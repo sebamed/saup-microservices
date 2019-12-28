@@ -232,11 +232,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\FTN\\dotnet\\saup-microservices\\Commons\\Commons.csproj",
+      "projectUniqueName": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\Commons.csproj",
       "projectName": "Commons",
-      "projectPath": "F:\\FTN\\dotnet\\saup-microservices\\Commons\\Commons.csproj",
+      "projectPath": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\Commons.csproj",
       "packagesPath": "C:\\Users\\Sebastian\\.nuget\\packages\\",
-      "outputPath": "F:\\FTN\\dotnet\\saup-microservices\\Commons\\obj\\",
+      "outputPath": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

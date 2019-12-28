@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "F:\\FTN\\dotnet\\saup-microservices\\AuthResource\\AuthResource.csproj": {}
+    "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\AuthResource\\AuthResource.csproj": {}
   },
   "projects": {
-    "F:\\FTN\\dotnet\\saup-microservices\\AuthResource\\AuthResource.csproj": {
+    "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\AuthResource\\AuthResource.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\FTN\\dotnet\\saup-microservices\\AuthResource\\AuthResource.csproj",
+        "projectUniqueName": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\AuthResource\\AuthResource.csproj",
         "projectName": "AuthResource",
-        "projectPath": "F:\\FTN\\dotnet\\saup-microservices\\AuthResource\\AuthResource.csproj",
+        "projectPath": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\AuthResource\\AuthResource.csproj",
         "packagesPath": "C:\\Users\\Sebastian\\.nuget\\packages\\",
-        "outputPath": "F:\\FTN\\dotnet\\saup-microservices\\AuthResource\\obj\\",
+        "outputPath": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\AuthResource\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -30,8 +30,8 @@
         "frameworks": {
           "netcoreapp3.0": {
             "projectReferences": {
-              "F:\\FTN\\dotnet\\saup-microservices\\Commons\\Commons.csproj": {
-                "projectPath": "F:\\FTN\\dotnet\\saup-microservices\\Commons\\Commons.csproj"
+              "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\Commons.csproj": {
+                "projectPath": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\Commons.csproj"
               }
             }
           }
@@ -102,14 +102,14 @@
         }
       }
     },
-    "F:\\FTN\\dotnet\\saup-microservices\\Commons\\Commons.csproj": {
+    "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\Commons.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\FTN\\dotnet\\saup-microservices\\Commons\\Commons.csproj",
+        "projectUniqueName": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\Commons.csproj",
         "projectName": "Commons",
-        "projectPath": "F:\\FTN\\dotnet\\saup-microservices\\Commons\\Commons.csproj",
+        "projectPath": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\Commons.csproj",
         "packagesPath": "C:\\Users\\Sebastian\\.nuget\\packages\\",
-        "outputPath": "F:\\FTN\\dotnet\\saup-microservices\\Commons\\obj\\",
+        "outputPath": "F:\\FTN\\dotnet\\MicroservicesBoilerplate\\Commons\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
