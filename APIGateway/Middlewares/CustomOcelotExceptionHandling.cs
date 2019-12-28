@@ -12,25 +12,22 @@ namespace APIGateway.ExceptionHandling {
     public class CustomOcelotExceptionHandling {
 
         public static Task HandleExceptionAsync(DownstreamContext context, BaseException ex) {
-            var code = HttpStatusCode.InternalServerError; // 500 if unexpected
-
-            if (ex is EntityNotFoundException) {
-                code = HttpStatusCode.NotFound;
-            } else if (ex is UnauthenticatedException) {
-                code = HttpStatusCode.Unauthorized;
+            if(ex.code == 0) {
+                ex.code = HttpStatusCode.InternalServerError; // 500 if unexpected
             }
+            
 
             // actual response
             var result = JsonConvert.SerializeObject(new {
                 messsage = ex.Message,
-                status = code,
+                status = ex.code,
                 requested_uri = context.HttpContext.Request.Path,
                 origin = ex.origin,
                 timestamp = DateTime.Now
             });
 
             context.HttpContext.Response.ContentType = "application/json";
-            context.HttpContext.Response.StatusCode = (int)code;
+            context.HttpContext.Response.StatusCode = (int) ex.code;
 
             return context.HttpContext.Response.WriteAsync(result);
         }
