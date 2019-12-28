@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace UserMicroservice.Consts {
+namespace Commons.Consts {
     public class RoleConsts {
 
         public const string ROLE_ADMIN = "Admin";
-        public const string ROLE_USER= "User";
+        public const string ROLE_USER = "User";
 
     }
 }
