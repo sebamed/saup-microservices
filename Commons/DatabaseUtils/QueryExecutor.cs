@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using AutoMapper.Data;
 using Commons.ExceptionHandling.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace Commons.DatabaseUtils {
+
     public class QueryExecutor {
 
         public List<T> Execute<T>(string connectionUrl, string query) {
@@ -34,8 +36,8 @@ namespace Commons.DatabaseUtils {
                         return data;
                     }
 
-                } catch(BaseException e) {
-
+                } catch(Exception e) {
+                    throw new BadSqlQueryException($"There was an error with the database while trying to execute: `{query}`", "Query Executor");
                 }
                 
                 connection.Close();
