@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Commons.DatabaseUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UserMicroservice.Services;
@@ -19,6 +20,8 @@ namespace UserMicroservice.Initializers {
             // register user service singleton
             services.AddSingleton<IUserService, UserService>();
 
+            // register QueryExecutor singleton
+            services.AddSingleton<QueryExecutor>();
         }
     }
 }
