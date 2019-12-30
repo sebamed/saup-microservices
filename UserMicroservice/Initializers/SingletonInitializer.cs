@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Commons.DatabaseUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UserMicroservice.Mappers;
 using UserMicroservice.Services;
 using UserMicroservice.Services.Implementation;
 
@@ -17,11 +18,14 @@ namespace UserMicroservice.Initializers {
 
         public void InitializeServices(IServiceCollection services, IConfiguration configuration) {
 
-            // register user service singleton
+            // register UserService singleton
             services.AddSingleton<IUserService, UserService>();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
+
+            // register ModelMapper singleton
+            services.AddSingleton<ModelMapper>();
         }
     }
 }
