@@ -8,28 +8,48 @@ using UserMicroservice.Domain;
 namespace UserMicroservice.Mappers {
     public class ModelMapper {
 
-        public List<Instrument> mapToInstruments(IDataReader reader) {
-            List<Instrument> instruments = new List<Instrument>();
-
-            while(reader.Read()) {
-                instruments.Add(new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
-                });
-            }
-
-            return instruments;
-        }
-
-        public Instrument mapToInstrument(IDataReader reader) {
+        public User MapToUser(IDataReader reader) {
             while (reader.Read()) {
-                return new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
+                return new User() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    role = new Role() {
+                        uuid = Convert.ToString(reader["role_uuid"]),
+                        id = Convert.ToInt32(reader["roleID"]),
+                        name = Convert.ToString(reader["role_name"]),
+                    }
                 };
             }
 
             return null;
+        }
+
+        public List<User> MapToUsers(IDataReader reader) {
+            List<User> users = new List<User>();
+
+            while(reader.Read()) {
+                users.Add(new User() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    role = new Role() {
+                        uuid = Convert.ToString(reader["role_uuid"]),
+                        id = Convert.ToInt32(reader["roleID"]),
+                        name = Convert.ToString(reader["role_name"]),
+                    }
+                });
+            }
+
+            return users;
         }
     }
 }

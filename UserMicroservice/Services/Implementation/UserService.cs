@@ -1,4 +1,5 @@
-﻿using Commons.Consts;
+﻿using AutoMapper;
+using Commons.Consts;
 using Commons.DatabaseUtils;
 using Commons.ExceptionHandling.Exceptions;
 using System.Collections.Generic;
@@ -15,9 +16,15 @@ namespace UserMicroservice.Services.Implementation {
 
         private readonly ModelMapper _modelMapper;
 
-        public UserService(QueryExecutor queryExecutor, ModelMapper modelMapper) {
+        private readonly IMapper _autoMapper;
+
+        private readonly SqlCommands _sqlCommands;
+
+        public UserService(QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands) {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
+            this._autoMapper = autoMapper;
+            this._sqlCommands = sqlCommands;
         }
 
         public UserResponseDTO Create(CreateUserRequestDTO requestDTO) {
@@ -27,26 +34,30 @@ namespace UserMicroservice.Services.Implementation {
 
         public List<UserResponseDTO> GetAll() {
             // todo
-            return new List<UserResponseDTO>();
+            return this._autoMapper.Map<List<UserResponseDTO>>(this.FindAll());
         }
-        public UserResponseDTO GetOneByUuid(string uuid) {
-            // todo
-
-            // *1
-            //List<Instrument> k = this._queryExecutor.Execute<Instrument>(DatabaseConsts.USER_SCHEMA, "select * from tblInstrument;");
-            
-
-            // koristicemo ovakve mappere:
-            var b = this._queryExecutor.Execute<Instrument>(DatabaseConsts.USER_SCHEMA, "select * from tblInstrument where InstrumentID = 123;", this._modelMapper.mapToInstrument);
-            var a = this._queryExecutor.Execute<List<Instrument>>(DatabaseConsts.USER_SCHEMA, "select * from tblInstrument;", this._modelMapper.mapToInstruments);
-
-            throw new EntityNotFoundException($"User with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
+        public UserResponseDTO GetOneByUuid(string uuid) {                  
+            return this._autoMapper.Map<UserResponseDTO>(this.FindOneByUuidOrThrow(uuid));
         }
 
         public UserResponseDTO Update(UpdateUserRequestDTO requestDTO) {
             // todo
             return new UserResponseDTO();
-        }       
+        }
+
+        public User FindOneByUuidOrThrow(string uuid) {
+            User user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_USERS_WITH_ROLE(uuid), this._modelMapper.MapToUser);
+
+            if (user == null) {
+                throw new EntityNotFoundException($"User with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            return user;
+        }
+
+        public List<User> FindAll() {
+            return this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL(), this._modelMapper.MapToUsers);
+        }
     }
 
 }

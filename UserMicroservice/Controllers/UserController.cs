@@ -25,7 +25,7 @@ namespace UserMicroservice.Controllers
             _userService = userService;
         }
 
-        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult<List<UserResponseDTO>> HandleGetAllUsers() {
             return Ok(this._userService.GetAll());

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Commons.DatabaseUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UserMicroservice.Consts;
 using UserMicroservice.Mappers;
 using UserMicroservice.Services;
 using UserMicroservice.Services.Implementation;
@@ -26,6 +27,9 @@ namespace UserMicroservice.Initializers {
 
             // register ModelMapper singleton
             services.AddSingleton<ModelMapper>();
+
+            // register SqlCommands singleton
+            services.AddSingleton<SqlCommands>();
         }
     }
 }

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace UserMicroservice.Domain {
-    public class Instrument : BaseEntity {
+    public class Role : BaseEntity {
 
-        public int InstrumentID { get; set; }
+        public int id { get; set; }
 
-        public string InstrumentNaziv { get; set; }
+        public string name { get; set; }
 
     }
 }
