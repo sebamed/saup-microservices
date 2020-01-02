@@ -12,6 +12,8 @@ using UserMicroservice.Mappers;
 namespace UserMicroservice.Services.Implementation {
     public class UserService : IUserService {
 
+        private readonly IRoleService _roleService;
+
         private readonly QueryExecutor _queryExecutor;
 
         private readonly ModelMapper _modelMapper;
@@ -20,7 +22,8 @@ namespace UserMicroservice.Services.Implementation {
 
         private readonly SqlCommands _sqlCommands;
 
-        public UserService(QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands) {
+        public UserService(IRoleService roleService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands) {
+            this._roleService = roleService;
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._autoMapper = autoMapper;
@@ -28,12 +31,28 @@ namespace UserMicroservice.Services.Implementation {
         }
 
         public UserResponseDTO Create(CreateUserRequestDTO requestDTO) {
-            // todo
-            return new UserResponseDTO();
+            // Checking if the user with provided email already exists
+            if (this.FindOneByEmailAddress(requestDTO.email) != null) {
+                throw new EntityAlreadyExistsException($"User with email {requestDTO.email} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            User user = new User() {
+                email = requestDTO.email,
+                phone = requestDTO.phone,
+                name = requestDTO.name,
+                surname = requestDTO.surname,
+                password = BCrypt.Net.BCrypt.HashPassword(requestDTO.password),
+                role = this._roleService.FindOneByName(requestDTO.roleName)
+            };
+
+            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_USER(user), this._modelMapper.MapToUserAfterInsert);
+
+
+
+            return this._autoMapper.Map<UserResponseDTO>(user);
         }
 
         public List<UserResponseDTO> GetAll() {
-            // todo
             return this._autoMapper.Map<List<UserResponseDTO>>(this.FindAll());
         }
         public UserResponseDTO GetOneByUuid(string uuid) {                  
@@ -41,12 +60,11 @@ namespace UserMicroservice.Services.Implementation {
         }
 
         public UserResponseDTO Update(UpdateUserRequestDTO requestDTO) {
-            // todo
             return new UserResponseDTO();
         }
 
         public User FindOneByUuidOrThrow(string uuid) {
-            User user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_USERS_WITH_ROLE(uuid), this._modelMapper.MapToUser);
+            User user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_USER_BY_UUID(uuid), this._modelMapper.MapToUser);
 
             if (user == null) {
                 throw new EntityNotFoundException($"User with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
@@ -55,8 +73,12 @@ namespace UserMicroservice.Services.Implementation {
             return user;
         }
 
+        public User FindOneByEmailAddress(string email) {
+            return this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_USER_BY_EMAIL(email), this._modelMapper.MapToUser);
+        }
+
         public List<User> FindAll() {
-            return this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL(), this._modelMapper.MapToUsers);
+            return this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_USERS(), this._modelMapper.MapToUsers);
         }
     }
 

@@ -10,5 +10,8 @@ namespace UserMicroservice.Localization {
 
         public const string ROUTE_USER_BASE = ROUTE_API_BASE + "/users";
         public const string ROUTE_USER_GET_ONE_BY_UUID = ROUTE_USER_BASE + "/{uuid}";
+
+        public const string ROUTE_ADMIN_BASE = ROUTE_USER_BASE + "/admins";
+        public const string ROUTE_ADMIN_GET_ONE_BY_UUID = ROUTE_ADMIN_BASE + "/{uuid}";
     }
 }

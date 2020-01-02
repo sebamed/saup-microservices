@@ -4,6 +4,8 @@ using UserMicroservice.DTO.User.Response;
 namespace UserMicroservice.DTO.User {
     public class UserResponseDTO : BaseDTO {
 
+        public int id { get; set; }
+
         public string name { get; set; }
 
         public string surname { get; set; }

@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace UserMicroservice.DTO.User {
-    public class CreateUserRequestDTO {
+namespace UserMicroservice.DTO.Admin.Request {
+    public class CreateAdminRequestDTO {
 
         [Required]
         public string name { get; set; }
@@ -23,9 +23,6 @@ namespace UserMicroservice.DTO.User {
         [Required]
         [Phone]
         public string phone { get; set; }
-
-        [Required]
-        public string roleName { get; set; }
 
     }
 }

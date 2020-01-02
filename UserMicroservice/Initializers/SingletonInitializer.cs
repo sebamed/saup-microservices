@@ -19,8 +19,10 @@ namespace UserMicroservice.Initializers {
 
         public void InitializeServices(IServiceCollection services, IConfiguration configuration) {
 
-            // register UserService singleton
+            // Register services            
             services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IAdminService, AdminService>();
+            services.AddSingleton<IRoleService, RoleService>();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
