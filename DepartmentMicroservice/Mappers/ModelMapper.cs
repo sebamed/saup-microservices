@@ -8,24 +8,30 @@ using DepartmentMicroservice.Domain;
 namespace DepartmentMicroservice.Mappers {
     public class ModelMapper {
 
-        public List<Instrument> mapToInstruments(IDataReader reader) {
-            List<Instrument> instruments = new List<Instrument>();
+        public List<Faculty> MapToFaculties(IDataReader reader) {
+            List<Faculty> instruments = new List<Faculty>();
 
             while(reader.Read()) {
-                instruments.Add(new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
+                instruments.Add(new Faculty() {
+                    id = Convert.ToInt32(reader["id"]),
+                    uuid = Convert.ToString(reader["uuid"]),
+                    name = Convert.ToString(reader["name"]),
+                    city = Convert.ToString(reader["city"]),
+                    phone = Convert.ToString(reader["phone"])
                 });
             }
 
             return instruments;
         }
 
-        public Instrument mapToInstrument(IDataReader reader) {
+        public Faculty MapToFaculty(IDataReader reader) {
             while (reader.Read()) {
-                return new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
+                return new Faculty() {
+                    id = Convert.ToInt32(reader["id"]),
+                    uuid = Convert.ToString(reader["uuid"]),
+                    name = Convert.ToString(reader["name"]),
+                    city = Convert.ToString(reader["city"]),
+                    phone = Convert.ToString(reader["phone"])
                 };
             }
 

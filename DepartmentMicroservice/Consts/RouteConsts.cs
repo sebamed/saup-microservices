@@ -8,7 +8,7 @@ namespace DepartmentMicroservice.Localization {
 
         public const string ROUTE_API_BASE = "/api";
 
-        public const string ROUTE_USER_BASE = ROUTE_API_BASE + "/users";
-        public const string ROUTE_USER_GET_ONE_BY_UUID = ROUTE_USER_BASE + "/{uuid}";
+        public const string ROUTE_DEPARTMENT_BASE = ROUTE_API_BASE + "/departments";
+        public const string ROUTE_FACULTY_BASE = ROUTE_DEPARTMENT_BASE + "/faculties";
     }
 }

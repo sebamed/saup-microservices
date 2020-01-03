@@ -6,11 +6,8 @@ using DepartmentMicroservice.DTO.User;
 using DepartmentMicroservice.DTO.User.Request;
 
 namespace DepartmentMicroservice.Services {
-    public interface IUserService : ICrudService<UserResponseDTO> {
-
-        UserResponseDTO Create(CreateUserRequestDTO requestDTO);
-
-        UserResponseDTO Update(UpdateUserRequestDTO requestDTO);
-
+    public interface IFacultyService : ICrudService<FacultyResponseDTO> {
+        FacultyResponseDTO Create(CreateFacultyRequestDTO requestDTO);
+        FacultyResponseDTO Update(UpdateFacultyRequestDTO requestDTO);
     }
 }
