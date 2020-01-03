@@ -8,5 +8,6 @@ namespace DepartmentMicroservice.Consts {
 
         public const string MICROSERVICE_NAME = "DEPARTMENT Microservice";
 
+        public const string SCHEMA_NAME = "SAUP_FACULTY";
     }
 }
