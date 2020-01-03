@@ -33,7 +33,7 @@ namespace UserMicroservice.Services.Implementation {
 
         public AdminResponseDTO Create(CreateAdminRequestDTO requestDTO) {
 
-            UserResponseDTO user = this._userService.Create(new CreateUserRequestDTO() {
+            User user = this._userService.Create(new CreateUserRequestDTO() {
                 email = requestDTO.email,
                 phone = requestDTO.phone,
                 name = requestDTO.name,

@@ -10,6 +10,7 @@ using UserMicroservice.DTO.User;
 using UserMicroservice.Localization;
 using UserMicroservice.Services;
 using Commons.Consts;
+using UserMicroservice.DTO.User.Request;
 
 namespace UserMicroservice.Controllers
 {
@@ -35,6 +36,12 @@ namespace UserMicroservice.Controllers
         [HttpGet(RouteConsts.ROUTE_USER_GET_ONE_BY_UUID)]
         public ActionResult<UserResponseDTO> HandleGetOneUserByUuid(string uuid) {
             return Ok(this._userService.GetOneByUuid(uuid));
+        }
+
+        [AllowAnonymous]
+        [HttpPut]
+        public ActionResult<UserResponseDTO> HandleUpdateUser(UpdateUserRequestDTO requestDTO) {
+            return Ok(this._userService.Update(requestDTO));
         }
 
     }

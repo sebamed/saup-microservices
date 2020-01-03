@@ -3,6 +3,10 @@
 namespace UserMicroservice.Consts {
     public class SqlCommands {
 
+        public string UPDATE_USER(User user) {
+            return $"update SAUP_USER.Users set name = '{ user.name }', surname = '{ user.surname}', email = '{ user.email}', phone = '{ user.phone}' output inserted.* where uuid = '{ user.uuid}';";
+        }
+
         public string CREATE_USER(User user) {
             return $"insert into SAUP_USER.Users (uuid, name, surname, password, email, phone, roleID) output inserted.* " +
                 $"values ('{user.uuid}', '{user.name}', '{user.surname}', '{user.password}', '{user.email}', '{user.phone}', {user.role.id});";

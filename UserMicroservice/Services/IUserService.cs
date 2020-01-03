@@ -9,7 +9,7 @@ using UserMicroservice.DTO.User.Request;
 namespace UserMicroservice.Services {
     public interface IUserService : ICrudService<UserResponseDTO> {
 
-        UserResponseDTO Create(CreateUserRequestDTO requestDTO);
+        User Create(CreateUserRequestDTO requestDTO);
 
         UserResponseDTO Update(UpdateUserRequestDTO requestDTO);
 

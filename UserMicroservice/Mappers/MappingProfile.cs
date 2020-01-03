@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UserMicroservice.Domain;
 using UserMicroservice.DTO.Admin.Response;
 using UserMicroservice.DTO.User;
+using UserMicroservice.DTO.User.Request;
 using UserMicroservice.DTO.User.Response;
 
 namespace UserMicroservice.Mappers {
@@ -17,6 +18,8 @@ namespace UserMicroservice.Mappers {
             CreateMap<User, AdminResponseDTO>();
             CreateMap<Role, RoleResponseDTO>();
             CreateMap<Admin, AdminResponseDTO>();
+            CreateMap<UpdateUserRequestDTO, User>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); ;
         }
 
     }
