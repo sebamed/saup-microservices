@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using LectureMaterialMicroservice.Mappers;
 using LectureMaterialMicroservice.Services;
 using LectureMaterialMicroservice.Services.Implementation;
+using LectureMaterialMicroservice.Consts;
+using SectionMicroservice.Services;
+using SectionMicroservice.Services.Implementation;
 
 namespace LectureMaterialMicroservice.Initializers {
 
@@ -18,14 +21,18 @@ namespace LectureMaterialMicroservice.Initializers {
 
         public void InitializeServices(IServiceCollection services, IConfiguration configuration) {
 
-            // register UserService singleton
-            services.AddSingleton<IUserService, UserService>();
+            // register services
+            services.AddSingleton<ISectionService, SectionService>();
+            services.AddSingleton<ISectionArchiveService, SectionArchiveService>();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
 
             // register ModelMapper singleton
             services.AddSingleton<ModelMapper>();
+
+            // register SqlCommands singleton
+            services.AddSingleton<SqlCommands>();
         }
     }
 }

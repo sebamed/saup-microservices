@@ -47,8 +47,6 @@ namespace UserMicroservice.Services.Implementation {
 
             user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_USER(user), this._modelMapper.MapToUserAfterInsert);
 
-
-
             return this._autoMapper.Map<UserResponseDTO>(user);
         }
 

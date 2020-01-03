@@ -8,7 +8,10 @@ namespace LectureMaterialMicroservice.Localization {
 
         public const string ROUTE_API_BASE = "/api";
 
-        public const string ROUTE_USER_BASE = ROUTE_API_BASE + "/users";
-        public const string ROUTE_USER_GET_ONE_BY_UUID = ROUTE_USER_BASE + "/{uuid}";
+        public const string ROUTE_SECTION_BASE = ROUTE_API_BASE + "/lecture-materials";
+        public const string ROUTE_SECTION_GET_ONE_BY_UUID = ROUTE_SECTION_BASE + "/{uuid}";
+        public const string ROUTE_SECTION_GET_VISIBLE = ROUTE_SECTION_BASE + "/visible";
+
+        public const string ROUTE_SECTION_ARCHIVE_BASE = ROUTE_API_BASE + "/lecture-materials/archive";
     }
 }
