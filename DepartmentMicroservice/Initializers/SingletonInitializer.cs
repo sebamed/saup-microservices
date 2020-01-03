@@ -21,9 +21,10 @@ namespace DepartmentMicroservice.Initializers {
 
             // register services
             services.AddSingleton<IFacultyService, FacultyService>();
+			services.AddSingleton<IDepartmentService, DepartmentService>();
 
-            // register QueryExecutor singleton
-            services.AddSingleton<QueryExecutor>();
+			// register QueryExecutor singleton
+			services.AddSingleton<QueryExecutor>();
 
             // register ModelMapper singleton
             services.AddSingleton<ModelMapper>();

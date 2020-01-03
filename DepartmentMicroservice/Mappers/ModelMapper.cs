@@ -47,5 +47,50 @@ namespace DepartmentMicroservice.Mappers {
                 phone = Convert.ToString(reader["phone"])
             };
         }
-    }
+
+		public List<Department> MapToDepartments(IDataReader reader)
+		{
+			List<Department> departments = new List<Department>();
+
+			while (reader.Read())
+			{
+				departments.Add(new Department()
+				{
+					id = Convert.ToInt32(reader["id"]),
+					uuid = Convert.ToString(reader["uuid"]),
+					name = Convert.ToString(reader["name"]),
+					facultyID = Convert.ToInt32(reader["facultyID"])
+				});
+			}
+
+			return departments;
+		}
+
+		public Department MapToDepartment(IDataReader reader)
+		{
+			while (reader.Read())
+			{
+				return new Department()
+				{
+					id = Convert.ToInt32(reader["id"]),
+					uuid = Convert.ToString(reader["uuid"]),
+					name = Convert.ToString(reader["name"]),
+					facultyID = Convert.ToInt32(reader["facultyID"])
+				};
+			}
+			return null;
+		}
+
+		public Department MapToDepartmentAfterInsert(IDataReader reader)
+		{
+			reader.Read();
+			return new Department()
+			{
+				id = Convert.ToInt32(reader["id"]),
+				uuid = Convert.ToString(reader["uuid"]),
+				name = Convert.ToString(reader["name"]),
+				facultyID = Convert.ToInt32(reader["facultyID"])
+			};
+		}
+	}
 }

@@ -8,8 +8,12 @@ using System.Threading.Tasks;
 
 namespace DepartmentMicroservice.Mappers {
     public class MappingProfile: Profile {
+
         public MappingProfile() {
+
             CreateMap<Faculty, FacultyResponseDTO>();
+
+			CreateMap<Department, DepartmentResponseDTO>();
         }
     }
 }
