@@ -9,10 +9,10 @@ namespace DepartmentMicroservice.Mappers {
     public class ModelMapper {
 
         public List<Faculty> MapToFaculties(IDataReader reader) {
-            List<Faculty> instruments = new List<Faculty>();
+            List<Faculty> faculties = new List<Faculty>();
 
             while(reader.Read()) {
-                instruments.Add(new Faculty() {
+                faculties.Add(new Faculty() {
                     id = Convert.ToInt32(reader["id"]),
                     uuid = Convert.ToString(reader["uuid"]),
                     name = Convert.ToString(reader["name"]),
@@ -21,7 +21,7 @@ namespace DepartmentMicroservice.Mappers {
                 });
             }
 
-            return instruments;
+            return faculties;
         }
 
         public Faculty MapToFaculty(IDataReader reader) {
@@ -34,8 +34,18 @@ namespace DepartmentMicroservice.Mappers {
                     phone = Convert.ToString(reader["phone"])
                 };
             }
-
             return null;
+        }
+
+        public Faculty MapToFacultyAfterInsert(IDataReader reader) {
+            reader.Read();
+            return new Faculty() {
+                id = Convert.ToInt32(reader["id"]),
+                uuid = Convert.ToString(reader["uuid"]),
+                name = Convert.ToString(reader["name"]),
+                city = Convert.ToString(reader["city"]),
+                phone = Convert.ToString(reader["phone"])
+            };
         }
     }
 }

@@ -10,5 +10,8 @@ namespace DepartmentMicroservice.Localization {
 
         public const string ROUTE_DEPARTMENT_BASE = ROUTE_API_BASE + "/departments";
         public const string ROUTE_FACULTY_BASE = ROUTE_DEPARTMENT_BASE + "/faculties";
+        public const string ROUTE_FACULTY_BY_UUID = ROUTE_FACULTY_BASE + "/{uuid}";
+        public const string ROUTE_FACULTY_BY_NAME = ROUTE_FACULTY_BASE + "/name/{name}";
+        public const string ROUTE_FACULTY_BY_CITY = ROUTE_FACULTY_BASE + "/city/{city}";
     }
 }
