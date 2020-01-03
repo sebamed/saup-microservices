@@ -58,8 +58,7 @@ namespace DepartmentMicroservice.Mappers {
 				{
 					id = Convert.ToInt32(reader["id"]),
 					uuid = Convert.ToString(reader["uuid"]),
-					name = Convert.ToString(reader["name"]),
-					facultyID = Convert.ToInt32(reader["facultyID"])
+					name = Convert.ToString(reader["name"])
 				});
 			}
 
@@ -74,8 +73,7 @@ namespace DepartmentMicroservice.Mappers {
 				{
 					id = Convert.ToInt32(reader["id"]),
 					uuid = Convert.ToString(reader["uuid"]),
-					name = Convert.ToString(reader["name"]),
-					facultyID = Convert.ToInt32(reader["facultyID"])
+					name = Convert.ToString(reader["name"])
 				};
 			}
 			return null;
@@ -88,8 +86,7 @@ namespace DepartmentMicroservice.Mappers {
 			{
 				id = Convert.ToInt32(reader["id"]),
 				uuid = Convert.ToString(reader["uuid"]),
-				name = Convert.ToString(reader["name"]),
-				facultyID = Convert.ToInt32(reader["facultyID"])
+				name = Convert.ToString(reader["name"])
 			};
 		}
 	}

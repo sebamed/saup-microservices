@@ -51,7 +51,7 @@ namespace DepartmentMicroservice.Consts {
 		public string CREATE_DEPARTMENT(Department Department)
 		{
 			return $"insert into {GeneralConsts.SCHEMA_NAME}.Department (uuid, name, facultyID) output inserted.* " +
-				$"values ('{Department.uuid}', '{Department.name}', '{Department.facultyID}');";
+				$"values ('{Department.uuid}', '{Department.name}');";
 		}
 
 		public string UPDATE_DEPARTMENT(Department Department)

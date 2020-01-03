@@ -66,8 +66,7 @@ namespace DepartmentMicroservice.Services.Implementation {
             
             Department department = new Department() {
                 uuid = requestDTO.uuid,
-                name = requestDTO.name,
-                facultyID = requestDTO.facultyID
+                name = requestDTO.name
             };
 
             department = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_DEPARTMENT(department), this._modelMapper.MapToDepartment);
