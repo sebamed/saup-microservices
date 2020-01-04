@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UserMicroservice.DTO.Student.Request;
 using UserMicroservice.DTO.Student.Response;
 using UserMicroservice.Localization;
 using UserMicroservice.Services;
 
-namespace UserMicroservice.Controllers
-{
+namespace UserMicroservice.Controllers {
     [Authorize]
     [Route(RouteConsts.ROUTE_STUDENT_BASE)]
     [ApiController]
@@ -32,6 +28,12 @@ namespace UserMicroservice.Controllers
         [HttpGet(RouteConsts.ROUTE_STUDENT_GET_ONE_BY_UUID)]
         public ActionResult<StudentResponseDTO> HandleGetOneStudentByUuid(string uuid) {
             return Ok(this._studentService.GetOneByUuid(uuid));
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult<StudentResponseDTO> HandleCreateStudent(CreateStudentRequestDTO requestDTO) {
+            return Ok(this._studentService.Create(requestDTO));
         }
     }
 }

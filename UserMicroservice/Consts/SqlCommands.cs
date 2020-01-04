@@ -21,6 +21,10 @@ namespace UserMicroservice.Consts {
             return $"insert into SAUP_USER.Admin (userUUID) output inserted.* values ('{admin.uuid}');";
         }
 
+        public string CREATE_STUDENT(Student student) {
+            return $"insert into SAUP_USER.Student (userUUID, indexNumber, departmentUUID) output inserted.* values ('{student.uuid}', '{student.indexNumber}', '{student.departmentUuid}');";
+        }
+
         public string GET_ONE_USER_BY_UUID(string uuid) {
             return $"select u.*, r.name as 'role_name', r.uuid as 'role_uuid' " +
                 $"from SAUP_USER.Users u " +
@@ -49,6 +53,11 @@ namespace UserMicroservice.Consts {
         public string GET_ONE_STUDENT_BY_UUID(string uuid) {
             return $"select u.*, s.* from SAUP_USER.Student s " +
                 $"inner join SAUP_USER.Users u on s.userUUID = u.uuid and u.uuid = '{uuid}'";
+        }
+
+        public string GET_ONE_STUDENT_BY_INDEX_NUMBER(string indexNumber) {
+            return $"select u.*, s.* from SAUP_USER.Student s " +
+                $"inner join SAUP_USER.Users u on s.userUUID = u.uuid and s.indexNumber = '{indexNumber}'";
         }
         public string GET_ALL_ADMINS() {
             return "select u.* from SAUP_USER.Admin a " +
