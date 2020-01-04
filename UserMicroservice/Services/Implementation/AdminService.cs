@@ -44,6 +44,7 @@ namespace UserMicroservice.Services.Implementation {
 
             Admin admin = new Admin() {
                 id = user.id,
+                uuid = user.uuid,
                 email = user.email,
                 phone = user.phone,
                 name = user.name,

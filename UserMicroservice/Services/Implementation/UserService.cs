@@ -61,7 +61,7 @@ namespace UserMicroservice.Services.Implementation {
             User user = this.FindOneByUuidOrThrow(requestDTO.uuid);
             user = this._autoMapper.Map<User>(requestDTO);
 
-            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_USER(user), this._modelMapper.MapToUserAfterInsert);
+            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_USER(user), this._modelMapper.MapToUserAfterUpdate);
 
             return this._autoMapper.Map<UserResponseDTO>(user);
         }

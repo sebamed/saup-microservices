@@ -23,6 +23,7 @@ namespace UserMicroservice.Initializers {
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<IAdminService, AdminService>();
             services.AddSingleton<IRoleService, RoleService>();
+            services.AddSingleton<IStudentService, StudentService>();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
