@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DepartmentMicroservice.DTO.User {
     public class DepartmentResponseDTO: BaseDTO {
-        public string uuid { get; set; }
         public string name { get; set; }
+
+        public FacultyResponseDTO faculty { get; set; }
     }
 }

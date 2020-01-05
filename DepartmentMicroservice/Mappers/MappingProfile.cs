@@ -12,8 +12,8 @@ namespace DepartmentMicroservice.Mappers {
         public MappingProfile() {
 
             CreateMap<Faculty, FacultyResponseDTO>();
-
-			CreateMap<Department, DepartmentResponseDTO>();
+            CreateMap<FacultyResponseDTO, Faculty>();
+            CreateMap<Department, DepartmentResponseDTO>();
         }
     }
 }

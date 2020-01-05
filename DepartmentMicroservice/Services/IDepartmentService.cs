@@ -12,5 +12,6 @@ namespace DepartmentMicroservice.Services {
         DepartmentResponseDTO Delete(string uuid);
 
         List<DepartmentResponseDTO> GetByName(string name);
+        List<DepartmentResponseDTO> GetByFacultyName(string facultyName);
     }
 }

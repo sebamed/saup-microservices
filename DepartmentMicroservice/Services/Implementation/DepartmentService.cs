@@ -12,16 +12,18 @@ using AutoMapper;
 namespace DepartmentMicroservice.Services.Implementation {
     public class DepartmentService : IDepartmentService {
 
+        private readonly IFacultyService _facultyService;
         private readonly QueryExecutor _queryExecutor;
         private readonly ModelMapper _modelMapper;
         private readonly SqlCommands _sqlCommands;
         private readonly IMapper _autoMapper;
 
-        public DepartmentService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper) {
+        public DepartmentService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper, IFacultyService facultyService) {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._sqlCommands = sqlCommands;
             this._autoMapper = autoMapper;
+            this._facultyService = facultyService;
         }
 
         //GET ALL
@@ -45,17 +47,26 @@ namespace DepartmentMicroservice.Services.Implementation {
         public DepartmentResponseDTO GetOneByUuid(string uuid) {
             return this._autoMapper.Map<DepartmentResponseDTO>(this.FindOneByUUID(uuid));
         }
+        public List<Department> FindByFacultyName(string facultyName) {
+            return this._queryExecutor.Execute<List<Department>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_FACULTY_NAME(facultyName), this._modelMapper.MapToDepartments);
+        }
+        public List<DepartmentResponseDTO> GetByFacultyName(string facultyName) {
+            return this._autoMapper.Map<List<DepartmentResponseDTO>>(this.FindByFacultyName(facultyName));
+        }
 
         public DepartmentResponseDTO Create(CreateDepartmentRequestDTO requestDTO) {
-            if (this.FindByName(requestDTO.name) != null)
-                throw new EntityAlreadyExistsException($"Department with name {requestDTO.name} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            if (this._facultyService.GetOneByUuid(requestDTO.facultyUUID) == null)
+                throw new EntityNotFoundException($"Faculty with uuid {requestDTO.facultyUUID} doesn't exists!", GeneralConsts.MICROSERVICE_NAME);
+
+            Faculty faculty = this._autoMapper.Map<Faculty>(this._facultyService.GetOneByUuid(requestDTO.facultyUUID)); 
 
             Department department = new Department() {
-                uuid = requestDTO.uuid,
-                name = requestDTO.name
+                name = requestDTO.name,
+                faculty = faculty
             };
 
-            department = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_DEPARTMENT(department), this._modelMapper.MapToDepartment);
+            department = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_DEPARTMENT(department), this._modelMapper.MapToDepartmentAfterInsert);
+            department = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_UUID(department.uuid), this._modelMapper.MapToDepartment);
 
             return this._autoMapper.Map<DepartmentResponseDTO>(department);
         }
@@ -63,13 +74,20 @@ namespace DepartmentMicroservice.Services.Implementation {
         public DepartmentResponseDTO Update(UpdateDepartmentRequestDTO requestDTO) {
             if (this.FindOneByUUID(requestDTO.uuid) == null)
                 throw new EntityNotFoundException($"Department with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-            
+
+            if (this._facultyService.GetOneByUuid(requestDTO.facultyUUID) == null)
+                throw new EntityNotFoundException($"Faculty with uuid {requestDTO.facultyUUID} doesn't exists!", GeneralConsts.MICROSERVICE_NAME);
+
+            Faculty faculty = this._autoMapper.Map<Faculty>(this._facultyService.GetOneByUuid(requestDTO.facultyUUID));
+
             Department department = new Department() {
                 uuid = requestDTO.uuid,
-                name = requestDTO.name
+                name = requestDTO.name,
+                faculty = faculty
             };
 
-            department = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_DEPARTMENT(department), this._modelMapper.MapToDepartment);
+            department = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_DEPARTMENT(department), this._modelMapper.MapToDepartmentAfterInsert);
+            department = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_UUID(department.uuid), this._modelMapper.MapToDepartment);
 
             return this._autoMapper.Map<DepartmentResponseDTO>(department);
         }

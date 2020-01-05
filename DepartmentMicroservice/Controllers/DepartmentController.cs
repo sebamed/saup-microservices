@@ -36,6 +36,13 @@ namespace DepartmentMicroservice.Controllers {
             return Ok(this._departmentService.GetByName(name));
         }
 
+        [AllowAnonymous]
+        [HttpGet(RouteConsts.ROUTE_DEPARTMENT_BY_FACULTY_NAME)]
+        public ActionResult<List<DepartmentResponseDTO>> HandleGetByFacultyName(string facultyName)
+        {
+            return Ok(this._departmentService.GetByFacultyName(facultyName));
+        }
+
 
         [AllowAnonymous]
         [HttpPost(RouteConsts.ROUTE_DEPARTMENT_BASE)]

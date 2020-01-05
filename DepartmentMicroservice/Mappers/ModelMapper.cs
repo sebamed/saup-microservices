@@ -37,17 +37,6 @@ namespace DepartmentMicroservice.Mappers {
             return null;
         }
 
-        public Faculty MapToFacultyAfterInsert(IDataReader reader) {
-            reader.Read();
-            return new Faculty() {
-                id = Convert.ToInt32(reader["id"]),
-                uuid = Convert.ToString(reader["uuid"]),
-                name = Convert.ToString(reader["name"]),
-                city = Convert.ToString(reader["city"]),
-                phone = Convert.ToString(reader["phone"])
-            };
-        }
-
 		public List<Department> MapToDepartments(IDataReader reader)
 		{
 			List<Department> departments = new List<Department>();
@@ -58,8 +47,14 @@ namespace DepartmentMicroservice.Mappers {
 				{
 					id = Convert.ToInt32(reader["id"]),
 					uuid = Convert.ToString(reader["uuid"]),
-					name = Convert.ToString(reader["name"])
-				});
+					name = Convert.ToString(reader["name"]),
+                    faculty = new Faculty() {
+                        uuid = Convert.ToString(reader["facultyUUID"]),
+                        name = Convert.ToString(reader["fname"]),
+                        city = Convert.ToString(reader["fcity"]),
+                        phone = Convert.ToString(reader["fphone"]),
+                    }
+                });
 			}
 
 			return departments;
@@ -73,8 +68,14 @@ namespace DepartmentMicroservice.Mappers {
 				{
 					id = Convert.ToInt32(reader["id"]),
 					uuid = Convert.ToString(reader["uuid"]),
-					name = Convert.ToString(reader["name"])
-				};
+					name = Convert.ToString(reader["name"]),
+                    faculty = new Faculty() {
+                        uuid = Convert.ToString(reader["facultyUUID"]),
+                        name = Convert.ToString(reader["fname"]),
+                        city = Convert.ToString(reader["fcity"]),
+                        phone = Convert.ToString(reader["fphone"]),
+                    }
+                };
 			}
 			return null;
 		}
@@ -86,8 +87,12 @@ namespace DepartmentMicroservice.Mappers {
 			{
 				id = Convert.ToInt32(reader["id"]),
 				uuid = Convert.ToString(reader["uuid"]),
-				name = Convert.ToString(reader["name"])
-			};
+				name = Convert.ToString(reader["name"]),
+                faculty = new Faculty()
+                {
+                    uuid = Convert.ToString(reader["facultyUUID"])
+                }
+            };
 		}
 	}
 }

@@ -37,28 +37,45 @@ namespace DepartmentMicroservice.Consts {
 
 		public string GET_ALL_DEPARTMENTS()
 		{
-			return $"select * from {GeneralConsts.SCHEMA_NAME}.Department";
+			return $"select d.*, f.name as fname, f.city as fcity, f.phone as fphone " +
+                $"from {GeneralConsts.SCHEMA_NAME}.Department d " +
+                $"join {GeneralConsts.SCHEMA_NAME}.Faculty f on d.facultyUUID = f.uuid;";
 		}
 		public string GET_DEPARTMENT_BY_UUID(string uuid)
 		{
-			return $"select * from {GeneralConsts.SCHEMA_NAME}.Department where uuid = '{uuid}'";
+            return $"select d.*, f.name as fname, f.city as fcity, f.phone as fphone " +
+                $"from {GeneralConsts.SCHEMA_NAME}.Department d " +
+                $"join {GeneralConsts.SCHEMA_NAME}.Faculty f on d.facultyUUID = f.uuid " +
+                $"where d.uuid = '{uuid}'";
 		}
 		public string GET_DEPARTMENTS_BY_NAME(string name)
 		{
-			return $"select * from {GeneralConsts.SCHEMA_NAME}.Department where name = '{name}'";
+            return $"select d.*, f.name as fname, f.city as fcity, f.phone as fphone " +
+                $"from {GeneralConsts.SCHEMA_NAME}.Department d " +
+                $"join {GeneralConsts.SCHEMA_NAME}.Faculty f on d.facultyUUID = f.uuid " +
+                $"where d.name = '{name}'";
 		}
+        public string GET_DEPARTMENT_BY_FACULTY_NAME(string facultyName) {
+            return $"select d.*, f.name as fname, f.city as fcity, f.phone as fphone " +
+                $"from {GeneralConsts.SCHEMA_NAME}.Department d " +
+                $"join {GeneralConsts.SCHEMA_NAME}.Faculty f on d.facultyUUID = f.uuid " +
+                $"where f.name = '{facultyName}'";
+        }
 
-		public string CREATE_DEPARTMENT(Department Department)
+
+        public string CREATE_DEPARTMENT(Department department)
 		{
-			return $"insert into {GeneralConsts.SCHEMA_NAME}.Department (uuid, name, facultyID) output inserted.* " +
-				$"values ('{Department.uuid}', '{Department.name}');";
+			return $"insert into {GeneralConsts.SCHEMA_NAME}.Department (uuid, name, facultyUUID) " +
+                $"output inserted.* " +
+                $"values ('{department.uuid}', '{department.name}', '{department.faculty.uuid}');";
 		}
 
-		public string UPDATE_DEPARTMENT(Department Department)
+		public string UPDATE_DEPARTMENT(Department department)
 		{
 			return $"update {GeneralConsts.SCHEMA_NAME}.Department " +
-				$"set uuid = '{Department.uuid}', name = '{Department.name}' output inserted.* " +
-				$"where uuid = '{Department.uuid}';";
+				$"set uuid = '{department.uuid}', name = '{department.name}', facultyUUID = '{department.faculty.uuid}' " +
+                $"output inserted.* " +
+                $"where uuid = '{department.uuid}';";
 		}
 
 		public string DELETE_DEPARTMENT(string uuid)
