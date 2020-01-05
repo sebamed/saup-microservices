@@ -1,5 +1,6 @@
 ﻿using Commons.Consts;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using System.Linq;
 using System.Security.Claims;
 
@@ -7,6 +8,8 @@ namespace Commons.Domain {
     public class UserPrincipal {
 
         private ClaimsPrincipal _principal;
+
+        public StringValues token { get; }
 
         public string uuid {
             get {
@@ -20,8 +23,12 @@ namespace Commons.Domain {
             }
         }
 
-        public UserPrincipal(ClaimsPrincipal principal) {
-            this._principal = principal;
+        public UserPrincipal(HttpContext context) {
+            this._principal = context.User;
+
+            StringValues sToken = "";
+            context.Request.Headers.TryGetValue(HttpClientConsts.HEADER_AUTHORIZATION, out sToken);
+            this.token = sToken.ToString();
         }
 
     }

@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
+using Commons.Domain;
+using Commons.HttpClientRequests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using UserMicroservice.DTO.Teacher.Request;
 using UserMicroservice.DTO.Teacher.Response;
+using UserMicroservice.DTO.User;
 using UserMicroservice.Localization;
 using UserMicroservice.Services;
 
@@ -13,15 +18,19 @@ namespace UserMicroservice.Controllers {
     [ApiController]
     public class TeacherController : ControllerBase {
 
+        private readonly HttpClientService _httpClientService;
+
         private readonly ITeacherService _teacherService;
 
-        public TeacherController(ITeacherService teacherService) {
+        public TeacherController(ITeacherService teacherService, HttpClientService httpClientService) {
             _teacherService = teacherService;
+            this._httpClientService = httpClientService;
         }
 
         [AllowAnonymous]
         [HttpGet]
         public ActionResult<List<TeacherResponseDTO>> HandleGetAllTeachers() {
+            var a = this._httpClientService.SendRequest<List<UserResponseDTO>>(HttpMethod.Get, "http://localhost:40001/api/users/", new UserPrincipal(HttpContext).token).Result;
             return Ok(this._teacherService.GetAll());
         }
 

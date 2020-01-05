@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Commons.Consts;
 using Commons.DatabaseUtils;
+using Commons.Domain;
 using Commons.ExceptionHandling.Exceptions;
+using Commons.HttpClientRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using UserMicroservice.Consts;
 using UserMicroservice.Domain;
@@ -25,6 +28,7 @@ namespace UserMicroservice.Services.Implementation {
         private readonly IMapper _autoMapper;
 
         private readonly SqlCommands _sqlCommands;
+
 
         public TeacherService(IUserService userService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands) {
             this._userService = userService;
