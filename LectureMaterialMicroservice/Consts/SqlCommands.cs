@@ -47,7 +47,7 @@ namespace LectureMaterialMicroservice.Consts {
 
         public string CREATE_ARCHIVE(SectionArchive sectionArchive) {
             return $"insert into SAUP_SECTION.SectionArchive (sectionUUID, name, description, visible, creationDate, courseUUID, moderatorUUID, changeDate) output inserted.* " +
-               $"values ('934f082e-91d2-4ea7-8fc1-ed7e454b0fad','{sectionArchive.name}', '{sectionArchive.description}', '{sectionArchive.visible}', '{sectionArchive.creationDate}', 'c9660a83-2fe5-4b97-a207-8269e7d99747', '2ef30b0c-c8ee-44c5-a4df-6621c9f6a9c4', '{sectionArchive.changeDate}');";
+               $"values ('{sectionArchive.sectionUUID}','{sectionArchive.name}', '{sectionArchive.description}', '{sectionArchive.visible}', '{sectionArchive.creationDate}', '{sectionArchive.courseUUID}', '{sectionArchive.moderatorUUID}', '{sectionArchive.changeDate}');";
         }
 
         public string GET_ONE_ARCHIVE_BY_SECTION_UUID(string sectionUUID) {
@@ -63,7 +63,7 @@ namespace LectureMaterialMicroservice.Consts {
         public string UPDATE_ARCHIVE(SectionArchive sectionArchive)
         {
             return $"update SAUP_SECTION.SectionArchive " +
-               $"set name = '{sectionArchive.name}', description = '{sectionArchive.description}', visible = '{sectionArchive.visible}', creationDate = '{sectionArchive.creationDate}', changeDate = '{sectionArchive.changeDate}' output inserted.* " +
+               $"set sectionUUID = '{sectionArchive.sectionUUID}', name = '{sectionArchive.name}', description = '{sectionArchive.description}', visible = '{sectionArchive.visible}', creationDate = '{sectionArchive.creationDate}', courseUUID = '{sectionArchive.courseUUID}', moderatorUUID = '{sectionArchive.moderatorUUID}', changeDate = '{sectionArchive.changeDate}' output inserted.* " +
                $"where sectionUUID = '{sectionArchive.sectionUUID}';";
         }
 
@@ -72,6 +72,5 @@ namespace LectureMaterialMicroservice.Consts {
             return $"select sa.* " +
                $"from SAUP_SECTION.SectionArchive sa where sa.visible = 1";
         }
-
     }
 }

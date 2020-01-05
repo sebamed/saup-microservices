@@ -17,9 +17,9 @@ namespace SectionMicroservice.Domain
 
         public DateTime creationDate { get; set; }
 
-        //public Course course { get; set; }
+        public string courseUUID { get; set; }
 
-        public int moderatorID { get; set; }
+        public string moderatorUUID { get; set; }
 
         public DateTime changeDate { get; set; }
 

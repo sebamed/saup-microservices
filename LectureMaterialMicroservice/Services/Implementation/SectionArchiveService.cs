@@ -34,10 +34,13 @@ namespace SectionMicroservice.Services.Implementation
         {
             SectionArchive sectionArchive = new SectionArchive()
             {
+                sectionUUID = requestDTO.sectionUUID,
                 name = requestDTO.name,
                 description = requestDTO.description,
                 visible = requestDTO.visible,
                 creationDate = requestDTO.creationDate,
+                courseUUID = requestDTO.courseUUID,
+                moderatorUUID = requestDTO.moderatorUUID,
                 changeDate = requestDTO.changeDate
             };
 
@@ -99,6 +102,8 @@ namespace SectionMicroservice.Services.Implementation
                 description = requestDTO.description,
                 visible = requestDTO.visible,
                 creationDate = requestDTO.creationDate,
+                courseUUID = requestDTO.courseUUID,
+                moderatorUUID = requestDTO.moderatorUUID,
                 changeDate = requestDTO.changeDate
             };
 

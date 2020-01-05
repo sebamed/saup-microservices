@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UserMicroservice.DTO.User;
 
 namespace SectionMicroservice.DTO.SectionArchive.Response
 {
@@ -17,8 +18,14 @@ namespace SectionMicroservice.DTO.SectionArchive.Response
 
         public DateTime creationDate { get; set; }
 
+        public string courseUUID { get; set; }
+
+        public string moderatorUUID { get; set; }
+
         public DateTime changeDate { get; set; }
 
         public int version { get; set; }
+
+       
     }
 }

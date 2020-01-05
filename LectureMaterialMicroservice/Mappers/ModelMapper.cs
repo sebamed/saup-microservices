@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LectureMaterialMicroservice.Domain;
 using SectionMicroservice.Domain;
+using UserMicroservice.Domain;
 
 namespace LectureMaterialMicroservice.Mappers
 {
@@ -60,6 +61,8 @@ namespace LectureMaterialMicroservice.Mappers
                     description = Convert.ToString(reader["description"]),
                     visible = Convert.ToInt32(reader["visible"]),
                     creationDate = Convert.ToDateTime(reader["creationDate"]),
+                    courseUUID = Convert.ToString(reader["courseUUID"]),
+                    moderatorUUID = Convert.ToString(reader["moderatorUUID"]),
                     changeDate = Convert.ToDateTime(reader["changeDate"]),
                     version = Convert.ToInt32(reader["version"])
                 };
@@ -81,6 +84,8 @@ namespace LectureMaterialMicroservice.Mappers
                     description = Convert.ToString(reader["description"]),
                     visible = Convert.ToInt32(reader["visible"]),
                     creationDate = Convert.ToDateTime(reader["creationDate"]),
+                    courseUUID = Convert.ToString(reader["courseUUID"]),
+                    moderatorUUID = Convert.ToString(reader["moderatorUUID"]),
                     changeDate = Convert.ToDateTime(reader["changeDate"]),
                     version = Convert.ToInt32(reader["version"])
                 });

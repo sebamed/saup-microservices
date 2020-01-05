@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Commons\Commons.csproj" />
+    <ProjectReference Include="..\UserMicroservice\UserMicroservice.csproj" />
   </ItemGroup>
 
 </Project>

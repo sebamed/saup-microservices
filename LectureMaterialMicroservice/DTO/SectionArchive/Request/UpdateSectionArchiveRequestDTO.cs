@@ -23,6 +23,12 @@ namespace SectionMicroservice.DTO.SectionArchive.Request
         public DateTime creationDate { get; set; }
 
         [Required]
+        public string courseUUID { get; set; }
+
+        [Required]
+        public string moderatorUUID { get; set; }
+
+        [Required]
         public DateTime changeDate { get; set; }
     }
 }
