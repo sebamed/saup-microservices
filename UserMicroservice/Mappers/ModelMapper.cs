@@ -95,6 +95,40 @@ namespace UserMicroservice.Mappers {
             return admins;
         }
 
+        public List<Teacher> MapToTeachers(IDataReader reader) {
+            List<Teacher> teachers = new List<Teacher>();
+
+            while (reader.Read()) {
+                teachers.Add(new Teacher() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                });
+            }
+
+            return teachers;
+        }
+
+        public Teacher MapToTeacher(IDataReader reader) {
+            while (reader.Read()) {
+                return new Teacher() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                };
+            }
+
+            return null;
+        }
+
         public User MapToUserAfterInsert(IDataReader reader) {
             reader.Read();
             return new User() {

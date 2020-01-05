@@ -21,6 +21,10 @@ namespace UserMicroservice.Consts {
             return $"insert into SAUP_USER.Admin (userUUID) output inserted.* values ('{admin.uuid}');";
         }
 
+        public string CREATE_ADMIN(Teacher teacher) {
+            return $"insert into SAUP_USER.Teacher (userUUID) output inserted.* values ('{teacher.uuid}');";
+        }
+
         public string CREATE_STUDENT(Student student) {
             return $"insert into SAUP_USER.Student (userUUID, indexNumber, departmentUUID) output inserted.* values ('{student.uuid}', '{student.indexNumber}', '{student.departmentUuid}');";
         }
@@ -50,6 +54,11 @@ namespace UserMicroservice.Consts {
                 $"inner join SAUP_USER.Users u on a.userUUID = u.uuid and u.uuid = '{uuid}'";
         }
 
+        public string GET_ONE_TEACHER_BY_UUID(string uuid) {
+            return $"select u.* from SAUP_USER.Teacher t " +
+                $"inner join SAUP_USER.Users u on t.userUUID = u.uuid and u.uuid = '{uuid}'";
+        }
+
         public string GET_ONE_STUDENT_BY_UUID(string uuid) {
             return $"select u.*, s.* from SAUP_USER.Student s " +
                 $"inner join SAUP_USER.Users u on s.userUUID = u.uuid and u.uuid = '{uuid}'";
@@ -62,6 +71,11 @@ namespace UserMicroservice.Consts {
         public string GET_ALL_ADMINS() {
             return "select u.* from SAUP_USER.Admin a " +
                 "inner join SAUP_USER.Users u on a.userUUID = u.uuid;";
+        }
+
+        public string GET_ALL_TEACHERS() {
+            return "select u.* from SAUP_USER.Teacher t " +
+                "inner join SAUP_USER.Users u on t.userUUID = u.uuid;";
         }
 
         public string GET_ALL_STUDENTS() {
