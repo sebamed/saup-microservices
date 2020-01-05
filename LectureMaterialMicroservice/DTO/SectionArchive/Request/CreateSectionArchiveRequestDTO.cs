@@ -21,13 +21,8 @@ namespace SectionMicroservice.DTO.SectionArchive.Request
         public DateTime creationDate { get; set; }
 
         [Required]
-        public int moderatorID { get; set; }
-
-        [Required]
         public DateTime changeDate { get; set; }
 
-        [Required]
-        public int version { get; set; }
     }
 }
 

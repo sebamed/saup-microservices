@@ -64,22 +64,45 @@ namespace LectureMaterialMicroservice.Services.Implementation {
 
             return section;
         }
+        
         public List<Section> FindAllVisible()  {
             return this._queryExecutor.Execute<List<Section>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_VISIBLE_SECTIONS(), this._modelMapper.MapToSections);
         }
 
-        public List<SectionResponseDTO> GetVisibleSections() {
-            return this._autoMapper.Map<List<SectionResponseDTO>>(this.FindAllVisible());
-        }
-
-        public SectionResponseDTO DeleteSectionByUUID(string uuid) {
+        public SectionResponseDTO DeleteSection(string uuid) {
             if (this.FindOneByUuidOrThrow(uuid) == null) {
                 throw new EntityNotFoundException($"Section with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
             }
 
             Section old = this.FindOneByUuidOrThrow(uuid);
-            this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_SECTION_BY_UUID(uuid), this._modelMapper.MapToSection);
+            this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_SECTION(uuid), this._modelMapper.MapToSection);
             return this._autoMapper.Map<SectionResponseDTO>(old);
+        }
+
+        public SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO)
+        {
+            if (this.FindOneByUuidOrThrow(requestDTO.uuid) == null)
+            {
+                throw new EntityNotFoundException($"Section with uuid: {requestDTO.uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+            Section section = new Section()
+            {
+                uuid = requestDTO.uuid,
+                name = requestDTO.name,
+                description = requestDTO.description,
+                visible = requestDTO.visible,
+                creationDate = requestDTO.creationDate
+            };
+
+            section = this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_SECTION(section), this._modelMapper.MapToSection);
+
+            return this._autoMapper.Map<SectionResponseDTO>(section);
+
+        }
+
+        public List<SectionResponseDTO> GetVisibleSections()
+        {
+            return this._autoMapper.Map<List<SectionResponseDTO>>(this.FindAllVisible());
         }
     }
 }

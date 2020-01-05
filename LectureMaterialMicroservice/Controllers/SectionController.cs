@@ -55,7 +55,14 @@ namespace LectureMaterialMicroservice.Controllers {
         [HttpDelete]
         public ActionResult<SectionResponseDTO> HandleDeleteSectionByUuid(string uuid)
         {
-            return Ok(this._sectionService.DeleteSectionByUUID(uuid));
+            return Ok(this._sectionService.DeleteSection(uuid));
+        }
+
+        [AllowAnonymous]
+        [HttpPut]
+        public ActionResult<SectionResponseDTO> HandleUpdateSection(UpdateSectionRequestDTO requestDTO)
+        {
+            return Ok(this._sectionService.Update(requestDTO));
         }
 
     }

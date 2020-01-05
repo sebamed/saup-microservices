@@ -6,14 +6,19 @@ using System.Threading.Tasks;
 using LectureMaterialMicroservice.Domain;
 using SectionMicroservice.Domain;
 
-namespace LectureMaterialMicroservice.Mappers {
-    public class ModelMapper {
+namespace LectureMaterialMicroservice.Mappers
+{
+    public class ModelMapper
+    {
 
-        public List<Section> MapToSections(IDataReader reader) {
+        public List<Section> MapToSections(IDataReader reader)
+        {
             List<Section> sections = new List<Section>();
 
-            while(reader.Read()) {
-                sections.Add(new Section() {
+            while (reader.Read())
+            {
+                sections.Add(new Section()
+                {
                     id = Convert.ToInt32(reader["id"]),
                     uuid = Convert.ToString(reader["uuid"]),
                     name = Convert.ToString(reader["name"]),
@@ -26,9 +31,12 @@ namespace LectureMaterialMicroservice.Mappers {
             return sections;
         }
 
-        public Section MapToSection(IDataReader reader) {
-            while (reader.Read()) {
-                return new Section() {
+        public Section MapToSection(IDataReader reader)
+        {
+            while (reader.Read())
+            {
+                return new Section()
+                {
                     id = Convert.ToInt32(reader["id"]),
                     uuid = Convert.ToString(reader["uuid"]),
                     name = Convert.ToString(reader["name"]),
@@ -47,7 +55,7 @@ namespace LectureMaterialMicroservice.Mappers {
             {
                 return new SectionArchive()
                 {
-                    id = Convert.ToInt32(reader["id"]),
+                    sectionUUID = Convert.ToString(reader["sectionUUID"]),
                     name = Convert.ToString(reader["name"]),
                     description = Convert.ToString(reader["description"]),
                     visible = Convert.ToInt32(reader["visible"]),
@@ -68,7 +76,7 @@ namespace LectureMaterialMicroservice.Mappers {
             {
                 sectionArchives.Add(new SectionArchive()
                 {
-                    id = Convert.ToInt32(reader["id"]),
+                    sectionUUID = Convert.ToString(reader["sectionUUID"]),
                     name = Convert.ToString(reader["name"]),
                     description = Convert.ToString(reader["description"]),
                     visible = Convert.ToInt32(reader["visible"]),
@@ -80,6 +88,5 @@ namespace LectureMaterialMicroservice.Mappers {
 
             return sectionArchives;
         }
-
     }
 }

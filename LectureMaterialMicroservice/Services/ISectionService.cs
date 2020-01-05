@@ -10,9 +10,8 @@ namespace LectureMaterialMicroservice.Services {
     public interface ISectionService : ICrudService<SectionResponseDTO> {
 
         SectionResponseDTO Create(CreateSectionRequestDTO requestDTO);
-
-        //SectionResponseDTO Update(UpdateUserRequestDTO requestDTO);
+        SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO);
         Section FindOneByUuidOrThrow(string uuid);
-        SectionResponseDTO DeleteSectionByUUID(string uuid);
+        SectionResponseDTO DeleteSection(string uuid);
     }
 }

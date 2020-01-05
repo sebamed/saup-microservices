@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SectionMicroservice.Domain
 {
     public class SectionArchive : BaseEntity {
-        public int id { get; set; }
+        public string sectionUUID { get; set; }
 
         public string name { get; set; }
 
