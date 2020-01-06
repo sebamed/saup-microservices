@@ -18,19 +18,16 @@ namespace UserMicroservice.Controllers {
     [ApiController]
     public class TeacherController : ControllerBase {
 
-        private readonly HttpClientService _httpClientService;
 
         private readonly ITeacherService _teacherService;
 
-        public TeacherController(ITeacherService teacherService, HttpClientService httpClientService) {
+        public TeacherController(ITeacherService teacherService) {
             _teacherService = teacherService;
-            this._httpClientService = httpClientService;
         }
 
         [AllowAnonymous]
         [HttpGet]
         public ActionResult<List<TeacherResponseDTO>> HandleGetAllTeachers() {
-            var a = this._httpClientService.SendRequest<List<UserResponseDTO>>(HttpMethod.Get, "http://localhost:40001/api/users/", new UserPrincipal(HttpContext).token).Result;
             return Ok(this._teacherService.GetAll());
         }
 
@@ -42,8 +39,7 @@ namespace UserMicroservice.Controllers {
 
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<TeacherResponseDTO> HandleCreateAdmin(CreateTeacherRequestDTO requestDTO) {
-            // todo: created()
+        public ActionResult<TeacherResponseDTO> HandleCreateTeacher(CreateTeacherRequestDTO requestDTO) {
             return Ok(this._teacherService.Create(requestDTO));
         }
     }
