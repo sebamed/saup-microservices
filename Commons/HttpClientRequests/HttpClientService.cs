@@ -48,7 +48,7 @@ namespace Commons.HttpClientRequests {
                 recipients
             });
 
-            var a = await _client.PostAsync("http://localhost:40009/api/mails/send", new StringContent(json, Encoding.UTF8, "application/json"));
+            await _client.PostAsync("http://localhost:40009/api/mails/send", new StringContent(json, Encoding.UTF8, "application/json"));
         }
 
     }
