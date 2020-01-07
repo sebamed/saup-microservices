@@ -8,7 +8,13 @@ namespace SubjectMicroservice.Localization {
 
         public const string ROUTE_API_BASE = "/api";
 
-        public const string ROUTE_USER_BASE = ROUTE_API_BASE + "/users";
-        public const string ROUTE_USER_GET_ONE_BY_UUID = ROUTE_USER_BASE + "/{uuid}";
+        public const string ROUTE_SUBJECT_BASE = ROUTE_API_BASE + "/subjects";
+        public const string ROUTE_SUBJECT_BY_UUID = ROUTE_SUBJECT_BASE + "/{uuid}";
+        public const string ROUTE_SUBJECT_BY_NAME = ROUTE_SUBJECT_BASE + "/name/{name}";
+
+        public const string ROUTE_SUBJECT_ARCHIVE_BASE = ROUTE_SUBJECT_BASE + "/archives";
+        public const string ROUTE_SUBJECT_ARCHIVE_BY_UUID = ROUTE_SUBJECT_ARCHIVE_BASE + "/{uuid}";
+        public const string ROUTE_SUBJECT_ARCHIVE_BY_NAME = ROUTE_SUBJECT_ARCHIVE_BASE + "/name/{name}";
+
     }
 }
