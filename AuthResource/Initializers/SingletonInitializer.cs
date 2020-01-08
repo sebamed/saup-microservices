@@ -22,7 +22,7 @@ namespace AuthResource.Initializers {
         public void InitializeServices(IServiceCollection services, IConfiguration configuration) {
 
             services.AddSingleton<IAuthService, AuthService>();
-            services.AddTransient<JwtGenerator>();
+            services.AddSingleton<JwtGenerator>();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();

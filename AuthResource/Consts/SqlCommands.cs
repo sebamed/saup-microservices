@@ -12,7 +12,7 @@ namespace AuthResource.Consts {
         }
 
         public string GET_AUTHENTICATED_USER(string email) {
-            return $"select u.email, u.uuid, r.name as 'role' from SAUP_USER.Users u inner join SAUP_USER.Role r on r.id = u.roleID where u.email = '{email}';";
+            return $"select u.email, u.uuid, r.name as 'role' from SAUP_USER.Users u inner join SAUP_USER.Role r on r.uuid = u.roleUUID where u.email = '{email}';";
         }
 
     }
