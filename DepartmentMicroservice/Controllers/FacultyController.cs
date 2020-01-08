@@ -5,6 +5,7 @@ using DepartmentMicroservice.DTO.User;
 using DepartmentMicroservice.Localization;
 using DepartmentMicroservice.Services;
 using DepartmentMicroservice.DTO.User.Request;
+using Commons.Consts;
 
 namespace DepartmentMicroservice.Controllers {
     [Authorize]
@@ -18,43 +19,43 @@ namespace DepartmentMicroservice.Controllers {
             _facultyService = facultyService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_FACULTY_BASE)]
         public ActionResult<List<FacultyResponseDTO>> HandleGetAll() {
             return Ok(this._facultyService.GetAll());
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_FACULTY_BY_UUID)]
         public ActionResult<FacultyResponseDTO> HandleGetOnebyUUID(string uuid) {
             return Ok(this._facultyService.GetOneByUuid(uuid));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_FACULTY_BY_NAME)]
         public ActionResult<List<FacultyResponseDTO>> HandleGetByName(string name) {
             return Ok(this._facultyService.GetByName(name));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_FACULTY_BY_CITY)]
         public ActionResult<List<FacultyResponseDTO>> HandleGetByCity(string city) {
             return Ok(this._facultyService.GetByCity(city));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
         [HttpPost(RouteConsts.ROUTE_FACULTY_BASE)]
         public ActionResult<FacultyResponseDTO> HandleCreateFaculty(CreateFacultyRequestDTO requestDTO) {
             return Ok(this._facultyService.Create(requestDTO));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
         [HttpPut(RouteConsts.ROUTE_FACULTY_BASE)]
         public ActionResult<FacultyResponseDTO> HandleUpdateFaculty(UpdateFacultyRequestDTO requestDTO){
             return Ok(this._facultyService.Update(requestDTO));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
         [HttpDelete(RouteConsts.ROUTE_FACULTY_BY_UUID)]
         public ActionResult<FacultyResponseDTO> HandleDeleteByUUID(string uuid) {
             return Ok(this._facultyService.Delete(uuid));
