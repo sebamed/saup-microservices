@@ -19,7 +19,7 @@ namespace DepartmentMicroservice.Controllers {
 			_departmentService = departmentService;
         }
 
-        [Authorize(Roles = RoleConsts.ROLE_STUDENT)]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_DEPARTMENT_BASE)]
         public ActionResult<List<DepartmentResponseDTO>> HandleGetAll() {
             return Ok(this._departmentService.GetAll());
