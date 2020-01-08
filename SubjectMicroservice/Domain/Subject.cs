@@ -1,4 +1,6 @@
 ﻿using Commons.Domain;
+using SubjectMicroservice.Domain.External;
+using SubjectMicroservice.DTO.Department;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +11,14 @@ namespace SubjectMicroservice.Domain {
 
         public int id { get; set; }
 
-        public string uuid { get; set; }
-
         public string name { get; set; }
 
         public string description { get; set; }
 
         public DateTime creationDate { get; set; }
 
+        public Department department { get; set; }
 
+        public User creator { get; set; }
     }
 }

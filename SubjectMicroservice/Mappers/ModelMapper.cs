@@ -4,6 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using SubjectMicroservice.Domain;
+using SubjectMicroservice.Domain.External;
+using SubjectMicroservice.DTO.Department;
 
 namespace SubjectMicroservice.Mappers {
     public class ModelMapper {
@@ -17,7 +19,13 @@ namespace SubjectMicroservice.Mappers {
                     uuid = Convert.ToString(reader["uuid"]),
                     name = Convert.ToString(reader["name"]),
                     description = Convert.ToString(reader["description"]),
-                    creationDate = Convert.ToDateTime(reader["creationDate"])
+                    creationDate = Convert.ToDateTime(reader["creationDate"]),
+                    department = new Department() {
+                        uuid = Convert.ToString(reader["departmentUUID"])
+                    },
+                    creator = new User() {
+                        uuid = Convert.ToString(reader["creatorUUID"])
+                    }
                 });
             }
 
@@ -31,24 +39,17 @@ namespace SubjectMicroservice.Mappers {
                     uuid = Convert.ToString(reader["uuid"]),
                     name = Convert.ToString(reader["name"]),
                     description = Convert.ToString(reader["description"]),
-                    creationDate = Convert.ToDateTime(reader["creationDate"])
+                    creationDate = Convert.ToDateTime(reader["creationDate"]),
+                    department = new Department() {
+                        uuid = Convert.ToString(reader["departmentUUID"])
+                    },
+                    creator = new User() {
+                        uuid = Convert.ToString(reader["creatorUUID"])
+                    }
                 };
             }
 
             return null;
-        }
-
-        public Subject MapToSubjectAfterInsert(IDataReader reader)
-        {
-            reader.Read();
-            return new Subject()
-            {
-                id = Convert.ToInt32(reader["id"]),
-                uuid = Convert.ToString(reader["uuid"]),
-                name = Convert.ToString(reader["name"]),
-                description = Convert.ToString(reader["description"]),
-                creationDate = Convert.ToDateTime(reader["creationDate"])
-            };
         }
 
 		public List<SubjectArchive> MapToSubjectArchives(IDataReader reader)

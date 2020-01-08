@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using SubjectMicroservice.DTO.Subject;
 using SubjectMicroservice.DTO.Subject.Request;
 using SubjectMicroservice.DTO.Subject.Response;
 
 namespace SubjectMicroservice.Services {
-    public interface ISubjectService : ICrudService<SubjectResponseDTO> {
+    public interface ISubjectService : ICrudService<MultipleSubjectResponseDTO> {
 
         SubjectResponseDTO Create(CreateSubjectRequestDTO requestDTO);
 
@@ -15,7 +16,12 @@ namespace SubjectMicroservice.Services {
 
         SubjectResponseDTO Delete(string uuid);
 
-        List<SubjectResponseDTO> GetByName(string name);
 
+        SubjectResponseDTO GetOneByUuid(string uuid);
+
+        List<MultipleSubjectResponseDTO> GetByName(string name);
+
+        List<MultipleSubjectResponseDTO> GetByDepartmentUUID(string uuid);
+        List<MultipleSubjectResponseDTO> GetByCreatorUUID(string uuid);
     }
 }

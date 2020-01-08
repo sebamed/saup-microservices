@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Commons.DTO;
 
 namespace SubjectMicroservice.DTO.SubjectArchive.Request {
-    public class UpdateSubjectArchiveRequestDTO : BaseDTO {
+    public class UpdateSubjectArchiveRequestDTO {
         
         [Required]
         public string subjectUUID { get; set; }
@@ -20,9 +20,5 @@ namespace SubjectMicroservice.DTO.SubjectArchive.Request {
         public DateTime changeDate { get; set; }
 
         public int version { get; set; }
-
-
-
-
     }
 }

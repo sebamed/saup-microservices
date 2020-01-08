@@ -16,7 +16,8 @@ namespace SubjectMicroservice.Services
 
         SubjectArchiveResponseDTO Delete(string uuid);
 
-        List<SubjectArchiveResponseDTO> GetByName(string name);
+        SubjectArchiveResponseDTO GetOneByUuid(string uuid);
 
+        List<SubjectArchiveResponseDTO> GetByName(string name);
     }
 }

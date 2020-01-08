@@ -6,7 +6,7 @@ using Commons.DTO;
 
 
 namespace SubjectMicroservice.DTO.SubjectArchive.Response {
-    public class SubjectArchiveResponseDTO : BaseDTO{
+    public class SubjectArchiveResponseDTO {
 
         public string subjectUUID { get; set; }
 

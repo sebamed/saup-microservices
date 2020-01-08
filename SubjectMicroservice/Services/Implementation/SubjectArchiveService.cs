@@ -2,6 +2,7 @@
 using Commons.Consts;
 using Commons.DatabaseUtils;
 using Commons.ExceptionHandling.Exceptions;
+using Microsoft.AspNetCore.Http;
 using SubjectMicroservice.Consts;
 using SubjectMicroservice.Domain;
 using SubjectMicroservice.DTO.SubjectArchive.Request;

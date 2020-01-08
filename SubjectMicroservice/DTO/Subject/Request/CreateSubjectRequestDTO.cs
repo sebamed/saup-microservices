@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 namespace SubjectMicroservice.DTO.Subject.Request {
     public class CreateSubjectRequestDTO {
         [Required]
-        public string uuid { get; set; }
-
-        [Required]
         public string name { get; set; }
 
         [Required]
@@ -17,6 +14,11 @@ namespace SubjectMicroservice.DTO.Subject.Request {
 
         [Required]
         public DateTime creationDate { get; set; }
-
+        
+        [Required]
+        public string departmentUUID { get; set; }
+        
+        [Required]
+        public string creatorUUID { get; set; }
     }
 }

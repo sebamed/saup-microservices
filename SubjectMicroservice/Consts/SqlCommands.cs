@@ -23,16 +23,27 @@ namespace SubjectMicroservice.Consts
             return $"select * from {GeneralConsts.SCHEMA_NAME}.Subject where name = '{name}'";
         }
 
+        public string GET_SUBJECTS_BY_DEPARTMENT_UUID(string departmentUUID)
+        {
+            return $"select * from {GeneralConsts.SCHEMA_NAME}.Subject where departmentUUID = '{departmentUUID}'";
+        }
+
+        public string GET_SUBJECTS_BY_CREATOR_UUID(string creatortUUID)
+        {
+            return $"select * from {GeneralConsts.SCHEMA_NAME}.Subject where creatorUUID = '{creatortUUID}'";
+        }
+
         public string CREATE_SUBJECT(Subject subject)
         {
-            return $"insert into {GeneralConsts.SCHEMA_NAME}.Subject (uuid, name, description, creationDate) output inserted.* " +
-                $"values ('{subject.uuid}', '{subject.name}', '{subject.description}', '{subject.creationDate}');";
+            return $"insert into {GeneralConsts.SCHEMA_NAME}.Subject (uuid, name, description, creationDate, departmentUUID, creatorUUID) output inserted.* " +
+                $"values ('{subject.uuid}', '{subject.name}', '{subject.description}', '{subject.creationDate}', '{subject.department.uuid}', '{subject.creator.uuid}');";
         }
 
         public string UPDATE_SUBJECT(Subject subject)
         {
             return $"update {GeneralConsts.SCHEMA_NAME}.Subject " +
-                $"set uuid = '{subject.uuid}', name = '{subject.name}', description = '{subject.description}', creationDate = '{subject.creationDate}' output inserted.* " +
+                $"set uuid = '{subject.uuid}', name = '{subject.name}', description = '{subject.description}', " +
+                $"creationDate = '{subject.creationDate}', departmentUUID = '{subject.department.uuid}', creatorUUID = '{subject.creator.uuid}' output inserted.* " +
                 $"where uuid = '{subject.uuid}';";
         }
 

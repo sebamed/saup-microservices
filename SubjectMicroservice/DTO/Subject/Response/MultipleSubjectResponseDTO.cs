@@ -7,7 +7,7 @@ using SubjectMicroservice.DTO.Department;
 using SubjectMicroservice.DTO.External;
 
 namespace SubjectMicroservice.DTO.Subject.Response {
-    public class SubjectResponseDTO : BaseDTO {
+    public class MultipleSubjectResponseDTO : BaseDTO {
 
         public string name { get; set; }
 
@@ -15,8 +15,8 @@ namespace SubjectMicroservice.DTO.Subject.Response {
 
         public DateTime creationDate { get; set; }
 
-        public DepartmentDTO department { get; set; }
+        public string departmentUUID { get; set; }
 
-        public UserDTO creator { get; set; }
+        public string creatorUUID { get; set; }
     }
 }

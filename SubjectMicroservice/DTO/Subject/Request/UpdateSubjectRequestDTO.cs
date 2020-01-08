@@ -7,10 +7,6 @@ using Commons.DTO;
 
 namespace SubjectMicroservice.DTO.Subject.Request {
     public class UpdateSubjectRequestDTO : BaseDTO {
-
-        [Required]
-        public string uuid { get; set; }
-
         [Required]
         public string name { get; set; }
 
@@ -20,7 +16,10 @@ namespace SubjectMicroservice.DTO.Subject.Request {
         [Required]
         public DateTime creationDate { get; set; }
 
+        [Required]
+        public string departmentUUID { get; set; }
 
-
+        [Required]
+        public string creatorUUID { get; set; }
     }
 }
