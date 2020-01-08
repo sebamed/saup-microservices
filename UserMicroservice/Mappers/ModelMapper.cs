@@ -23,6 +23,44 @@ namespace UserMicroservice.Mappers {
             return null;
         }
 
+        public Student MapToStudent(IDataReader reader) {
+            while (reader.Read()) {
+                return new Student() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    departmentUuid = Convert.ToString(reader["departmentUuid"]),
+                    indexNumber = Convert.ToString(reader["indexNumber"])
+                };
+            }
+
+            return null;
+        }
+
+        public List<Student> MapToStudents(IDataReader reader) {
+            List<Student> students = new List<Student>();
+
+            while (reader.Read()) {
+                students.Add(new Student() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    departmentUuid = Convert.ToString(reader["departmentUuid"]),
+                    indexNumber = Convert.ToString(reader["indexNumber"])
+                });
+            }
+
+            return students;
+        }
+
         public Admin MapToAdmin(IDataReader reader) {
             while (reader.Read()) {
                 return new Admin() {
@@ -57,6 +95,40 @@ namespace UserMicroservice.Mappers {
             return admins;
         }
 
+        public List<Teacher> MapToTeachers(IDataReader reader) {
+            List<Teacher> teachers = new List<Teacher>();
+
+            while (reader.Read()) {
+                teachers.Add(new Teacher() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                });
+            }
+
+            return teachers;
+        }
+
+        public Teacher MapToTeacher(IDataReader reader) {
+            while (reader.Read()) {
+                return new Teacher() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                };
+            }
+
+            return null;
+        }
+
         public User MapToUserAfterInsert(IDataReader reader) {
             reader.Read();
             return new User() {
@@ -68,7 +140,24 @@ namespace UserMicroservice.Mappers {
                 email = Convert.ToString(reader["email"]),
                 phone = Convert.ToString(reader["phone"]),
                 role = new Role() {
-                    id = Convert.ToInt32(reader["roleID"])
+                    uuid = Convert.ToString(reader["roleUUID"]),
+                }
+            };
+        }
+
+        public User MapToUserAfterUpdate(IDataReader reader) {
+            reader.Read();
+            return new User() {
+                uuid = Convert.ToString(reader["uuid"]),
+                id = Convert.ToInt32(reader["id"]),
+                name = Convert.ToString(reader["name"]),
+                surname = Convert.ToString(reader["surname"]),
+                password = Convert.ToString(reader["password"]),
+                email = Convert.ToString(reader["email"]),
+                phone = Convert.ToString(reader["phone"]),
+                role = new Role() {
+                    uuid = Convert.ToString(reader["roleUUID"]),
+                    name = Convert.ToString(reader["role_name"])
                 }
             };
         }
@@ -84,9 +173,8 @@ namespace UserMicroservice.Mappers {
                     email = Convert.ToString(reader["email"]),
                     phone = Convert.ToString(reader["phone"]),
                     role = new Role() {
-                        uuid = Convert.ToString(reader["role_uuid"]),
-                        id = Convert.ToInt32(reader["roleID"]),
-                        name = Convert.ToString(reader["role_name"]),
+                        uuid = Convert.ToString(reader["roleUUID"]),
+                        name = Convert.ToString(reader["role_name"])
                     }
                 };
             }
@@ -107,8 +195,7 @@ namespace UserMicroservice.Mappers {
                     email = Convert.ToString(reader["email"]),
                     phone = Convert.ToString(reader["phone"]),
                     role = new Role() {
-                        uuid = Convert.ToString(reader["role_uuid"]),
-                        id = Convert.ToInt32(reader["roleID"]),
+                        uuid = Convert.ToString(reader["roleUUID"]),
                         name = Convert.ToString(reader["role_name"]),
                     }
                 });
