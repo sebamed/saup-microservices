@@ -9,7 +9,7 @@ namespace Commons.Consts {
         public const string ROLE_STUDENT = "Student";
         public const string ROLE_TEACHER = "Nastavnik";
 
-        public const string ROLE_USER = "User";
+        public const string ROLE_USER = "Administrator, Student, Nastavnik";
 
     }
 }
