@@ -66,6 +66,63 @@ namespace CourseMicroservice.Mappers
                 subjectUUID = Convert.ToString(reader["subjectUUID"])
             };
         }
+
+        internal List<CourseArchive> MapToCourseArchives(IDataReader reader)
+        {
+            List<CourseArchive> archives = new List<CourseArchive>();
+
+            while (reader.Read())
+            {
+                archives.Add(new CourseArchive()
+                {
+                    name = Convert.ToString(reader["name"]),
+                    description = Convert.ToString(reader["description"]),
+                    active = Convert.ToBoolean(reader["active"]),
+                    maxStudents = Convert.ToInt32(reader["maxStudents"]),
+                    minStudents = Convert.ToInt32(reader["minStudents"]),
+                    creationDate = Convert.ToDateTime(reader["creationDate"]),
+                    subjectUUID = Convert.ToString(reader["subjectUUID"]),
+                    moderatorUUID = Convert.ToString(reader["moderatorUUID"]),
+                    changeDate = Convert.ToDateTime(reader["changeDate"]),
+                    version = Convert.ToInt32(reader["version"])
+                });
+            }
+            return archives;
+        }
+
+        internal List<CourseStudent> MapToCourseStudents(IDataReader reader)
+        {
+            List<CourseStudent> students = new List<CourseStudent>();
+
+            while (reader.Read())
+            {
+                students.Add(new CourseStudent()
+                {
+                    studentUUID = Convert.ToString(reader["studentUUID"]),
+                    activeStudent = Convert.ToBoolean(reader["activeStudent"]),
+                    currentPoints = (float)Convert.ToDouble(reader["currentPoints"]),
+                    finalMark = Convert.ToInt32(reader["finalMark"]),
+                    beginDate = Convert.ToDateTime(reader["beginDate"])
+                });
+            }
+            return students;
+        }
+
+        internal List<CourseTeacher> MapToCourseTeachers(IDataReader reader)
+        {
+            List<CourseTeacher> teachers = new List<CourseTeacher>();
+
+            while (reader.Read())
+            {
+                teachers.Add(new CourseTeacher()
+                {
+                    teacherUUID = Convert.ToString(reader["teacherUUID"]),
+                    activeTeacher = Convert.ToBoolean(reader["activeTeacher"])
+                });
+            }
+            return teachers;
+        }
+
         public Course MapToCourseAfterUpdate(IDataReader reader)
         {
             reader.Read();

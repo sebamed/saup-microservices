@@ -13,10 +13,10 @@ namespace CourseMicroservice.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        //obelezja
+        //OBELEZJA
         private readonly ICourseService _courseService;
 
-        //konstruktor
+        //KONSTRUKTOR
         public CourseController(ICourseService courseService)
         {
             this._courseService = courseService;
@@ -34,6 +34,24 @@ namespace CourseMicroservice.Controllers
         public ActionResult<CourseResponseDTO>HandleGetOneCourseByUuid(string uuid)
         {
             return Ok(this._courseService.GetOneByUuid(uuid));
+        }
+        [AllowAnonymous]
+        [HttpGet(RouteConsts.ROUTE_COURSE_TEACHERS)]
+        public ActionResult<List<CourseTeacherResponseDTO>> HandleGetCourseTeachers(string uuid)
+        {
+            return Ok(this._courseService.GetCourseTeachers(uuid));
+        }
+        [AllowAnonymous]
+        [HttpGet(RouteConsts.ROUTE_COURSE_STUDENTS)]
+        public ActionResult<List<CourseStudentResponseDTO>> HandleGetCourseStudents(string uuid)
+        {
+            return Ok(this._courseService.GetCourseStudents(uuid));
+        }
+        [AllowAnonymous]
+        [HttpGet(RouteConsts.ROUTE_COURESE_ARCHIVES)]
+        public ActionResult<List<CourseArchiveResponseDTO>> HandleGetCourseArchives(string uuid)
+        {
+            return Ok(this._courseService.GetCourseArchives(uuid));
         }
 
         //POST METODE

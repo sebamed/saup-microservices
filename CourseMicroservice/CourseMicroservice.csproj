@@ -23,4 +23,10 @@
     <ProjectReference Include="..\Commons\Commons.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTO\CourseArchive\Request\" />
+    <Folder Include="DTO\CourseTeacher\Request\" />
+    <Folder Include="DTO\CourseStudent\Request\" />
+  </ItemGroup>
+
 </Project>

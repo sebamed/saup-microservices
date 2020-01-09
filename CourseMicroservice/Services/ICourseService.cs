@@ -1,4 +1,5 @@
 ﻿using CourseMicroservice.DTO.Course;
+using System.Collections.Generic;
 
 namespace CourseMicroservice.Services {
     public interface ICourseService : ICrudService<CourseResponseDTO> {
@@ -7,5 +8,11 @@ namespace CourseMicroservice.Services {
         CourseResponseDTO Update(UpdateCourseRequestDTO requestDTO);
 
         CourseResponseDTO Delete(string uuid);
+
+        List<CourseTeacherResponseDTO> GetCourseTeachers(string uuid);
+
+        List<CourseStudentResponseDTO> GetCourseStudents(string uuid);
+
+        List<CourseArchiveResponseDTO> GetCourseArchives(string uuid);
     }
 }

@@ -3,6 +3,8 @@ using CourseMicroservice.Domain;
 
 namespace CourseMicroservice.Consts {
     public class SqlCommands {
+        
+        //GET COMMANDS
 
         public string GET_ALL_COURSES()
         {
@@ -12,6 +14,21 @@ namespace CourseMicroservice.Consts {
         {
             return $"select * from SAUP_COURSE.Course where uuid = '{uuid}';";
         }
+        public string GET_COURSE_TEACHERS(string uuid)
+        {
+            return $"select * from SAUP_COURSE.TeacherCourse where courseUUID='{uuid}'";
+        }
+        public string GET_COURSE_STUDENTS(string uuid)
+        {
+            return $"select * from SAUP_COURSE.StudentCourse where courseUUID='{uuid}'";
+        }
+        public string GET_COURSE_ARCHIVES(string uuid)
+        {
+            return $"select * from SAUP_COURSE.CourseArchive where courseUUID = '{uuid}';";
+        }
+
+
+        //INSERT COMMANDS
         public string CREATE_COURSE(Course course)
         {
             //SQL Server ne poznaje boolean, samo bit koji moze biti 1 ili 0
@@ -24,6 +41,11 @@ namespace CourseMicroservice.Consts {
                 $"'{course.subjectUUID}');";
         }
 
+ 
+
+
+
+        //UPDATE COMMANDS
         public string UPDATE_COURSE(Course course)
         {
             int var = 0;
@@ -36,6 +58,8 @@ namespace CourseMicroservice.Consts {
             $" output inserted.* where uuid = '{course.uuid}';";
         }
 
+
+        //DELETE COMMANDS
         public string DELETE_COURSE(string uuid)
         {
             return $"delete from SAUP_Course.Course output deleted.* " +

@@ -42,6 +42,19 @@ namespace CourseMicroservice.Services.Implementation {
             return course;
         }
 
+        public List<CourseTeacher> FindAllTeachersByCourseId(string uuid)
+        {
+            return this._queryExecutor.Execute<List<CourseTeacher>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_TEACHERS(uuid), this._modelMapper.MapToCourseTeachers);
+        }
+        public List<CourseStudent> FindAllStudentsByCourseId(string uuid)
+        {
+            return this._queryExecutor.Execute<List<CourseStudent>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_STUDENTS(uuid), this._modelMapper.MapToCourseStudents);
+        }
+        public List<CourseArchive> FindAllArchivesByCourseId(string uuid)
+        {
+            return this._queryExecutor.Execute<List<CourseArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_ARCHIVES(uuid), this._modelMapper.MapToCourseArchives);
+        }
+
         //mapira rezultate funkcije FindALL u DTO klasu
         //koristi automapper
         public List<CourseResponseDTO> GetAll()
@@ -86,6 +99,25 @@ namespace CourseMicroservice.Services.Implementation {
             Course course = this.FindOneByUuidOrThrow(uuid);
             course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_COURSE(uuid), this._modelMapper.MapToCourse);
             return this._autoMapper.Map<CourseResponseDTO>(course);
+        }
+
+        public List<CourseTeacherResponseDTO> GetCourseTeachers(string uuid)
+        {
+            Course course = this.FindOneByUuidOrThrow(uuid);
+            return this._autoMapper.Map<List<CourseTeacherResponseDTO>>(this.FindAllTeachersByCourseId(uuid));
+        }
+
+        public List<CourseStudentResponseDTO> GetCourseStudents(string uuid)
+        {
+            Course course = this.FindOneByUuidOrThrow(uuid);
+            return this._autoMapper.Map<List<CourseStudentResponseDTO>>(this.FindAllStudentsByCourseId(uuid));
+        }
+
+        public List<CourseArchiveResponseDTO> GetCourseArchives(string uuid)
+        {
+            Course course = this.FindOneByUuidOrThrow(uuid);
+            return this._autoMapper.Map<List<CourseArchiveResponseDTO>>(this.FindAllArchivesByCourseId(uuid));
+
         }
     }
 }
