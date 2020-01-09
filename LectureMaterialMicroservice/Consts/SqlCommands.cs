@@ -40,10 +40,6 @@ namespace LectureMaterialMicroservice.Consts {
         }
 
         //SQL commands for Section_Archive
-        public string GET_ALL_ARCHIVES() {
-            return $"select sa.* " +
-               $"from SAUP_SECTION.SectionArchive sa ";
-        }
 
         public string CREATE_ARCHIVE(SectionArchive sectionArchive) {
             return $"insert into SAUP_SECTION.SectionArchive (sectionUUID, name, description, visible, creationDate, courseUUID, moderatorUUID, changeDate) output inserted.* " +
@@ -55,22 +51,11 @@ namespace LectureMaterialMicroservice.Consts {
                $"from SAUP_SECTION.SectionArchive sa where sa.sectionUUID = '{sectionUUID}';";
         }
 
-        public string DELETE_ARCHIVE(string sectionUUID) {
-            return $"delete from SAUP_SECTION.SectionArchive " +
-               $"where SectionUUID = '{sectionUUID}';";
+        public string GET_ONE_ARCHIVE_BY_LATEST_VERSION()
+        {
+            return $"select top 1 *" +
+               $"from SAUP_SECTION.SectionArchive order by version desc;";
         }
 
-        public string UPDATE_ARCHIVE(SectionArchive sectionArchive)
-        {
-            return $"update SAUP_SECTION.SectionArchive " +
-               $"set sectionUUID = '{sectionArchive.sectionUUID}', name = '{sectionArchive.name}', description = '{sectionArchive.description}', visible = '{sectionArchive.visible}', creationDate = '{sectionArchive.creationDate}', courseUUID = '{sectionArchive.courseUUID}', moderatorUUID = '{sectionArchive.moderatorUUID}', changeDate = '{sectionArchive.changeDate}' output inserted.* " +
-               $"where sectionUUID = '{sectionArchive.sectionUUID}';";
-        }
-
-        public string GET_VISIBLE_SECTIONS_FROM_ARCHIVE()
-        {
-            return $"select sa.* " +
-               $"from SAUP_SECTION.SectionArchive sa where sa.visible = 1";
-        }
     }
 }

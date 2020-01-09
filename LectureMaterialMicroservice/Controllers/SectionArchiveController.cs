@@ -22,13 +22,6 @@ namespace SectionMicroservice.Controllers {
         }
 
         [AllowAnonymous]
-        [HttpGet]
-        public ActionResult<List<SectionArchiveResponseDTO>> HandleGetAllArchives()
-        {
-            return Ok(this._sectionArchiveService.GetAll());
-        }
-
-        [AllowAnonymous]
         [HttpPost]
         public ActionResult<SectionArchiveResponseDTO> HandleCreateSection(CreateSectionArchiveRequestDTO requestDTO)
         {
@@ -40,28 +33,7 @@ namespace SectionMicroservice.Controllers {
         [HttpGet(RouteConsts.ROUTE_SECTION_GET_ARCHIVE_BY_SECTION_UUID)]
         public ActionResult<SectionArchiveResponseDTO> HandleGetOneArchiveBySectionUUID(string sectionUUID)
         {
-            return Ok(this._sectionArchiveService.GetOneByUuid(sectionUUID));
-        }
-
-        [AllowAnonymous]
-        [HttpDelete]
-        public ActionResult<SectionArchiveResponseDTO> HandleDeleteArchiveBySectionUUID(string sectionUUID)
-        {
-            return Ok(this._sectionArchiveService.DeleteArchive(sectionUUID));
-        }
-
-        [AllowAnonymous]
-        [HttpPut]
-        public ActionResult<SectionArchiveResponseDTO> HandleUpdateArchive(UpdateSectionArchiveRequestDTO requestDTO)
-        {
-            return Ok(this._sectionArchiveService.Update(requestDTO));
-        }
-
-        [AllowAnonymous]
-        [HttpGet(RouteConsts.ROUTE_SECTION_GET_VISIBLE_IN_ARCHIVE)]
-        public ActionResult<List<SectionArchiveResponseDTO>> HandleVisibleSectionsInArhive()
-        {
-            return Ok(this._sectionArchiveService.GetVisibleSections());
+            return Ok(this._sectionArchiveService.GetOneByArchiveBySectionUuid(sectionUUID));
         }
     }
 }

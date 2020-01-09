@@ -9,11 +9,9 @@ using System.Threading.Tasks;
 
 namespace SectionMicroservice.Services
 {
-    public interface ISectionArchiveService : ICrudService<SectionArchiveResponseDTO>
-    {
+    public interface ISectionArchiveService {
         SectionArchiveResponseDTO Create(CreateSectionArchiveRequestDTO requestDTO);
-        SectionArchive FindOneBySectionUuidOrThrow(string sectionUUID);
-        SectionArchiveResponseDTO Update(UpdateSectionArchiveRequestDTO requestDTO);
-        SectionArchiveResponseDTO DeleteArchive(string sectionUUID);
+        SectionArchive GetOneByArchiveBySectionUuid(string sectionUUID);
+
     }
 }
