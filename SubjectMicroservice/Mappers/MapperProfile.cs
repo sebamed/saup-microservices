@@ -12,6 +12,7 @@ namespace SubjectMicroservice.Mappers
         public MappingProfile(){
             CreateMap<Subject, SubjectResponseDTO>();
             CreateMap<Subject, MultipleSubjectResponseDTO>();
+            CreateMap<SubjectArchive, MultipleSubjectArchiveResponseDTO>();
             CreateMap<SubjectArchive, SubjectArchiveResponseDTO>();
             CreateMap<Faculty, FacultyDTO>();
             CreateMap<Department, DepartmentDTO>();

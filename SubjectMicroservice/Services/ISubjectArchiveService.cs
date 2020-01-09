@@ -8,16 +8,13 @@ using SubjectMicroservice.DTO.SubjectArchive.Response;
 
 namespace SubjectMicroservice.Services
 {
-	public interface ISubjectArchiveService : ICrudService<SubjectArchiveResponseDTO>
-	{
+	public interface ISubjectArchiveService {
         SubjectArchiveResponseDTO Create(CreateSubjectArchiveRequestDTO requestDTO);
 
-        SubjectArchiveResponseDTO Update(UpdateSubjectArchiveRequestDTO requestDTO);
+        SubjectArchiveResponseDTO GetLatestVersionBySubjectUUID(string sectionUUID);
 
-        SubjectArchiveResponseDTO Delete(string uuid);
+        List<MultipleSubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string sectionUUID);
 
-        SubjectArchiveResponseDTO GetOneByUuid(string uuid);
-
-        List<SubjectArchiveResponseDTO> GetByName(string name);
+        public void Delete(string subjectUUID);
     }
 }

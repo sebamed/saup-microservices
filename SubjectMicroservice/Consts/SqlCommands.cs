@@ -53,37 +53,26 @@ namespace SubjectMicroservice.Consts
                 $"where uuid = '{uuid}';";
         }
 
-		public string GET_ALL_SUBJECT_ARCHIVES()
-		{
-			return $"select * from {GeneralConsts.SCHEMA_NAME}.SubjectArchive";
-		}
-		public string GET_SUBJECT_ARHIVE_BY_UUID(string subjectUUID)
-		{
+        //ARCHIVE
+		public string GET_ALL_ARCHIVES_BY_SUBJECT_UUID(string subjectUUID) {
 			return $"select * from {GeneralConsts.SCHEMA_NAME}.SubjectArchive where subjectUUID = '{subjectUUID}'";
 		}
-		public string GET_SUBJECT_ARHIVES_BY_NAME(string name)
+
+        public string GET_LATEST_ARCHIVE_BY_SUBJECT_UUID(string subjectUUID) {
+            return $"select top 1 * from {GeneralConsts.SCHEMA_NAME}.SubjectArchive where subjectUUID = '{subjectUUID}' order by version desc";
+        }
+
+        public string CREATE_SUBJECT_ARHIVE(SubjectArchive SubjectArchive)
 		{
-			return $"select * from {GeneralConsts.SCHEMA_NAME}.SubjectArchive where name = '{name}'";
+			return $"insert into {GeneralConsts.SCHEMA_NAME}.SubjectArchive (subjectUUID, name, description, creationDate, departmentUUID, creatorUUID, moderatorUUID, changeDate) output inserted.* " +
+				$"values ('{SubjectArchive.subjectUUID}', '{SubjectArchive.name}', '{SubjectArchive.description}', " +
+                $"'{SubjectArchive.creationDate}', '{SubjectArchive.department.uuid}', '{SubjectArchive.creator.uuid}', " +
+                $"'{SubjectArchive.moderator.uuid}', '{SubjectArchive.changeDate}');";
 		}
 
-		public string CREATE_SUBJECT_ARHIVE(SubjectArchive SubjectArchive)
-		{
-			return $"insert into {GeneralConsts.SCHEMA_NAME}.SubjectArchive (subjectUUID, name, description, creationDate, changeDate, version) output inserted.* " +
-				$"values ('{SubjectArchive.subjectUUID}', '{SubjectArchive.name}', '{SubjectArchive.description}', '{SubjectArchive.creationDate}', '{SubjectArchive.changeDate}', '{SubjectArchive.version}');";
-		}
-
-		public string UPDATE_SUBJECT_ARHIVE(SubjectArchive SubjectArchive)
-		{
-			return $"update {GeneralConsts.SCHEMA_NAME}.SubjectArchive " +
-				$"set subjectUUID = '{SubjectArchive.subjectUUID}', name = '{SubjectArchive.name}', description = '{SubjectArchive.description}', changeDate = '{SubjectArchive.changeDate}', version = '{SubjectArchive.version}' output inserted.* " +
-				$"where subjectUUID = '{SubjectArchive.subjectUUID}';";
-		}
-
-		public string DELETE_SUBJECT_ARHIVE(string subjectUUID)
-		{
-			return $"delete from {GeneralConsts.SCHEMA_NAME}.SubjectArchive " +
-				$"where subjectUUID = '{subjectUUID}';";
-		}
-	}
+        public string DELETE_ARCHIVES_BY_SUBJECT_UUID(string subjectUUID) {
+            return $"delete from {GeneralConsts.SCHEMA_NAME}.SubjectArchive where subjectUUID = '{subjectUUID}'";
+        }
+    }
 }
 

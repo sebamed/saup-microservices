@@ -15,8 +15,7 @@ namespace SubjectMicroservice.Localization {
         public const string ROUTE_SUBJECT_BY_CREATOR_UUID = ROUTE_SUBJECT_BASE + "/creator/{uuid}";
 
         public const string ROUTE_SUBJECT_ARCHIVE_BASE = ROUTE_SUBJECT_BASE + "/archives";
-        public const string ROUTE_SUBJECT_ARCHIVE_BY_UUID = ROUTE_SUBJECT_ARCHIVE_BASE + "/{uuid}";
-        public const string ROUTE_SUBJECT_ARCHIVE_BY_NAME = ROUTE_SUBJECT_ARCHIVE_BASE + "/name/{name}";
-
+        public const string ROUTE_ARCHIVES_BY_SUBJECT_UUID = ROUTE_SUBJECT_ARCHIVE_BASE + "/{uuid}";
+        public const string ROUTE_LATEST_ARCHIVE_BY_SUBJECT_UUID = ROUTE_SUBJECT_ARCHIVE_BASE + "/latest/{uuid}";
     }
 }

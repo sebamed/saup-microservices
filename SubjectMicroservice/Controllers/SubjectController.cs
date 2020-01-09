@@ -55,14 +55,13 @@ namespace SubjectMicroservice.Controllers
             return Ok(this._subjectService.GetByDepartmentUUID(uuid));
         }
 
-        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet(RouteConsts.ROUTE_SUBJECT_BY_CREATOR_UUID)]
         public ActionResult<List<SubjectResponseDTO>> HandleGetByCreatorUUID(string uuid)
         {
             return Ok(this._subjectService.GetByCreatorUUID(uuid));
         }
 
-        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPost(RouteConsts.ROUTE_SUBJECT_BASE)]
 		public ActionResult<SubjectResponseDTO> HandleCreateSubject(CreateSubjectRequestDTO requestDTO)
@@ -70,7 +69,6 @@ namespace SubjectMicroservice.Controllers
 			return Ok(this._subjectService.Create(requestDTO));
 		}
 
-        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPut(RouteConsts.ROUTE_SUBJECT_BASE)]
 		public ActionResult<SubjectResponseDTO> HandleUpdateSubject(UpdateSubjectRequestDTO requestDTO)

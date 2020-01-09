@@ -1,17 +1,20 @@
 ﻿using AutoMapper;
 using Commons.Consts;
 using Commons.DatabaseUtils;
+using Commons.Domain;
 using Commons.ExceptionHandling.Exceptions;
+using Commons.HttpClientRequests;
 using Microsoft.AspNetCore.Http;
 using SubjectMicroservice.Consts;
 using SubjectMicroservice.Domain;
+using SubjectMicroservice.Domain.External;
+using SubjectMicroservice.DTO.Department;
+using SubjectMicroservice.DTO.External;
 using SubjectMicroservice.DTO.SubjectArchive.Request;
 using SubjectMicroservice.DTO.SubjectArchive.Response;
 using SubjectMicroservice.Mappers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace SubjectMicroservice.Services.Implementation
 {
@@ -22,91 +25,66 @@ namespace SubjectMicroservice.Services.Implementation
         private readonly ModelMapper _modelMapper;
         private readonly SqlCommands _sqlCommands;
         private readonly IMapper _autoMapper;
+        private readonly HttpClientService _httpClientService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SubjectArchiveService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper)
+        public SubjectArchiveService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
         {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._sqlCommands = sqlCommands;
             this._autoMapper = autoMapper;
+            this._httpClientService = httpClientService;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
-        //GET ALL
-        public List<SubjectArchive> FindAll()
-        {
-            return this._queryExecutor.Execute<List<SubjectArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_SUBJECT_ARCHIVES(), this._modelMapper.MapToSubjectArchives);
+        //GET
+        public List<SubjectArchive> FindAllArchivesBySubjectUUID(string subjectUUID) {
+            return this._queryExecutor.Execute<List<SubjectArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_ARCHIVES_BY_SUBJECT_UUID(subjectUUID), this._modelMapper.MapToSubjectArchives);
         }
-        public List<SubjectArchiveResponseDTO> GetAll()
-        {
-            return this._autoMapper.Map<List<SubjectArchiveResponseDTO>>(this.FindAll());
+        public List<MultipleSubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string subjectUUID) {
+            return this._autoMapper.Map<List<MultipleSubjectArchiveResponseDTO>>(this.FindAllArchivesBySubjectUUID(subjectUUID));
         }
 
-        //GET BY
-        public List<SubjectArchive> FindByName(string name)
-        {
-            return this._queryExecutor.Execute<List<SubjectArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_SUBJECT_ARHIVES_BY_NAME(name), this._modelMapper.MapToSubjectArchives);
+        public SubjectArchive FindLatestVersionBySubjectUUID(string subjectUUID) {
+            return this._queryExecutor.Execute<SubjectArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_LATEST_ARCHIVE_BY_SUBJECT_UUID(subjectUUID), this._modelMapper.MapToSubjectArchive);
         }
-        public List<SubjectArchiveResponseDTO> GetByName(string name)
-        {
-            return this._autoMapper.Map<List<SubjectArchiveResponseDTO>>(this.FindByName(name));
-        }
-        public SubjectArchive FindOneByUUID(string subjectUUID)
-        {
-            return this._queryExecutor.Execute<SubjectArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_SUBJECT_ARHIVE_BY_UUID(subjectUUID), this._modelMapper.MapToSubjectArchive);
-        }
-        public SubjectArchiveResponseDTO GetOneByUuid(string subjectUUID)
-        {
-            return this._autoMapper.Map<SubjectArchiveResponseDTO>(this.FindOneByUUID(subjectUUID));
+        public SubjectArchiveResponseDTO GetLatestVersionBySubjectUUID(string subjectUUID) {
+            SubjectArchiveResponseDTO response = this._autoMapper.Map<SubjectArchiveResponseDTO>(this.FindLatestVersionBySubjectUUID(subjectUUID));
+            if (response == null)
+                return response;
+            response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
         }
 
-        public SubjectArchiveResponseDTO Create(CreateSubjectArchiveRequestDTO requestDTO)
-        {
-            if (this.FindByName(requestDTO.name) != null)
-                throw new EntityAlreadyExistsException($"Subject Archive with name {requestDTO.name} already exists!", GeneralConsts.MICROSERVICE_NAME);
-
-            SubjectArchive subjectArchive = new SubjectArchive()
-            {
+        //CREATE
+        public SubjectArchiveResponseDTO Create(CreateSubjectArchiveRequestDTO requestDTO) {
+            SubjectArchive subjectArchive = new SubjectArchive() {
                 subjectUUID = requestDTO.subjectUUID,
                 name = requestDTO.name,
                 description = requestDTO.description,
                 creationDate = requestDTO.creationDate,
-                changeDate = requestDTO.changeDate,
-                version = requestDTO.version
+                department = new Department() {
+                    uuid = requestDTO.departmentUUID
+                },
+                moderator = new User() {
+                    uuid = requestDTO.moderatorUUID
+                },
+                creator = new User() {
+                    uuid = requestDTO.creatorUUID
+                },
+                changeDate = requestDTO.changeDate
             };
 
             subjectArchive = this._queryExecutor.Execute<SubjectArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_SUBJECT_ARHIVE(subjectArchive), this._modelMapper.MapToSubjectArchive);
 
-            return this._autoMapper.Map<SubjectArchiveResponseDTO>(subjectArchive);
+            return this._autoMapper.Map<SubjectArchiveResponseDTO>(subjectArchive); ;
         }
 
-        public SubjectArchiveResponseDTO Update(UpdateSubjectArchiveRequestDTO requestDTO)
-        {
-            if (this.FindOneByUUID(requestDTO.subjectUUID) == null)
-                throw new EntityNotFoundException($"Subject Archive with subjectUUID {requestDTO.subjectUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-
-            SubjectArchive subjectArchive = new SubjectArchive()
-            {
-                subjectUUID = requestDTO.subjectUUID,
-                name = requestDTO.name,
-                description = requestDTO.description,
-                changeDate = requestDTO.changeDate,
-                version = requestDTO.version
-            };
-
-            subjectArchive = this._queryExecutor.Execute<SubjectArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_SUBJECT_ARHIVE(subjectArchive), this._modelMapper.MapToSubjectArchive);
-
-            return this._autoMapper.Map<SubjectArchiveResponseDTO>(subjectArchive);
-        }
-
-        public SubjectArchiveResponseDTO Delete(string subjectUUID)
-        {
-            if (this.FindOneByUUID(subjectUUID) == null)
-                throw new EntityNotFoundException($"Subject Archive with subjectUUID {subjectUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-
-            SubjectArchive old = this.FindOneByUUID(subjectUUID);
-            this._queryExecutor.Execute<SubjectArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_SUBJECT_ARHIVE(subjectUUID), this._modelMapper.MapToSubjectArchive);
-
-            return this._autoMapper.Map<SubjectArchiveResponseDTO>(old);
+        public void Delete(string subjectUUID) {
+            _ = this._queryExecutor.Execute<List<SubjectArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_ARCHIVES_BY_SUBJECT_UUID(subjectUUID), this._modelMapper.MapToSubjectArchives);
         }
     }
 }

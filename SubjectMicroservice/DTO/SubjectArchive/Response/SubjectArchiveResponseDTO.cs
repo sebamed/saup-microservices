@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Commons.DTO;
-
+using SubjectMicroservice.DTO.Department;
+using SubjectMicroservice.DTO.External;
 
 namespace SubjectMicroservice.DTO.SubjectArchive.Response {
     public class SubjectArchiveResponseDTO {
@@ -16,16 +13,14 @@ namespace SubjectMicroservice.DTO.SubjectArchive.Response {
 
         public DateTime creationDate { get; set; }
 
-        public string departmentUUID { get; set; }
+        public DepartmentDTO department { get; set; }
 
-        public string creatorUUID { get; set; }
+        public UserDTO creator { get; set; }
 
-        public string moderatorUUID { get; set; }
-
-        public int version { get; set; }
+        public UserDTO moderator { get; set; }
 
         public DateTime changeDate { get; set; }
 
-
+        public int version { get; set; }
     }
 }

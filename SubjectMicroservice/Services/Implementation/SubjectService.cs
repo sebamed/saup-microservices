@@ -15,6 +15,8 @@ using Commons.Domain;
 using Microsoft.AspNetCore.Http;
 using SubjectMicroservice.DTO.External;
 using SubjectMicroservice.Domain.External;
+using SubjectMicroservice.DTO.SubjectArchive.Request;
+using System;
 
 namespace SubjectMicroservice.Services.Implementation
 {
@@ -26,8 +28,9 @@ namespace SubjectMicroservice.Services.Implementation
 		private readonly IMapper _autoMapper;
         private readonly HttpClientService _httpClientService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ISubjectArchiveService _subjectArchiveService;
 
-        public SubjectService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
+        public SubjectService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor, ISubjectArchiveService subjectArchiveService)
 		{
 			this._queryExecutor = queryExecutor;
 			this._modelMapper = modelMapper;
@@ -35,6 +38,7 @@ namespace SubjectMicroservice.Services.Implementation
 			this._autoMapper = autoMapper;
             this._httpClientService = httpClientService;
             this._httpContextAccessor = httpContextAccessor;
+            this._subjectArchiveService = subjectArchiveService;
         }
 
 		public List<Subject> FindAll()
@@ -99,10 +103,24 @@ namespace SubjectMicroservice.Services.Implementation
                 }
             };
 
-			subject = this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_SUBJECT(subject), this._modelMapper.MapToSubject);
+            CreateSubjectArchiveRequestDTO archiveDTO = new CreateSubjectArchiveRequestDTO() {
+                subjectUUID = subject.uuid,
+                name = subject.name,
+                description = subject.description,
+                creationDate = subject.creationDate,
+                departmentUUID = subject.department.uuid,
+                creatorUUID = subject.creator.uuid,
+                moderatorUUID = new UserPrincipal(_httpContextAccessor.HttpContext).uuid,
+                changeDate = DateTime.Now
+            };
+
+            subject = this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_SUBJECT(subject), this._modelMapper.MapToSubject);
+            
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(subject);
             response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+
+            _ = _subjectArchiveService.Create(archiveDTO);
             return response;
 		}
 
@@ -127,8 +145,19 @@ namespace SubjectMicroservice.Services.Implementation
                 }
             };
 
+            CreateSubjectArchiveRequestDTO archiveDTO = new CreateSubjectArchiveRequestDTO() {
+                subjectUUID = subject.uuid,
+                name = subject.name,
+                description = subject.description,
+                creationDate = subject.creationDate,
+                departmentUUID = subject.department.uuid,
+                creatorUUID = subject.creator.uuid,
+                moderatorUUID = new UserPrincipal(_httpContextAccessor.HttpContext).uuid,
+                changeDate = DateTime.Now
+            };
+            _ = _subjectArchiveService.Create(archiveDTO);
 
-			subject = this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_SUBJECT(subject), this._modelMapper.MapToSubject);
+            subject = this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_SUBJECT(subject), this._modelMapper.MapToSubject);
 
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(subject);
             response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
@@ -141,7 +170,9 @@ namespace SubjectMicroservice.Services.Implementation
 			if (this.FindOneByUUID(uuid) == null)
 				throw new EntityNotFoundException($"Subject with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
-			Subject old = this.FindOneByUUID(uuid);
+            this._subjectArchiveService.Delete(uuid);
+
+            Subject old = this.FindOneByUUID(uuid);
 			this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_SUBJECT(uuid), this._modelMapper.MapToSubject);
 
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(old);

@@ -16,15 +16,18 @@ namespace SubjectMicroservice.DTO.SubjectArchive.Request {
         public string description { get; set; }
 
         [Required]
-
         public DateTime creationDate { get; set; }
         
         [Required]
-        public DateTime changeDate { get; set; }
-
+        public string departmentUUID { get; set; }
+        
         [Required]
-        public int version { get; set; }
-
-
+        public string creatorUUID { get; set; }
+        
+        [Required]
+        public string moderatorUUID { get; set; }
+        
+        [Required]
+        public DateTime changeDate { get; set; }
     }
 }
