@@ -8,7 +8,8 @@ namespace CourseMicroservice.Localization {
 
         public const string ROUTE_API_BASE = "/api";
 
-        public const string ROUTE_USER_BASE = ROUTE_API_BASE + "/users";
-        public const string ROUTE_USER_GET_ONE_BY_UUID = ROUTE_USER_BASE + "/{uuid}";
+        public const string ROUTE_COURSE_BASE = "/courses";
+        public const string ROUTE_COURSE_GET_ONE_BY_UUID = ROUTE_COURSE_BASE + "/{uuid}";
+
     }
 }

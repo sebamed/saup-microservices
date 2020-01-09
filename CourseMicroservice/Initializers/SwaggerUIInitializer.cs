@@ -8,7 +8,7 @@ namespace CourseMicroservice.Initializers {
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo {
                     Version = "v1",
-                    Title = "User Microservice",
+                    Title = "Course Microservice",
                     Description = "API Documentation",
                     Contact = new OpenApiContact() {
                         Name = "Sebastian Dudas",
