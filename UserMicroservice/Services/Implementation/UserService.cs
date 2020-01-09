@@ -30,11 +30,9 @@ namespace UserMicroservice.Services.Implementation {
             this._sqlCommands = sqlCommands;
         }
 
-        public UserResponseDTO Create(CreateUserRequestDTO requestDTO) {
+        public User Create(CreateUserRequestDTO requestDTO) {
             // Checking if the user with provided email already exists
-            if (this.FindOneByEmailAddress(requestDTO.email) != null) {
-                throw new EntityAlreadyExistsException($"User with email {requestDTO.email} already exists!", GeneralConsts.MICROSERVICE_NAME);
-            }
+            this.ThrowExceptionIfEmailExists(requestDTO.email);
 
             User user = new User() {
                 email = requestDTO.email,
@@ -47,18 +45,25 @@ namespace UserMicroservice.Services.Implementation {
 
             user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_USER(user), this._modelMapper.MapToUserAfterInsert);
 
-            return this._autoMapper.Map<UserResponseDTO>(user);
+            return user;
         }
 
         public List<UserResponseDTO> GetAll() {
             return this._autoMapper.Map<List<UserResponseDTO>>(this.FindAll());
         }
-        public UserResponseDTO GetOneByUuid(string uuid) {                  
+        public UserResponseDTO GetOneByUuid(string uuid) {
             return this._autoMapper.Map<UserResponseDTO>(this.FindOneByUuidOrThrow(uuid));
         }
 
         public UserResponseDTO Update(UpdateUserRequestDTO requestDTO) {
-            return new UserResponseDTO();
+            this.ThrowExceptionIfEmailExists(requestDTO.email);
+
+            User user = this.FindOneByUuidOrThrow(requestDTO.uuid);
+            user = this._autoMapper.Map<User>(requestDTO);
+
+            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_USER(user), this._modelMapper.MapToUserAfterUpdate);
+
+            return this._autoMapper.Map<UserResponseDTO>(user);
         }
 
         public User FindOneByUuidOrThrow(string uuid) {
@@ -77,6 +82,12 @@ namespace UserMicroservice.Services.Implementation {
 
         public List<User> FindAll() {
             return this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_USERS(), this._modelMapper.MapToUsers);
+        }
+
+        private void ThrowExceptionIfEmailExists(string email) {
+            if (this.FindOneByEmailAddress(email) != null) {
+                throw new EntityAlreadyExistsException($"User with email {email} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            }
         }
     }
 
