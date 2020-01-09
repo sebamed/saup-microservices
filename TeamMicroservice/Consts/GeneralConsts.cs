@@ -8,5 +8,6 @@ namespace TeamMicroservice.Consts {
 
         public const string MICROSERVICE_NAME = "TEAM Microservice";
 
+        public const string SCHEMA_NAME = "SAUP_FACULTY";
     }
 }

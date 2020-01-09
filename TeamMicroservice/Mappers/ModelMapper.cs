@@ -8,28 +8,44 @@ using TeamMicroservice.Domain;
 namespace TeamMicroservice.Mappers {
     public class ModelMapper {
 
-        public List<Instrument> mapToInstruments(IDataReader reader) {
-            List<Instrument> instruments = new List<Instrument>();
+        public List<Team> MapToTeams(IDataReader reader) {
+            List<Team> teams = new List<Team>();
 
             while(reader.Read()) {
-                instruments.Add(new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
+                teams.Add(new Team() {
+                    id = Convert.ToInt32(reader["id"]),
+                    uuid = Convert.ToString(reader["uuid"]),
+                    name = Convert.ToString(reader["name"]),
+                    description = Convert.ToString(reader["description"])
                 });
             }
 
-            return instruments;
+            return teams;
         }
 
-        public Instrument mapToInstrument(IDataReader reader) {
+        public Team MapToTeam(IDataReader reader) {
             while (reader.Read()) {
-                return new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
+                return new Team() {
+                    id = Convert.ToInt32(reader["id"]),
+                    uuid = Convert.ToString(reader["uuid"]),
+                    name = Convert.ToString(reader["name"]),
+                    description = Convert.ToString(reader["description"])
                 };
             }
 
             return null;
+        }
+
+        public Team MapToTeamAfterInsert(IDataReader reader)
+        {
+            reader.Read();
+            return new Team()
+            {
+                id = Convert.ToInt32(reader["id"]),
+                uuid = Convert.ToString(reader["uuid"]),
+                name = Convert.ToString(reader["name"]),
+                description = Convert.ToString(reader["description"])
+            };
         }
     }
 }
