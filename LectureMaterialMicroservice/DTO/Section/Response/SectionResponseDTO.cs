@@ -14,5 +14,7 @@ namespace LectureMaterialMicroservice.DTO.User {
         public int visible { get; set; }
 
         public DateTime creationDate { get; set; }
+
+        public string courseUUID { get; set; }
     }
 }

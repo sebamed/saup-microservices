@@ -11,7 +11,7 @@ namespace LectureMaterialMicroservice.Consts {
         //SQL commands for Section
         public string CREATE_SECTION(Section section) {
             return $"insert into SAUP_SECTION.Section (uuid, name, description, visible, creationDate, courseUUID) output inserted.* " +
-               $"values ('{section.uuid}', '{section.name}', '{section.description}', '{section.visible}', '{section.creationDate}', 'c9660a83-2fe5-4b97-a207-8269e7d99747');";
+               $"values ('{section.uuid}', '{section.name}', '{section.description}', '{section.visible}', '{section.creationDate}', '{section.courseUUID}');";
         }
         public string GET_ALL_SECTIONS() {
             return $"select s.* " +
@@ -35,7 +35,7 @@ namespace LectureMaterialMicroservice.Consts {
 
         public string UPDATE_SECTION(Section section) {
             return $"update SAUP_SECTION.Section " +
-               $"set name = '{section.name}', description = '{section.description}', visible = '{section.visible}', creationDate = '{section.creationDate}' output inserted.* " +
+               $"set name = '{section.name}', description = '{section.description}', visible = '{section.visible}', creationDate = '{section.creationDate}', courseUUID = '{section.courseUUID}' output inserted.* " +
                $"where uuid = '{section.uuid}';";
         }
 

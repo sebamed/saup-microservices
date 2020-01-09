@@ -17,6 +17,6 @@ namespace LectureMaterialMicroservice.Domain{
 
         public DateTime creationDate { get; set; }
 
-        //public Course course { get; set; }
+        public string courseUUID { get; set; }
     }
 }

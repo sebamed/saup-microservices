@@ -19,5 +19,8 @@ namespace SectionMicroservice.DTO.Section.Request
 
         [Required]
         public DateTime creationDate { get; set; }
+
+        [Required]
+        public string courseUUID { get; set; }
     }
 }

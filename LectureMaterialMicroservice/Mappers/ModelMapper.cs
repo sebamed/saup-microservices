@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using LectureMaterialMicroservice.Domain;
 using SectionMicroservice.Domain;
-using UserMicroservice.Domain;
-
 namespace LectureMaterialMicroservice.Mappers
 {
     public class ModelMapper
@@ -25,7 +23,8 @@ namespace LectureMaterialMicroservice.Mappers
                     name = Convert.ToString(reader["name"]),
                     description = Convert.ToString(reader["description"]),
                     visible = Convert.ToInt32(reader["visible"]),
-                    creationDate = Convert.ToDateTime(reader["creationDate"])
+                    creationDate = Convert.ToDateTime(reader["creationDate"]),
+                    courseUUID = Convert.ToString(reader["courseUUID"])
                 });
             }
 
@@ -43,7 +42,8 @@ namespace LectureMaterialMicroservice.Mappers
                     name = Convert.ToString(reader["name"]),
                     description = Convert.ToString(reader["description"]),
                     visible = Convert.ToInt32(reader["visible"]),
-                    creationDate = Convert.ToDateTime(reader["creationDate"])
+                    creationDate = Convert.ToDateTime(reader["creationDate"]),
+                    courseUUID = Convert.ToString(reader["courseUUID"])
                 };
             }
 

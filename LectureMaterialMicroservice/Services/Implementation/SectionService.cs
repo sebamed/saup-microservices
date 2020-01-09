@@ -45,7 +45,8 @@ namespace LectureMaterialMicroservice.Services.Implementation {
                 name = requestDTO.name,
                 description = requestDTO.description,
                 visible = requestDTO.visible,
-                creationDate = requestDTO.creationDate
+                creationDate = requestDTO.creationDate,
+                courseUUID = requestDTO.courseUUID
             };
 
             section = this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_SECTION(section), this._modelMapper.MapToSection);
@@ -91,7 +92,8 @@ namespace LectureMaterialMicroservice.Services.Implementation {
                 name = requestDTO.name,
                 description = requestDTO.description,
                 visible = requestDTO.visible,
-                creationDate = requestDTO.creationDate
+                creationDate = requestDTO.creationDate,
+                courseUUID = requestDTO.courseUUID
             };
 
             section = this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_SECTION(section), this._modelMapper.MapToSection);
