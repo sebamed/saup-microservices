@@ -20,20 +20,11 @@ namespace SectionMicroservice.Controllers {
         public SectionArchiveController(ISectionArchiveService sectionArchiveService) {
             _sectionArchiveService = sectionArchiveService;
         }
-
         [AllowAnonymous]
-        [HttpPost]
-        public ActionResult<SectionArchiveResponseDTO> HandleCreateSection(CreateSectionArchiveRequestDTO requestDTO)
+        [HttpGet(RouteConsts.ROUTE_LATEST_ARCHIVE_BY_SECTION_UUID)]
+        public ActionResult<MultipleSectionArchiveResponseDTO> HandleGetAllArchivesBySectionUUID(string sectionUUID)
         {
-            // todo: created()
-            return Ok(this._sectionArchiveService.Create(requestDTO));
-        }
-
-        [AllowAnonymous]
-        [HttpGet(RouteConsts.ROUTE_SECTION_GET_ARCHIVE_BY_SECTION_UUID)]
-        public ActionResult<SectionArchiveResponseDTO> HandleGetOneArchiveBySectionUUID(string sectionUUID)
-        {
-            return Ok(this._sectionArchiveService.GetOneByArchiveBySectionUuid(sectionUUID));
+            return Ok(this._sectionArchiveService.GetAllArchivesBySectionUUID(sectionUUID));
         }
     }
 }

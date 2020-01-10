@@ -27,15 +27,22 @@ namespace LectureMaterialMicroservice.Controllers {
 
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult<List<SectionResponseDTO>> HandleGetAllSections() {
+        public ActionResult<List<MultipleSectionResponseDTO>> HandleGetAllSections() {
             return Ok(this._sectionService.GetAll());
         }
 
         [AllowAnonymous]
         [HttpGet(RouteConsts.ROUTE_SECTION_GET_VISIBLE)]
-        public ActionResult<List<SectionResponseDTO>> HandleVisibleSections()
+        public ActionResult<List<MultipleSectionResponseDTO>> HandleVisibleSections()
         {
             return Ok(this._sectionService.GetVisibleSections());
+        }
+
+        [AllowAnonymous]
+        [HttpGet(RouteConsts.ROUTE_SECTION_GET_ONE_BY_UUID)]
+        public ActionResult<SectionResponseDTO> HandleGetOneSectionByUuid(string uuid)
+        {
+            return Ok(this._sectionService.GetOneByUuid(uuid));
         }
 
         [AllowAnonymous]
@@ -46,9 +53,10 @@ namespace LectureMaterialMicroservice.Controllers {
         }
 
         [AllowAnonymous]
-        [HttpGet(RouteConsts.ROUTE_SECTION_GET_ONE_BY_UUID)]
-        public ActionResult<SectionResponseDTO> HandleGetOneSectionByUuid(string uuid) {
-            return Ok(this._sectionService.GetOneByUuid(uuid));
+        [HttpPut]
+        public ActionResult<SectionResponseDTO> HandleUpdateSection(UpdateSectionRequestDTO requestDTO)
+        {
+            return Ok(this._sectionService.Update(requestDTO));
         }
 
         [AllowAnonymous]
@@ -57,13 +65,5 @@ namespace LectureMaterialMicroservice.Controllers {
         {
             return Ok(this._sectionService.DeleteSection(uuid));
         }
-
-        [AllowAnonymous]
-        [HttpPut]
-        public ActionResult<SectionResponseDTO> HandleUpdateSection(UpdateSectionRequestDTO requestDTO)
-        {
-            return Ok(this._sectionService.Update(requestDTO));
-        }
-
     }
 }

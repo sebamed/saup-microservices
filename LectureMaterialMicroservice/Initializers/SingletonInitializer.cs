@@ -24,6 +24,7 @@ namespace LectureMaterialMicroservice.Initializers {
             // register services
             services.AddSingleton<ISectionService, SectionService>();
             services.AddSingleton<ISectionArchiveService, SectionArchiveService>();
+            services.AddHttpContextAccessor();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();

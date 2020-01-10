@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 namespace SectionMicroservice.DTO.Section.Request
 {
     public class CreateSectionRequestDTO {
-
-
         [Required]
         public string name { get; set; }
 

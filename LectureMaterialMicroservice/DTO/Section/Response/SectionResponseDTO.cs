@@ -1,4 +1,5 @@
 ﻿using Commons.DTO;
+using SectionMicroservice.DTO.External;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,6 @@ namespace LectureMaterialMicroservice.DTO.User {
 
         public DateTime creationDate { get; set; }
 
-        public string courseUUID { get; set; }
+        public CourseDTO course { get; set; }
     }
 }

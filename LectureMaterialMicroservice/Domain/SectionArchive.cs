@@ -1,4 +1,5 @@
 ﻿using Commons.Domain;
+using SectionMicroservice.Domain.External;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,9 @@ namespace SectionMicroservice.Domain
 
         public DateTime creationDate { get; set; }
 
-        public string courseUUID { get; set; }
+        public Course course { get; set; }
 
-        public string moderatorUUID { get; set; }
+        public User moderator { get; set; }
 
         public DateTime changeDate { get; set; }
 

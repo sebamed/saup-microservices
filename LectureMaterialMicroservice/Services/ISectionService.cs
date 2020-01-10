@@ -7,11 +7,13 @@ using LectureMaterialMicroservice.DTO.User;
 using SectionMicroservice.DTO.Section.Request;
 
 namespace LectureMaterialMicroservice.Services {
-    public interface ISectionService : ICrudService<SectionResponseDTO> {
+    public interface ISectionService : ICrudService<MultipleSectionResponseDTO> {
 
         SectionResponseDTO Create(CreateSectionRequestDTO requestDTO);
         SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO);
-        Section FindOneByUuidOrThrow(string uuid);
         SectionResponseDTO DeleteSection(string uuid);
+        Section FindOneByUuidOrThrow(string uuid);
+        SectionResponseDTO GetOneByUuid(string uuid);
+        List<MultipleSectionResponseDTO> GetVisibleSections();
     }
 }

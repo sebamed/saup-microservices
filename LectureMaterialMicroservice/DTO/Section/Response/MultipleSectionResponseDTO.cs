@@ -1,14 +1,11 @@
-﻿using Commons.Domain;
-using SectionMicroservice.Domain.External;
+﻿using Commons.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LectureMaterialMicroservice.Domain{
-    public class Section : BaseEntity {
-
-        public int id { get; set; }
+namespace LectureMaterialMicroservice.DTO.User {
+    public class MultipleSectionResponseDTO : BaseDTO{
 
         public string name { get; set; }
 
@@ -18,6 +15,6 @@ namespace LectureMaterialMicroservice.Domain{
 
         public DateTime creationDate { get; set; }
 
-        public Course course { get; set; }
+        public string courseUUID { get; set; }
     }
 }

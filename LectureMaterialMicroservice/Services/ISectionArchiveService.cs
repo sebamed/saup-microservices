@@ -11,7 +11,6 @@ namespace SectionMicroservice.Services
 {
     public interface ISectionArchiveService {
         SectionArchiveResponseDTO Create(CreateSectionArchiveRequestDTO requestDTO);
-        SectionArchive GetOneByArchiveBySectionUuid(string sectionUUID);
-
+        List<MultipleSectionArchiveResponseDTO> GetAllArchivesBySectionUUID(string sectionUUID);
     }
 }

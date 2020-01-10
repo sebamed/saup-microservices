@@ -6,6 +6,7 @@ using LectureMaterialMicroservice.Consts;
 using LectureMaterialMicroservice.Mappers;
 using LectureMaterialMicroservice.Services;
 using SectionMicroservice.Domain;
+using SectionMicroservice.Domain.External;
 using SectionMicroservice.DTO.SectionArchive.Request;
 using SectionMicroservice.DTO.SectionArchive.Response;
 using System;
@@ -30,6 +31,14 @@ namespace SectionMicroservice.Services.Implementation
             this._sqlCommands = sqlCommands;
         }
 
+        public List<MultipleSectionArchiveResponseDTO> GetAllArchivesBySectionUUID(string sectionUUID) {
+            return this._autoMapper.Map<List<MultipleSectionArchiveResponseDTO>>(this.FindAllArchivesBySectionUUID(sectionUUID));
+        }
+
+        public List<SectionArchive> FindAllArchivesBySectionUUID(string sectionUUID) {
+            return this._queryExecutor.Execute<List<SectionArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_ARCHIVES_BY_SECTION_UUID(sectionUUID), this._modelMapper.MapToSectionArchives);
+        }
+
         public SectionArchiveResponseDTO Create(CreateSectionArchiveRequestDTO requestDTO)
         {
             SectionArchive sectionArchive = new SectionArchive()
@@ -39,8 +48,14 @@ namespace SectionMicroservice.Services.Implementation
                 description = requestDTO.description,
                 visible = requestDTO.visible,
                 creationDate = requestDTO.creationDate,
-                courseUUID = requestDTO.courseUUID,
-                moderatorUUID = requestDTO.moderatorUUID,
+                course = new Course()
+                {
+                    uuid = requestDTO.courseUUID
+                },
+                moderator = new User()
+                {
+                    uuid = requestDTO.moderatorUUID
+                },
                 changeDate = requestDTO.changeDate
             };
 
@@ -48,19 +63,5 @@ namespace SectionMicroservice.Services.Implementation
 
             return this._autoMapper.Map<SectionArchiveResponseDTO>(sectionArchive);
         }
-
-        public SectionArchive GetOneByArchiveBySectionUuid(string sectionUUID)
-        {
-
-            SectionArchive sectionArchive = this._queryExecutor.Execute<SectionArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_ARCHIVE_BY_SECTION_UUID(sectionUUID), this._modelMapper.MapToSectionArchive);
-
-            if (sectionArchive == null)
-            {
-                throw new EntityNotFoundException($"Archive with sectionUUID: {sectionUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            }
-
-            return sectionArchive;
-        }
-
     }
 }

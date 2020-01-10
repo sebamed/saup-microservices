@@ -1,13 +1,11 @@
-﻿using SectionMicroservice.DTO.External;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SectionMicroservice.DTO.SectionArchive.Response
 {
-    public class SectionArchiveResponseDTO
-    {
+    public class MultipleSectionArchiveResponseDTO {
         public string sectionUUID { get; set; }
 
         public string name { get; set; }
@@ -18,14 +16,12 @@ namespace SectionMicroservice.DTO.SectionArchive.Response
 
         public DateTime creationDate { get; set; }
 
-        public CourseDTO course { get; set; }
+        public string courseUUID { get; set; }
 
-        public UserDTO moderator { get; set; }
+        public string moderatorUUID { get; set; }
 
         public DateTime changeDate { get; set; }
 
         public int version { get; set; }
-
-
     }
 }

@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace LectureMaterialMicroservice.Consts {
     public class SqlCommands {
        
-        //SQL commands for Section
+        //SQL commands for SECTION
         public string CREATE_SECTION(Section section) {
             return $"insert into SAUP_SECTION.Section (uuid, name, description, visible, creationDate, courseUUID) output inserted.* " +
-               $"values ('{section.uuid}', '{section.name}', '{section.description}', '{section.visible}', '{section.creationDate}', '{section.courseUUID}');";
+               $"values ('{section.uuid}', '{section.name}', '{section.description}', '{section.visible}', '{section.creationDate}', '{section.course.uuid}');";
         }
         public string GET_ALL_SECTIONS() {
             return $"select s.* " +
@@ -35,20 +35,20 @@ namespace LectureMaterialMicroservice.Consts {
 
         public string UPDATE_SECTION(Section section) {
             return $"update SAUP_SECTION.Section " +
-               $"set name = '{section.name}', description = '{section.description}', visible = '{section.visible}', creationDate = '{section.creationDate}', courseUUID = '{section.courseUUID}' output inserted.* " +
+               $"set name = '{section.name}', description = '{section.description}', visible = '{section.visible}', creationDate = '{section.creationDate}', courseUUID = '{section.course.uuid}' output inserted.* " +
                $"where uuid = '{section.uuid}';";
         }
 
-        //SQL commands for Section_Archive
+        //SQL commands for SECTION_ARCHIVE
 
         public string CREATE_ARCHIVE(SectionArchive sectionArchive) {
             return $"insert into SAUP_SECTION.SectionArchive (sectionUUID, name, description, visible, creationDate, courseUUID, moderatorUUID, changeDate) output inserted.* " +
-               $"values ('{sectionArchive.sectionUUID}','{sectionArchive.name}', '{sectionArchive.description}', '{sectionArchive.visible}', '{sectionArchive.creationDate}', '{sectionArchive.courseUUID}', '{sectionArchive.moderatorUUID}', '{sectionArchive.changeDate}');";
+               $"values ('{sectionArchive.sectionUUID}','{sectionArchive.name}', '{sectionArchive.description}', '{sectionArchive.visible}', '{sectionArchive.creationDate}', '{sectionArchive.course.uuid}', '{sectionArchive.moderator.uuid}', '{sectionArchive.changeDate}');";
         }
 
-        public string GET_ONE_ARCHIVE_BY_SECTION_UUID(string sectionUUID) {
-            return $"select sa.*" +
-               $"from SAUP_SECTION.SectionArchive sa where sa.sectionUUID = '{sectionUUID}';";
+        public string GET_ALL_ARCHIVES_BY_SECTION_UUID(string sectionUUID) {
+            return $"select *" +
+               $"from SAUP_SECTION.SectionArchive where sectionUUID = '{sectionUUID}' order by version desc;";
         }
 
         public string GET_ONE_ARCHIVE_BY_LATEST_VERSION()
@@ -56,6 +56,5 @@ namespace LectureMaterialMicroservice.Consts {
             return $"select top 1 *" +
                $"from SAUP_SECTION.SectionArchive order by version desc;";
         }
-
     }
 }
