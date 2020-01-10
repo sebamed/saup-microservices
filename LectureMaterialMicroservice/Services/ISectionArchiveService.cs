@@ -10,7 +10,13 @@ using System.Threading.Tasks;
 namespace SectionMicroservice.Services
 {
     public interface ISectionArchiveService {
-        SectionArchiveResponseDTO Create(CreateSectionArchiveRequestDTO requestDTO);
+
         List<MultipleSectionArchiveResponseDTO> GetAllArchivesBySectionUUID(string sectionUUID);
+
+        SectionArchiveResponseDTO GetLatestVersionBySectionoUUID(string sectionUUID);
+
+        SectionArchiveResponseDTO Create(CreateSectionArchiveRequestDTO requestDTO);
+
+        public void Delete(string sectionUUID);
     }
 }

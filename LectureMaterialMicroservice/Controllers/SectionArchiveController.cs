@@ -21,10 +21,17 @@ namespace SectionMicroservice.Controllers {
             _sectionArchiveService = sectionArchiveService;
         }
         [AllowAnonymous]
-        [HttpGet(RouteConsts.ROUTE_LATEST_ARCHIVE_BY_SECTION_UUID)]
+        [HttpGet(RouteConsts.ROUTE_ARCHIVES_BY_SECTION_UUID)]
         public ActionResult<MultipleSectionArchiveResponseDTO> HandleGetAllArchivesBySectionUUID(string sectionUUID)
         {
             return Ok(this._sectionArchiveService.GetAllArchivesBySectionUUID(sectionUUID));
+        }
+
+        [AllowAnonymous]
+        [HttpGet(RouteConsts.ROUTE_LATEST_ARCHIVE_BY_SECTION_UUID)]
+        public ActionResult<SectionArchiveResponseDTO> HandleGetLatestbySectionUUID(string uuid)
+        {
+            return Ok(this._sectionArchiveService.GetLatestVersionBySectionoUUID(uuid));
         }
     }
 }

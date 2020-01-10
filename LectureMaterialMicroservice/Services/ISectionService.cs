@@ -8,12 +8,12 @@ using SectionMicroservice.DTO.Section.Request;
 
 namespace LectureMaterialMicroservice.Services {
     public interface ISectionService : ICrudService<MultipleSectionResponseDTO> {
-
-        SectionResponseDTO Create(CreateSectionRequestDTO requestDTO);
-        SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO);
-        SectionResponseDTO DeleteSection(string uuid);
         Section FindOneByUuidOrThrow(string uuid);
         SectionResponseDTO GetOneByUuid(string uuid);
         List<MultipleSectionResponseDTO> GetVisibleSections();
+        SectionResponseDTO Create(CreateSectionRequestDTO requestDTO);
+        SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO);
+        SectionResponseDTO DeleteSection(string uuid);
+
     }
 }

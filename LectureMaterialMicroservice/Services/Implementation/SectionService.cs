@@ -138,6 +138,8 @@ namespace LectureMaterialMicroservice.Services.Implementation {
                 throw new EntityNotFoundException($"Section with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
             }
 
+            this._archiveService.Delete(uuid);
+
             Section old = this.FindOneByUuidOrThrow(uuid);
             this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_SECTION(uuid), this._modelMapper.MapToSection);
             return this._autoMapper.Map<SectionResponseDTO>(old);

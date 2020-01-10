@@ -34,9 +34,18 @@ namespace SectionMicroservice.Services.Implementation
         public List<MultipleSectionArchiveResponseDTO> GetAllArchivesBySectionUUID(string sectionUUID) {
             return this._autoMapper.Map<List<MultipleSectionArchiveResponseDTO>>(this.FindAllArchivesBySectionUUID(sectionUUID));
         }
-
         public List<SectionArchive> FindAllArchivesBySectionUUID(string sectionUUID) {
             return this._queryExecutor.Execute<List<SectionArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_ARCHIVES_BY_SECTION_UUID(sectionUUID), this._modelMapper.MapToSectionArchives);
+        }
+
+        public SectionArchiveResponseDTO GetLatestVersionBySectionoUUID(string sectionUUID)
+        {
+            SectionArchiveResponseDTO response = this._autoMapper.Map<SectionArchiveResponseDTO>(this.FindLatestVersionBySectionUUID(sectionUUID));
+            return response;
+        }
+        public SectionArchive FindLatestVersionBySectionUUID(string sectionUUID)
+        {
+            return this._queryExecutor.Execute<SectionArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_LATEST_ARCHIVE_BY_SECTION_UUID(sectionUUID), this._modelMapper.MapToSectionArchive);
         }
 
         public SectionArchiveResponseDTO Create(CreateSectionArchiveRequestDTO requestDTO)
@@ -62,6 +71,11 @@ namespace SectionMicroservice.Services.Implementation
             sectionArchive = this._queryExecutor.Execute<SectionArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_ARCHIVE(sectionArchive), this._modelMapper.MapToSectionArchive);
 
             return this._autoMapper.Map<SectionArchiveResponseDTO>(sectionArchive);
+        }
+
+        public void Delete(string sectionUUID)
+        {
+            _ = this._queryExecutor.Execute<List<SectionArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_ARCHIVES_BY_SECTION_UUID(sectionUUID), this._modelMapper.MapToSectionArchives);
         }
     }
 }
