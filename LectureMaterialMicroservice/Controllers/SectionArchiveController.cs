@@ -22,9 +22,9 @@ namespace SectionMicroservice.Controllers {
         }
         [AllowAnonymous]
         [HttpGet(RouteConsts.ROUTE_ARCHIVES_BY_SECTION_UUID)]
-        public ActionResult<MultipleSectionArchiveResponseDTO> HandleGetAllArchivesBySectionUUID(string sectionUUID)
+        public ActionResult<MultipleSectionArchiveResponseDTO> HandleGetAllArchivesBySectionUUID(string uuid)
         {
-            return Ok(this._sectionArchiveService.GetAllArchivesBySectionUUID(sectionUUID));
+            return Ok(this._sectionArchiveService.GetAllArchivesBySectionUUID(uuid));
         }
 
         [AllowAnonymous]

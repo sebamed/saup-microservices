@@ -11,6 +11,8 @@ using LectureMaterialMicroservice.Services.Implementation;
 using LectureMaterialMicroservice.Consts;
 using SectionMicroservice.Services;
 using SectionMicroservice.Services.Implementation;
+using System.Net.Http;
+using Commons.HttpClientRequests;
 
 namespace LectureMaterialMicroservice.Initializers {
 
@@ -24,6 +26,8 @@ namespace LectureMaterialMicroservice.Initializers {
             // register services
             services.AddSingleton<ISectionService, SectionService>();
             services.AddSingleton<ISectionArchiveService, SectionArchiveService>();
+            services.AddSingleton<HttpClientService>();
+            services.AddSingleton<HttpClient>();
             services.AddHttpContextAccessor();
 
             // register QueryExecutor singleton

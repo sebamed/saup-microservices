@@ -1,19 +1,19 @@
 ﻿using AutoMapper;
 using Commons.Consts;
 using Commons.DatabaseUtils;
-using Commons.ExceptionHandling.Exceptions;
+using Commons.Domain;
+using Commons.HttpClientRequests;
 using LectureMaterialMicroservice.Consts;
 using LectureMaterialMicroservice.Mappers;
-using LectureMaterialMicroservice.Services;
+using Microsoft.AspNetCore.Http;
 using SectionMicroservice.Domain;
 using SectionMicroservice.Domain.External;
+using SectionMicroservice.DTO.External;
 using SectionMicroservice.DTO.SectionArchive.Request;
 using SectionMicroservice.DTO.SectionArchive.Response;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+using System.Net.Http;
+ 
 namespace SectionMicroservice.Services.Implementation
 {
     public class SectionArchiveService : ISectionArchiveService {
@@ -22,13 +22,17 @@ namespace SectionMicroservice.Services.Implementation
         private readonly ModelMapper _modelMapper;
         private readonly IMapper _autoMapper;
         private readonly SqlCommands _sqlCommands;
+        private readonly HttpClientService _httpClientService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SectionArchiveService(QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands)
+        public SectionArchiveService(QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
         {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._autoMapper = autoMapper;
             this._sqlCommands = sqlCommands;
+            this._httpClientService = httpClientService;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         public List<MultipleSectionArchiveResponseDTO> GetAllArchivesBySectionUUID(string sectionUUID) {
@@ -41,6 +45,11 @@ namespace SectionMicroservice.Services.Implementation
         public SectionArchiveResponseDTO GetLatestVersionBySectionoUUID(string sectionUUID)
         {
             SectionArchiveResponseDTO response = this._autoMapper.Map<SectionArchiveResponseDTO>(this.FindLatestVersionBySectionUUID(sectionUUID));
+            if (response == null)
+                return response;
+
+            response.moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+
             return response;
         }
         public SectionArchive FindLatestVersionBySectionUUID(string sectionUUID)
