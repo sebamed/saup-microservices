@@ -27,7 +27,7 @@ namespace TeamMicroservice.Controllers
 
         [AllowAnonymous]
         [HttpGet(RouteConsts.ROUTE_TEAM_BASE)]
-        public ActionResult<List<TeamResponseDTO>> HandleGetAll()
+        public ActionResult<List<MultipleTeamResponseDTO>> HandleGetAll()
         {
             return Ok(this._teamService.GetAll());
         }
@@ -41,7 +41,7 @@ namespace TeamMicroservice.Controllers
 
         [AllowAnonymous]
         [HttpGet(RouteConsts.ROUTE_TEAM_BY_NAME)]
-        public ActionResult<List<TeamResponseDTO>> HandleGetByName(string name)
+        public ActionResult<TeamResponseDTO> HandleGetByName(string name)
         {
             return Ok(this._teamService.GetByName(name));
         }
@@ -66,6 +66,5 @@ namespace TeamMicroservice.Controllers
         {
             return Ok(this._teamService.Delete(uuid));
         }
-
     }
 }

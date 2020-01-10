@@ -7,12 +7,12 @@ using TeamMicroservice.DTO.Team.Response;
 
 namespace TeamMicroservice.Services
 {
-    public interface ITeamService : ICrudService<TeamResponseDTO>
+    public interface ITeamService : ICrudService<MultipleTeamResponseDTO>
     {
         TeamResponseDTO Create(CreateTeamRequestDTO requestDTO);
         TeamResponseDTO Update(UpdateTeamRequestDTO requestDTO);
-
         TeamResponseDTO Delete(string uuid);
-        List<TeamResponseDTO> GetByName(string name);
+        TeamResponseDTO GetByName(string name);
+        TeamResponseDTO GetOneByUuid(string uuid);
     }
 }

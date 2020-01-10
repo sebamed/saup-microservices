@@ -25,14 +25,14 @@ namespace TeamMicroservice.Consts
 
         public string CREATE_TEAM(Team team)
         {
-            return $"insert into {GeneralConsts.SCHEMA_NAME}.Team (uuid, name, description) output inserted.* " +
-                $"values ('{team.uuid}', '{team.name}', '{team.description}');";
+            return $"insert into {GeneralConsts.SCHEMA_NAME}.Team (uuid, name, description, teacherUUID, courseUUID) output inserted.* " +
+                $"values ('{team.uuid}', '{team.name}', '{team.description}', '{team.teacher.uuid}', '{team.course.uuid}');";
         }
 
         public string UPDATE_TEAM(Team team)
         {
             return $"update {GeneralConsts.SCHEMA_NAME}.Team " +
-                $"set name = '{team.name}', description = '{team.description}' output inserted.* " +
+                $"set name = '{team.name}', description = '{team.description}', teacherUUID = '{team.teacher.uuid}', courseUUID = '{team.course.uuid}' output inserted.* " +
                 $"where uuid = '{team.uuid}';";
         }
 

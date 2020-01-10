@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TeamMicroservice.Consts;
 using TeamMicroservice.Domain;
+using TeamMicroservice.Domain.External;
 using TeamMicroservice.DTO.Team.Request;
 using TeamMicroservice.DTO.Team.Response;
 using TeamMicroservice.Mappers;
@@ -30,6 +31,33 @@ namespace TeamMicroservice.Services.Implementation
             this._autoMapper = autoMapper;
         }
 
+        public List<Team> FindAll()
+        {
+            return this._queryExecutor.Execute<List<Team>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_TEAMS(), this._modelMapper.MapToTeams);
+        }
+        public List<MultipleTeamResponseDTO> GetAll()
+        {
+            return this._autoMapper.Map<List<MultipleTeamResponseDTO>>(this.FindAll());
+        }
+
+        public Team FindByName(string name)
+        {
+            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAMS_BY_NAME(name), this._modelMapper.MapToTeam);
+        }
+        public TeamResponseDTO GetByName(string name)
+        {
+            return this._autoMapper.Map<TeamResponseDTO>(this.FindByName(name));
+        }
+        
+        public Team FindOneByUUID(string uuid)
+        {
+            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAM_BY_UUID(uuid), this._modelMapper.MapToTeam);
+        }
+        public TeamResponseDTO GetOneByUuid(string uuid)
+        {
+            return this._autoMapper.Map<TeamResponseDTO>(this.FindOneByUUID(uuid));
+        }
+
         public TeamResponseDTO Create(CreateTeamRequestDTO requestDTO)
         {
             if (this.FindByName(requestDTO.name) != null)
@@ -38,39 +66,20 @@ namespace TeamMicroservice.Services.Implementation
             Team team = new Team()
             {
                 name = requestDTO.name,
-                description = requestDTO.description
+                description = requestDTO.description,
+                teacher = new Teacher()
+                {
+                    uuid = requestDTO.teacherUUID
+                },
+                course = new Course()
+                {
+                    uuid = requestDTO.courseUUID
+                }
             };
 
             team = this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_TEAM(team), this._modelMapper.MapToTeam);
 
             return this._autoMapper.Map<TeamResponseDTO>(team);
-        }
-        public List<Team> FindAll()
-        {
-            return this._queryExecutor.Execute<List<Team>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_TEAMS(), this._modelMapper.MapToTeams);
-        }
-        public List<TeamResponseDTO> GetAll()
-        {
-            return this._autoMapper.Map<List<TeamResponseDTO>>(this.FindAll());
-        }
-
-        public List<Team> FindByName(string name)
-        {
-            return this._queryExecutor.Execute<List<Team>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAMS_BY_NAME(name), this._modelMapper.MapToTeams);
-        }
-        public List<TeamResponseDTO> GetByName(string name)
-        {
-            return this._autoMapper.Map<List<TeamResponseDTO>>(this.FindByName(name));
-        }
-        public Team FindOneByUUID(string uuid)
-        {
-            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAM_BY_UUID(uuid), this._modelMapper.MapToTeam);
-        }
-
-
-        public TeamResponseDTO GetOneByUuid(string uuid)
-        {
-            return this._autoMapper.Map<TeamResponseDTO>(this.FindOneByUUID(uuid));
         }
 
         public TeamResponseDTO Update(UpdateTeamRequestDTO requestDTO)
@@ -81,7 +90,15 @@ namespace TeamMicroservice.Services.Implementation
             {
                 uuid = requestDTO.uuid,
                 name = requestDTO.name,
-                description = requestDTO.description
+                description = requestDTO.description,
+                teacher = new Teacher()
+                {
+                    uuid = requestDTO.teacherUUID
+                },
+                course = new Course()
+                {
+                    uuid = requestDTO.courseUUID
+                }
             };
 
             team = this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_TEAM(team), this._modelMapper.MapToTeam);
@@ -99,7 +116,5 @@ namespace TeamMicroservice.Services.Implementation
 
             return this._autoMapper.Map<TeamResponseDTO>(old);
         }
-    }
-}
     }
 }

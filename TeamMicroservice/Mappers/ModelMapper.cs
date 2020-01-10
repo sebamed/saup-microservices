@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using TeamMicroservice.Domain;
+using TeamMicroservice.Domain.External;
 
 namespace TeamMicroservice.Mappers {
     public class ModelMapper {
@@ -16,7 +17,15 @@ namespace TeamMicroservice.Mappers {
                     id = Convert.ToInt32(reader["id"]),
                     uuid = Convert.ToString(reader["uuid"]),
                     name = Convert.ToString(reader["name"]),
-                    description = Convert.ToString(reader["description"])
+                    description = Convert.ToString(reader["description"]),
+                    teacher = new  Teacher()
+                    {
+                        uuid = Convert.ToString(reader["teacherUUID"])
+                    },
+                    course = new Course ()
+                    {
+                        uuid = Convert.ToString(reader["courseUUID"])
+                    }
                 });
             }
 
@@ -29,23 +38,19 @@ namespace TeamMicroservice.Mappers {
                     id = Convert.ToInt32(reader["id"]),
                     uuid = Convert.ToString(reader["uuid"]),
                     name = Convert.ToString(reader["name"]),
-                    description = Convert.ToString(reader["description"])
+                    description = Convert.ToString(reader["description"]),
+                    teacher = new Teacher()
+                    {
+                        uuid = Convert.ToString(reader["teacherUUID"])
+                    },
+                    course = new Course()
+                    {
+                        uuid = Convert.ToString(reader["courseUUID"])
+                    }
                 };
             }
 
             return null;
-        }
-
-        public Team MapToTeamAfterInsert(IDataReader reader)
-        {
-            reader.Read();
-            return new Team()
-            {
-                id = Convert.ToInt32(reader["id"]),
-                uuid = Convert.ToString(reader["uuid"]),
-                name = Convert.ToString(reader["name"]),
-                description = Convert.ToString(reader["description"])
-            };
         }
     }
 }
