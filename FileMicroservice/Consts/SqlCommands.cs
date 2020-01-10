@@ -13,8 +13,8 @@ namespace FileMicroservice.Consts {
 
         public string CREATE_FILE(File file)
         {
-            return $"insert into {GeneralConsts.FILE_TABLE} (uuid, path, fileTypeUUID) output inserted.* " +
-               $"values ('{file.uuid}', '{file.filePath}', 'aadcd643-d85b-4240-9b02-d861f5100e4e');";
+            return $"insert into {GeneralConsts.FILE_TABLE} (uuid, path) output inserted.* " +
+               $"values ('{file.uuid}', '{file.filePath}');";
         }
 
         public string GET_FILE_BY_UUID(string uuid)
