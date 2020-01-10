@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 
 namespace DepartmentMicroservice.Services {
     public interface ICrudService<T> {
-
         List<T> GetAll();
-
         T GetOneByUuid(string uuid);
-
     }
 }

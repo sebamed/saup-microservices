@@ -8,5 +8,7 @@ namespace SubjectMicroservice.Consts {
 
         public const string MICROSERVICE_NAME = "SUBJECT Microservice";
 
+        public const string SCHEMA_NAME = "SAUP_SUBJECT";
+
     }
 }
