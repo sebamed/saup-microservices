@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FileMicroservice.Mappers;
 using FileMicroservice.Services;
 using FileMicroservice.Services.Implementation;
+using FileMicroservice.Consts;
 
 namespace FileMicroservice.Initializers {
 
@@ -19,13 +20,16 @@ namespace FileMicroservice.Initializers {
         public void InitializeServices(IServiceCollection services, IConfiguration configuration) {
 
             // register UserService singleton
-            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IFileService, FileService>();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
 
             // register ModelMapper singleton
             services.AddSingleton<ModelMapper>();
+
+            // register SqlCommands singleton
+            services.AddSingleton<SqlCommands>();
         }
     }
 }

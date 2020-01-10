@@ -1,35 +1,52 @@
-﻿using System;
+﻿using FileMicroservice.Domain;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using FileMicroservice.Domain;
 
-namespace FileMicroservice.Mappers {
-    public class ModelMapper {
+namespace FileMicroservice.Mappers
+{
+	public class ModelMapper {
 
-        public List<Instrument> mapToInstruments(IDataReader reader) {
-            List<Instrument> instruments = new List<Instrument>();
+		public List<File> MapToFiles(IDataReader reader)
+		{
+			List<File> files = new List<File>();
 
-            while(reader.Read()) {
-                instruments.Add(new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
-                });
-            }
+			while (reader.Read())
+			{
+				files.Add(new File()
+				{
+					id = Convert.ToInt32(reader["id"]),
+					uuid = Convert.ToString(reader["uuid"]),
+					filePath = Convert.ToString(reader["path"])
+				});
+			}
 
-            return instruments;
-        }
+			return files;
+		}
 
-        public Instrument mapToInstrument(IDataReader reader) {
-            while (reader.Read()) {
-                return new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
+		public File MapToFile(IDataReader reader)
+		{
+			while (reader.Read())
+			{
+				return new File()
+				{
+					id = Convert.ToInt32(reader["id"]),
+					uuid = Convert.ToString(reader["uuid"]),
+					filePath = Convert.ToString(reader["path"]),
                 };
-            }
+			}
+			return null;
+		}
 
-            return null;
-        }
-    }
+		public File MapToFileAfterInsert(IDataReader reader)
+		{
+			reader.Read();
+			return new File()
+			{
+				id = Convert.ToInt32(reader["id"]),
+				uuid = Convert.ToString(reader["uuid"]),
+				filePath = Convert.ToString(reader["path"]),
+            };
+		}
+	}
 }
