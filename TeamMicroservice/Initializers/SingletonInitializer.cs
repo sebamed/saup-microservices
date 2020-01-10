@@ -9,6 +9,8 @@ using TeamMicroservice.Mappers;
 using TeamMicroservice.Services;
 using TeamMicroservice.Services.Implementation;
 using TeamMicroservice.Consts;
+using Commons.HttpClientRequests;
+using System.Net.Http;
 
 namespace TeamMicroservice.Initializers {
 
@@ -21,6 +23,9 @@ namespace TeamMicroservice.Initializers {
 
             // register UserService singleton
             services.AddSingleton<ITeamService, TeamService>();
+            services.AddSingleton<HttpClientService>();
+            services.AddSingleton<HttpClient>();
+            services.AddHttpContextAccessor();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();

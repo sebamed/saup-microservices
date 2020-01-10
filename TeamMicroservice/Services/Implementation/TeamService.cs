@@ -1,14 +1,19 @@
 ﻿using AutoMapper;
 using Commons.Consts;
 using Commons.DatabaseUtils;
+using Commons.Domain;
 using Commons.ExceptionHandling.Exceptions;
+using Commons.HttpClientRequests;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using TeamMicroservice.Consts;
 using TeamMicroservice.Domain;
 using TeamMicroservice.Domain.External;
+using TeamMicroservice.DTO.External;
 using TeamMicroservice.DTO.Team.Request;
 using TeamMicroservice.DTO.Team.Response;
 using TeamMicroservice.Mappers;
@@ -22,13 +27,17 @@ namespace TeamMicroservice.Services.Implementation
         private readonly ModelMapper _modelMapper;
         private readonly SqlCommands _sqlCommands;
         private readonly IMapper _autoMapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpClientService _httpClientService;
 
-        public TeamService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper)
+        public TeamService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper, IHttpContextAccessor httpContextAccessor, HttpClientService httpClientService)
         {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._sqlCommands = sqlCommands;
             this._autoMapper = autoMapper;
+            this._httpContextAccessor = httpContextAccessor;
+            this._httpClientService = httpClientService;
         }
 
         public List<Team> FindAll()
@@ -46,7 +55,9 @@ namespace TeamMicroservice.Services.Implementation
         }
         public TeamResponseDTO GetByName(string name)
         {
-            return this._autoMapper.Map<TeamResponseDTO>(this.FindByName(name));
+            TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(this.FindByName(name));
+            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
         }
         
         public Team FindOneByUUID(string uuid)
@@ -55,7 +66,9 @@ namespace TeamMicroservice.Services.Implementation
         }
         public TeamResponseDTO GetOneByUuid(string uuid)
         {
-            return this._autoMapper.Map<TeamResponseDTO>(this.FindOneByUUID(uuid));
+            TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(this.FindOneByUUID(uuid));
+            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
         }
 
         public TeamResponseDTO Create(CreateTeamRequestDTO requestDTO)
@@ -78,8 +91,10 @@ namespace TeamMicroservice.Services.Implementation
             };
 
             team = this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_TEAM(team), this._modelMapper.MapToTeam);
-
-            return this._autoMapper.Map<TeamResponseDTO>(team);
+            
+            TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(team);
+            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
         }
 
         public TeamResponseDTO Update(UpdateTeamRequestDTO requestDTO)
@@ -103,7 +118,9 @@ namespace TeamMicroservice.Services.Implementation
 
             team = this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_TEAM(team), this._modelMapper.MapToTeam);
 
-            return this._autoMapper.Map<TeamResponseDTO>(team);
+            TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(team);
+            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
         }
 
         public TeamResponseDTO Delete(string uuid)
@@ -114,7 +131,9 @@ namespace TeamMicroservice.Services.Implementation
             Team old = this.FindOneByUUID(uuid);
             this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_TEAM(uuid), this._modelMapper.MapToTeam);
 
-            return this._autoMapper.Map<TeamResponseDTO>(old);
+            TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(old);
+            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
         }
     }
 }
