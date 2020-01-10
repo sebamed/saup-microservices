@@ -49,9 +49,18 @@ namespace TeamMicroservice.Services.Implementation
             return this._autoMapper.Map<List<MultipleTeamResponseDTO>>(this.FindAll());
         }
 
+        public List<Team> FindTeamsByCourse(string courseUUID)
+        {
+            return this._queryExecutor.Execute<List<Team>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAMS_BY_COURSE(courseUUID), this._modelMapper.MapToTeams);
+        }
+        public List<MultipleTeamResponseDTO> GetTeamsByCourse(string courseUUID)
+        {
+            return this._autoMapper.Map<List<MultipleTeamResponseDTO>>(this.FindTeamsByCourse(courseUUID));
+        }
+
         public Team FindByName(string name)
         {
-            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAMS_BY_NAME(name), this._modelMapper.MapToTeam);
+            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAM_BY_NAME(name), this._modelMapper.MapToTeam);
         }
         public TeamResponseDTO GetByName(string name)
         {

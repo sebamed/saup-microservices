@@ -47,6 +47,13 @@ namespace TeamMicroservice.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet(RouteConsts.ROUTE_TEAM_BY_COURSE)]
+        public ActionResult<List<MultipleTeamResponseDTO>> HandleGetByCourse(string uuid)
+        {
+            return Ok(this._teamService.GetTeamsByCourse(uuid));
+        }
+
+        [AllowAnonymous]
         [HttpPost(RouteConsts.ROUTE_TEAM_BASE)]
         public ActionResult<TeamResponseDTO> HandleCreateTeam(CreateTeamRequestDTO requestDTO)
         {
