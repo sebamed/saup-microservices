@@ -46,5 +46,11 @@ namespace TeamMicroservice.Consts
             return $"delete from {GeneralConsts.SCHEMA_NAME}.Team " +
                 $"where uuid = '{uuid}';";
         }
+
+        public string ADD_STUDENT_INTO_TEAM(StudentTeam studentTeam)
+        {
+            return $"insert into {GeneralConsts.SCHEMA_NAME}.StudentCourseTeam (teamUUID, courseUUID, studentUUID) output inserted.* " +
+                $"values ('{studentTeam.team.uuid}', '{studentTeam.team.course.uuid}', '{studentTeam.student.uuid}');";
+        }
     }
 }

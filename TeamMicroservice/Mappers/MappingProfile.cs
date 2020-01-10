@@ -19,6 +19,10 @@ namespace TeamMicroservice.Mappers
             CreateMap<Team, MultipleTeamResponseDTO>();
             CreateMap<Teacher, TeacherDTO>();
             CreateMap<Course, CourseDTO>();
+            CreateMap<Student, StudentDTO>();
+            CreateMap<StudentTeam, StudentTeamResponseDTO>();
+
+            CreateMap<TeamResponseDTO, Team>();
         }
     }
 }

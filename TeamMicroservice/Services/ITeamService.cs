@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TeamMicroservice.DTO.External;
 using TeamMicroservice.DTO.Team.Request;
 using TeamMicroservice.DTO.Team.Response;
 

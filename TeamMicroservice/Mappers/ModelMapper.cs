@@ -52,5 +52,28 @@ namespace TeamMicroservice.Mappers {
 
             return null;
         }
+
+        public StudentTeam MapToStudentTeam(IDataReader reader)
+        {
+            while (reader.Read())
+            {
+                return new StudentTeam()
+                {
+                    team = new Team() {
+                        uuid = Convert.ToString(reader["teamUUID"]),
+                        course = new Course()
+                        {
+                            uuid = Convert.ToString(reader["courseUUID"])
+                        }
+                    },
+                    student = new Student()
+                    {
+                        uuid = Convert.ToString(reader["studentUUID"])
+                    }
+                };
+            }
+
+            return null;
+        }
     }
 }

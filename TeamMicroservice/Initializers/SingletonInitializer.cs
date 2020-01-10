@@ -23,6 +23,7 @@ namespace TeamMicroservice.Initializers {
 
             // register UserService singleton
             services.AddSingleton<ITeamService, TeamService>();
+            services.AddSingleton<IStudentTeamService, StudentTeamService>();
             services.AddSingleton<HttpClientService>();
             services.AddSingleton<HttpClient>();
             services.AddHttpContextAccessor();
