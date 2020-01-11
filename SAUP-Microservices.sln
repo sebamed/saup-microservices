@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubjectMicroservice", "Subj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DepartmentMicroservice", "DepartmentMicroservice\DepartmentMicroservice.csproj", "{D825619A-1D90-41DD-9972-0FFA9C59CC9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectureMaterialMicroservice", "LectureMaterialMicroservice\LectureMaterialMicroservice.csproj", "{7ADE2475-3C91-495A-BC14-918880F8A384}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SectionMicroservice", "LectureMaterialMicroservice\SectionMicroservice.csproj", "{7ADE2475-3C91-495A-BC14-918880F8A384}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailService", "MailService\MailService.csproj", "{22A6F567-25AF-4B3C-8789-C5163771AE1E}"
 EndProject
