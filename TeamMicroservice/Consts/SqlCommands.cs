@@ -52,5 +52,16 @@ namespace TeamMicroservice.Consts
             return $"insert into {GeneralConsts.SCHEMA_NAME}.StudentCourseTeam (teamUUID, courseUUID, studentUUID) output inserted.* " +
                 $"values ('{studentTeam.team.uuid}', '{studentTeam.team.course.uuid}', '{studentTeam.student.uuid}');";
         }
+
+        public string DELETE_STUDENT_FROM_TEAM(string studentUUID, string teamUUID)
+        {
+            return $"delete from {GeneralConsts.SCHEMA_NAME}.StudentCourseTeam " +
+                $"where teamUUID = '{teamUUID}' and studentUUID '{studentUUID}');";
+        }
+
+        public string GET_ONE_BY_TEAM_AND_STUDENT(string studentUUID, string teamUUID)
+        {
+            return $"select * from {GeneralConsts.SCHEMA_NAME}.StudentCourseTeam where studentUUID = '{studentUUID}' and teamUUID = '{teamUUID}'";
+        }
     }
 }

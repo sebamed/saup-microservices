@@ -42,6 +42,17 @@ namespace TeamMicroservice.Services.Implementation
             this._teamService = teamService;
         }
 
+        public StudentTeam FindByStudentAndTeam(string studentUUID, string teamUUID)
+        {
+            return this._queryExecutor.Execute<StudentTeam>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_BY_TEAM_AND_STUDENT(studentUUID, teamUUID), this._modelMapper.MapToStudentTeam);
+        }
+        public StudentTeamResponseDTO GetOneByStudentAndTeam(string studentUUID, string teamUUID)
+        {
+            StudentTeamResponseDTO response = this._autoMapper.Map<StudentTeamResponseDTO>(this.FindByStudentAndTeam(studentUUID,teamUUID));
+            response.student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
+        }
+
         public StudentTeamResponseDTO AddStudentIntoTeam(AddStudentIntoTeamDTO requestDTO) {
             if (this._teamService.GetOneByUuid(requestDTO.teamUUID) == null)
                 throw new EntityAlreadyExistsException($"Team with uuid {requestDTO.teamUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
@@ -67,6 +78,22 @@ namespace TeamMicroservice.Services.Implementation
             response.team = this._teamService.GetOneByUuid(requestDTO.teamUUID);
             response.student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
+        }
+
+        public StudentTeamResponseDTO DeleteStudentFromTeam(string studentUUID, string teamUUID){
+            if (this._teamService.GetOneByUuid(teamUUID) == null)
+                throw new EntityAlreadyExistsException($"Team with uuid {teamUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
+            if (this._teamService.GetOneByUuid(studentUUID) == null)
+                throw new EntityAlreadyExistsException($"Student with uuid {studentUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
+            StudentTeam old = this.FindByStudentAndTeam(studentUUID,teamUUID);
+            this._queryExecutor.Execute<StudentTeam>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_STUDENT_FROM_TEAM(studentUUID,teamUUID), this._modelMapper.MapToStudentTeam);
+
+            StudentTeamResponseDTO response = this._autoMapper.Map<StudentTeamResponseDTO>(old);
+            response.student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            return response;
+
         }
     }
 }

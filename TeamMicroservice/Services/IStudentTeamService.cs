@@ -10,5 +10,7 @@ namespace TeamMicroservice.Services
 {
     public interface IStudentTeamService {
         StudentTeamResponseDTO AddStudentIntoTeam(AddStudentIntoTeamDTO requestDTO);
+        StudentTeamResponseDTO DeleteStudentFromTeam(string studentUUID,string teamUUID);
+
     }
 }

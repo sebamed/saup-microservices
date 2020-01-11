@@ -29,5 +29,12 @@ namespace TeamMicroservice.Controllers
         public ActionResult<StudentTeamResponseDTO> HandleCreateTeam(AddStudentIntoTeamDTO requestDTO) {
             return Ok(this._studentTeamService.AddStudentIntoTeam(requestDTO));
         }
+
+        [AllowAnonymous]
+        [HttpDelete(RouteConsts.ROUTE_DELETE_STUDENT_FROM_TEAM)]
+        public ActionResult<StudentTeamResponseDTO> HandleDeleteStudent(string studentUUID, string teamUUID)
+        {
+            return Ok(this._studentTeamService.DeleteStudentFromTeam(studentUUID,teamUUID));
+        }
     }
 }
