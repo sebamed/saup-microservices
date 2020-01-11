@@ -8,7 +8,10 @@ namespace FileMicroservice.Localization {
 
         public const string ROUTE_API_BASE = "/api";
 
-        public const string ROUTE_USER_BASE = ROUTE_API_BASE + "/users";
-        public const string ROUTE_USER_GET_ONE_BY_UUID = ROUTE_USER_BASE + "/{uuid}";
+        public const string ROUTE_FILE_BASE = ROUTE_API_BASE + "/files";
+
+        public const string ROUTE_FILE_GET_ONE_BY_UUID = ROUTE_FILE_BASE + "/{uuid}";
+        public const string ROUTE_FILE_BY_PATH = ROUTE_FILE_BASE + "/path/{path}";
+
     }
 }
