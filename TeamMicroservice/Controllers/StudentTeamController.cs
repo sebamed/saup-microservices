@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Commons.Consts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -24,15 +25,15 @@ namespace TeamMicroservice.Controllers
             _studentTeamService = studentTeamService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPost(RouteConsts.ROUTE_ADD_STUDENT_INTO_TEAM)]
-        public ActionResult<StudentTeamResponseDTO> HandleCreateTeam(AddStudentIntoTeamDTO requestDTO) {
+        public ActionResult<StudentTeamResponseDTO> HandleCreateStudentTeam(AddStudentIntoTeamDTO requestDTO) {
             return Ok(this._studentTeamService.AddStudentIntoTeam(requestDTO));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpDelete(RouteConsts.ROUTE_DELETE_STUDENT_FROM_TEAM)]
-        public ActionResult<StudentTeamResponseDTO> HandleDeleteStudent(string studentUUID, string teamUUID)
+        public ActionResult<StudentTeamResponseDTO> HandleDeleteStudentTeam(string teamUUID, string studentUUID)
         {
             return Ok(this._studentTeamService.DeleteStudentFromTeam(studentUUID,teamUUID));
         }

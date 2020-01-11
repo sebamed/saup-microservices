@@ -46,9 +46,11 @@ namespace TeamMicroservice.Services.Implementation
         {
             return this._queryExecutor.Execute<StudentTeam>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_BY_TEAM_AND_STUDENT(studentUUID, teamUUID), this._modelMapper.MapToStudentTeam);
         }
+
         public StudentTeamResponseDTO GetOneByStudentAndTeam(string studentUUID, string teamUUID)
         {
             StudentTeamResponseDTO response = this._autoMapper.Map<StudentTeamResponseDTO>(this.FindByStudentAndTeam(studentUUID,teamUUID));
+            response.team = this._teamService.GetOneByUuid(teamUUID);
             response.student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
         }
@@ -84,16 +86,14 @@ namespace TeamMicroservice.Services.Implementation
             if (this._teamService.GetOneByUuid(teamUUID) == null)
                 throw new EntityAlreadyExistsException($"Team with uuid {teamUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
-            if (this._teamService.GetOneByUuid(studentUUID) == null)
+            if (this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result == null)
                 throw new EntityAlreadyExistsException($"Student with uuid {studentUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
-            StudentTeam old = this.FindByStudentAndTeam(studentUUID,teamUUID);
-            this._queryExecutor.Execute<StudentTeam>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_STUDENT_FROM_TEAM(studentUUID,teamUUID), this._modelMapper.MapToStudentTeam);
+            var response = this.GetOneByStudentAndTeam(studentUUID, teamUUID);
 
-            StudentTeamResponseDTO response = this._autoMapper.Map<StudentTeamResponseDTO>(old);
-            response.student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            _ = this._queryExecutor.Execute<StudentTeam>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_STUDENT_FROM_TEAM(studentUUID,teamUUID), this._modelMapper.MapToStudentTeam);
+
             return response;
-
         }
     }
 }

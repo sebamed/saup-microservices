@@ -56,7 +56,7 @@ namespace TeamMicroservice.Consts
         public string DELETE_STUDENT_FROM_TEAM(string studentUUID, string teamUUID)
         {
             return $"delete from {GeneralConsts.SCHEMA_NAME}.StudentCourseTeam " +
-                $"where teamUUID = '{teamUUID}' and studentUUID '{studentUUID}');";
+                $"where teamUUID = '{teamUUID}' and studentUUID = '{studentUUID}';";
         }
 
         public string GET_ONE_BY_TEAM_AND_STUDENT(string studentUUID, string teamUUID)

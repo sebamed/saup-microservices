@@ -65,6 +65,8 @@ namespace TeamMicroservice.Services.Implementation
         public TeamResponseDTO GetByName(string name)
         {
             TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(this.FindByName(name));
+            if (response == null)
+                throw new EntityAlreadyExistsException($"Team with name {name} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
             response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
         }
@@ -76,6 +78,8 @@ namespace TeamMicroservice.Services.Implementation
         public TeamResponseDTO GetOneByUuid(string uuid)
         {
             TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(this.FindOneByUUID(uuid));
+            if (response == null)
+                throw new EntityAlreadyExistsException($"Team with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
             response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
         }
@@ -137,11 +141,9 @@ namespace TeamMicroservice.Services.Implementation
             if (this.FindOneByUUID(uuid) == null)
                 throw new EntityNotFoundException($"Team with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
-            Team old = this.FindOneByUUID(uuid);
+            TeamResponseDTO response = this.GetOneByUuid(uuid);
             this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_TEAM(uuid), this._modelMapper.MapToTeam);
 
-            TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(old);
-            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
         }
     }
