@@ -32,7 +32,7 @@ namespace TeamMicroservice.Controllers
         }
 
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
-        [HttpDelete(RouteConsts.ROUTE_DELETE_STUDENT_FROM_TEAM)]
+        [HttpDelete(RouteConsts.ROUTE_ADD_STUDENT_INTO_TEAM)]
         public ActionResult<StudentTeamResponseDTO> HandleDeleteStudentTeam(string teamUUID, string studentUUID)
         {
             return Ok(this._studentTeamService.DeleteStudentFromTeam(studentUUID,teamUUID));
