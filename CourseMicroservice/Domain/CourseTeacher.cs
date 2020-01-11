@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace CourseMicroservice.Domain {
     public class CourseTeacher {
-
         public string teacherUUID { get; set; }
         public string courseUUID { get; set; }
         public bool activeTeacher { get; set; }
-
     }
 }

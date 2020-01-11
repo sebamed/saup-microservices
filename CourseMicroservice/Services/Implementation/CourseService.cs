@@ -7,6 +7,10 @@ using CourseMicroservice.Domain;
 using CourseMicroservice.Mappers;
 using CourseMicroservice.DTO.Course;
 using AutoMapper;
+using Commons.HttpClientRequests;
+using System.Net.Http;
+using Commons.Domain;
+using Microsoft.AspNetCore.Http;
 
 namespace CourseMicroservice.Services.Implementation {
     public class CourseService : ICourseService
@@ -15,18 +19,22 @@ namespace CourseMicroservice.Services.Implementation {
         private readonly QueryExecutor _queryExecutor;
         private readonly SqlCommands _sqlCommands;
         private readonly ModelMapper _modelMapper;
+        private readonly HttpClientService _httpClientService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private ICourseTeacherService _courseTeacherService;
 
-        public CourseService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands)
+        public CourseService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor, ICourseTeacherService courseTeacherService)
         {
             this._autoMapper = autoMapper;
             this._queryExecutor = queryExecutor;
             this._sqlCommands = sqlCommands;
             this._modelMapper = modelMapper;
+            this._httpClientService = httpClientService;
+            this._httpContextAccessor = httpContextAccessor;
+            this._courseTeacherService = courseTeacherService;
         }
 
-        //izvrsava query nad bazom, vraca domain klase
-        //3 parametara: sema, sql komanda i model mapper
-        //model mapper mapira iz kverija u domain klasu
+        //HELPER METHODS
         public List<Course> FindAll()
         {
             return this._queryExecutor.Execute<List<Course>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_COURSES(), this._modelMapper.MapToCourses);
@@ -42,32 +50,27 @@ namespace CourseMicroservice.Services.Implementation {
             return course;
         }
 
-        public List<CourseTeacher> FindAllTeachersByCourseId(string uuid)
-        {
-            return this._queryExecutor.Execute<List<CourseTeacher>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_TEACHERS(uuid), this._modelMapper.MapToCourseTeachers);
-        }
-        public List<CourseStudent> FindAllStudentsByCourseId(string uuid)
-        {
-            return this._queryExecutor.Execute<List<CourseStudent>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_STUDENTS(uuid), this._modelMapper.MapToCourseStudents);
-        }
-        public List<CourseArchive> FindAllArchivesByCourseId(string uuid)
-        {
-            return this._queryExecutor.Execute<List<CourseArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_ARCHIVES(uuid), this._modelMapper.MapToCourseArchives);
-        }
-
-        //mapira rezultate funkcije FindALL u DTO klasu
-        //koristi automapper
+        //GET METHODS
         public List<CourseResponseDTO> GetAll()
         {
-            return this._autoMapper.Map<List<CourseResponseDTO>>((this.FindAll()));
+            List<CourseResponseDTO> response = this._autoMapper.Map<List<CourseResponseDTO>>((this.FindAll()));
+            for (int i = 0; i<response.Count; i++)
+            {
+                response[i].teachers = this._courseTeacherService.GetAllTeachersOnCourse(response[i].uuid);
+            }
+            return response;
         }
 
 
         public CourseResponseDTO GetOneByUuid(string uuid)
         {
-            return this._autoMapper.Map<CourseResponseDTO>(this.FindOneByUuidOrThrow(uuid));
+            CourseResponseDTO course = this._autoMapper.Map<CourseResponseDTO>(this.FindOneByUuidOrThrow(uuid));
+            course.teachers = this._courseTeacherService.GetAllTeachersOnCourse(course.uuid);
+            return course;
         }
 
+
+        //POST METHODS
         CourseResponseDTO ICourseService.Create(CreateCourseRequestDTO requestDTO)
         {
             Course course = new Course()
@@ -81,43 +84,34 @@ namespace CourseMicroservice.Services.Implementation {
                 subjectUUID = requestDTO.subjectUUID
             };
             this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_COURSE(course), this._modelMapper.MapToCourseAfterInsert);
-            return this._autoMapper.Map<CourseResponseDTO>(course);
+            CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
+            response.teachers = _courseTeacherService.GetAllTeachersOnCourse(course.uuid);
+            return response;
         }
+
+        //PUT METHODS
 
         public CourseResponseDTO Update(UpdateCourseRequestDTO requestDTO)
         {
             Course course = this.FindOneByUuidOrThrow(requestDTO.uuid);
             course = this._autoMapper.Map<Course>(requestDTO);
-
             course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_COURSE(course), this._modelMapper.MapToCourseAfterUpdate);
-
-            return this._autoMapper.Map<CourseResponseDTO>(course);
+            CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
+            response.teachers = _courseTeacherService.GetAllTeachersOnCourse(course.uuid);
+            return response;
         }
 
+        //DELETE METHODS
         public CourseResponseDTO Delete(string uuid)
         {
             Course course = this.FindOneByUuidOrThrow(uuid);
             course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_COURSE(uuid), this._modelMapper.MapToCourse);
-            return this._autoMapper.Map<CourseResponseDTO>(course);
+            CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
+            response.teachers = _courseTeacherService.GetAllTeachersOnCourse(course.uuid);
+            return response;
         }
 
-        public List<CourseTeacherResponseDTO> GetCourseTeachers(string uuid)
-        {
-            Course course = this.FindOneByUuidOrThrow(uuid);
-            return this._autoMapper.Map<List<CourseTeacherResponseDTO>>(this.FindAllTeachersByCourseId(uuid));
-        }
 
-        public List<CourseStudentResponseDTO> GetCourseStudents(string uuid)
-        {
-            Course course = this.FindOneByUuidOrThrow(uuid);
-            return this._autoMapper.Map<List<CourseStudentResponseDTO>>(this.FindAllStudentsByCourseId(uuid));
-        }
 
-        public List<CourseArchiveResponseDTO> GetCourseArchives(string uuid)
-        {
-            Course course = this.FindOneByUuidOrThrow(uuid);
-            return this._autoMapper.Map<List<CourseArchiveResponseDTO>>(this.FindAllArchivesByCourseId(uuid));
-
-        }
     }
 }

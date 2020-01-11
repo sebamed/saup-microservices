@@ -1,18 +1,22 @@
-﻿using CourseMicroservice.DTO.Course;
+﻿using Commons.Domain;
+using CourseMicroservice.DTO.Course;
 using System.Collections.Generic;
 
 namespace CourseMicroservice.Services {
-    public interface ICourseService : ICrudService<CourseResponseDTO> {
+    public interface ICourseService {
+
+        //GET METHODS
+        List<CourseResponseDTO> GetAll();
+        CourseResponseDTO GetOneByUuid(string uuid);
+
+        //POST METHODS
         CourseResponseDTO Create(CreateCourseRequestDTO requestDTO);
 
+        //PUT METHODS
         CourseResponseDTO Update(UpdateCourseRequestDTO requestDTO);
 
+        //DELETE METHODS
         CourseResponseDTO Delete(string uuid);
 
-        List<CourseTeacherResponseDTO> GetCourseTeachers(string uuid);
-
-        List<CourseStudentResponseDTO> GetCourseStudents(string uuid);
-
-        List<CourseArchiveResponseDTO> GetCourseArchives(string uuid);
     }
 }

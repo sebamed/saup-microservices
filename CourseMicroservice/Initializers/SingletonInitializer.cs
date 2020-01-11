@@ -7,6 +7,7 @@ using Commons.HttpClientRequests;
 using Commons.DatabaseUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 
 namespace CourseMicroservice.Initializers {
 
@@ -19,8 +20,10 @@ namespace CourseMicroservice.Initializers {
 
             // register services
             services.AddSingleton<ICourseService, CourseService>();
+            services.AddSingleton<ICourseTeacherService, CourseTeacherService>();
             services.AddSingleton<HttpClientService>();
             services.AddSingleton<HttpClient>();
+            services.AddHttpContextAccessor();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();

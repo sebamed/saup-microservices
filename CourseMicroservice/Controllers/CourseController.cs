@@ -1,4 +1,5 @@
 ﻿
+using Commons.Domain;
 using CourseMicroservice.DTO.Course;
 using CourseMicroservice.Localization;
 using CourseMicroservice.Services;
@@ -13,16 +14,12 @@ namespace CourseMicroservice.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        //OBELEZJA
         private readonly ICourseService _courseService;
-
-        //KONSTRUKTOR
         public CourseController(ICourseService courseService)
         {
             this._courseService = courseService;
         }
-        
-        //GET METODE
+        //GET METHODS
         [AllowAnonymous]
         [HttpGet]
         public ActionResult<List<CourseResponseDTO>> HandleGetAllCourses()
@@ -35,42 +32,21 @@ namespace CourseMicroservice.Controllers
         {
             return Ok(this._courseService.GetOneByUuid(uuid));
         }
-        [AllowAnonymous]
-        [HttpGet(RouteConsts.ROUTE_COURSE_TEACHERS)]
-        public ActionResult<List<CourseTeacherResponseDTO>> HandleGetCourseTeachers(string uuid)
-        {
-            return Ok(this._courseService.GetCourseTeachers(uuid));
-        }
-        [AllowAnonymous]
-        [HttpGet(RouteConsts.ROUTE_COURSE_STUDENTS)]
-        public ActionResult<List<CourseStudentResponseDTO>> HandleGetCourseStudents(string uuid)
-        {
-            return Ok(this._courseService.GetCourseStudents(uuid));
-        }
-        [AllowAnonymous]
-        [HttpGet(RouteConsts.ROUTE_COURESE_ARCHIVES)]
-        public ActionResult<List<CourseArchiveResponseDTO>> HandleGetCourseArchives(string uuid)
-        {
-            return Ok(this._courseService.GetCourseArchives(uuid));
-        }
-
-        //POST METODE
+        //POST METHODS
         [AllowAnonymous]
         [HttpPost]
         public ActionResult<CourseResponseDTO>HandleCreateCourse(CreateCourseRequestDTO requestDTO)
         {
             return Ok(this._courseService.Create(requestDTO));
         }
-
-        //PUT METODE
+        //PUT METHODS
         [AllowAnonymous]
         [HttpPut]
         public ActionResult<CourseResponseDTO>HandleUpdateCourse(UpdateCourseRequestDTO requestDTO)
         {
             return Ok(this._courseService.Update(requestDTO));
         }
-
-        //DELETE METODE
+        //DELETE METHODS
         [AllowAnonymous]
         [HttpDelete]
         public ActionResult<CourseResponseDTO>HandleDeleteCourse(string uuid)

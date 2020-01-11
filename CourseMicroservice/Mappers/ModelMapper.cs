@@ -67,6 +67,8 @@ namespace CourseMicroservice.Mappers
             };
         }
 
+
+
         internal List<CourseArchive> MapToCourseArchives(IDataReader reader)
         {
             List<CourseArchive> archives = new List<CourseArchive>();
@@ -121,6 +123,16 @@ namespace CourseMicroservice.Mappers
                 });
             }
             return teachers;
+        }
+        internal CourseTeacher MapToCourseTeacher(IDataReader reader)
+        {
+            reader.Read();
+            return new CourseTeacher()
+            {
+                teacherUUID = Convert.ToString(reader["teacherUUID"]),
+                activeTeacher = Convert.ToBoolean(reader["activeTeacher"]),
+                courseUUID = Convert.ToString(reader["courseUUID"])
+            };
         }
 
         public Course MapToCourseAfterUpdate(IDataReader reader)
