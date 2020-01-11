@@ -4,6 +4,7 @@ using LectureMaterialMicroservice.DTO.User;
 using SectionMicroservice.Domain;
 using SectionMicroservice.Domain.External;
 using SectionMicroservice.DTO.External;
+using SectionMicroservice.DTO.Material.Response;
 using SectionMicroservice.DTO.SectionArchive.Response;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,10 @@ namespace LectureMaterialMicroservice.Mappers
             CreateMap<Section, MultipleSectionResponseDTO>();
             CreateMap<SectionArchive, SectionArchiveResponseDTO>();
             CreateMap<SectionArchive, MultipleSectionArchiveResponseDTO>();
+            CreateMap<Material, MaterialResponseDTO>();
             CreateMap<Course, CourseDTO>();
             CreateMap<User, UserDTO>();
+            CreateMap<File, FileDTO>();
         }
     }
 }

@@ -11,7 +11,6 @@ namespace LectureMaterialMicroservice.Mappers
 {
     public class ModelMapper
     {
-
         public List<Section> MapToSections(IDataReader reader)
         {
             List<Section> sections = new List<Section>();
@@ -111,5 +110,27 @@ namespace LectureMaterialMicroservice.Mappers
 
             return sectionArchives;
         }
+
+        public Material MapToMaterial(IDataReader reader)
+        {
+            while (reader.Read())
+            {
+                return new Material()
+                {
+                    section = new Section()
+                    {
+                        uuid = Convert.ToString(reader["sectionUUID"])
+                    },
+                    file = new File()
+                    {
+                        uuid = Convert.ToString(reader["fileUUID"])
+                    },
+                    visible = Convert.ToInt32(reader["visible"])
+                };
+            }
+
+            return null;
+        }
+
     }
 }

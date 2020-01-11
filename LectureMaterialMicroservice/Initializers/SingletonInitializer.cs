@@ -26,6 +26,7 @@ namespace LectureMaterialMicroservice.Initializers {
             // register services
             services.AddSingleton<ISectionService, SectionService>();
             services.AddSingleton<ISectionArchiveService, SectionArchiveService>();
+            services.AddSingleton<IMaterialService, MaterialService>();
             services.AddSingleton<HttpClientService>();
             services.AddSingleton<HttpClient>();
             services.AddHttpContextAccessor();

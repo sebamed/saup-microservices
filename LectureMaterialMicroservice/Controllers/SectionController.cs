@@ -25,41 +25,53 @@ namespace LectureMaterialMicroservice.Controllers {
             _sectionService = sectionService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet]
         public ActionResult<List<MultipleSectionResponseDTO>> HandleGetAllSections() {
             return Ok(this._sectionService.GetAll());
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_SECTION_GET_VISIBLE)]
         public ActionResult<List<MultipleSectionResponseDTO>> HandleVisibleSections()
         {
             return Ok(this._sectionService.GetVisibleSections());
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpGet(RouteConsts.ROUTE_SECTION_GET_VISIBLE_BY_COURSE)]
+        public ActionResult<List<MultipleSectionResponseDTO>> HandleVisibleSectionsByCourse(string uuid) {
+            return Ok(this._sectionService.GetSectionsByCourse(uuid, true));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
+        [HttpGet(RouteConsts.ROUTE_SECTION_GET_BY_COURSE)]
+        public ActionResult<List<MultipleSectionResponseDTO>> HandleSectionsByCourse(string uuid) {
+            return Ok(this._sectionService.GetSectionsByCourse(uuid,false));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet(RouteConsts.ROUTE_SECTION_GET_ONE_BY_UUID)]
         public ActionResult<SectionResponseDTO> HandleGetOneSectionByUuid(string uuid)
         {
             return Ok(this._sectionService.GetOneByUuid(uuid));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPost]
         public ActionResult<SectionResponseDTO> HandleCreateSection(CreateSectionRequestDTO requestDTO) {
             // todo: created()
             return Ok(this._sectionService.Create(requestDTO));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPut]
         public ActionResult<SectionResponseDTO> HandleUpdateSection(UpdateSectionRequestDTO requestDTO)
         {
             return Ok(this._sectionService.Update(requestDTO));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpDelete]
         public ActionResult<SectionResponseDTO> HandleDeleteSectionByUuid(string uuid)
         {

@@ -65,6 +65,15 @@ namespace LectureMaterialMicroservice.Services.Implementation {
             return this._autoMapper.Map<List<MultipleSectionResponseDTO>>(this.FindAllVisible());
         }
 
+        public List<MultipleSectionResponseDTO> GetSectionsByCourse(string courseUUID, bool visible)
+        {
+            return this._autoMapper.Map<List<MultipleSectionResponseDTO>>(this.FindSectionsByCourse(courseUUID,visible));
+        }
+        public List<Section> FindSectionsByCourse(string courseUUID, bool visible)
+        {
+            return this._queryExecutor.Execute<List<Section>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_SECTIONS_BY_COURSE(courseUUID,visible), this._modelMapper.MapToSections);
+        }
+
         public SectionResponseDTO Create(CreateSectionRequestDTO requestDTO)
         {
             Section section = new Section()

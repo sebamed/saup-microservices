@@ -28,6 +28,16 @@ namespace LectureMaterialMicroservice.Consts {
                $"from SAUP_SECTION.Section s where s.visible = 1";
         }
 
+        public string GET_SECTIONS_BY_COURSE(string courseUUID, bool visible)
+        {
+            if(visible)
+            return $"select s.* " +
+               $"from SAUP_SECTION.Section s where s.courseUUID = '{courseUUID}' and s.visible = 1";
+            else
+                return $"select s.* " +
+               $"from SAUP_SECTION.Section s where s.courseUUID = '{courseUUID}'";
+        }
+
         public string CREATE_SECTION(Section section) {
             return $"insert into SAUP_SECTION.Section (uuid, name, description, visible, creationDate, courseUUID) output inserted.* " +
                $"values ('{section.uuid}', '{section.name}', '{section.description}', '{section.visible}', '{section.creationDate}', '{section.course.uuid}');";
@@ -66,5 +76,23 @@ namespace LectureMaterialMicroservice.Consts {
         {
             return $"delete from SAUP_SECTION.SectionArchive where sectionUUID = '{sectionUUID}'";
         }
+
+        //SQL commands for MATERIAL
+        public string GET_ONE_FILE_BY_SECTION_AND_FILE_UUID(string sectionUUID, string fileUUID)
+        {
+            return $"select * from SAUP_SECTION.Material where sectionUUID = '{sectionUUID}' and fileUUID = '{fileUUID}';";
+        }
+
+        public string ADD_FILE_TO_SECTION(Material material)
+        {
+            return $"insert into SAUP_SECTION.Material (sectionUUID, fileUUID, visible) output inserted.* " +
+                $"values ('{material.section.uuid}', '{material.file.uuid}', {material.visible});";
+        }
+
+        public string DELETE_FILE_FROM_SECTION(string sectionUUID, string fileUUID)
+        {
+            return $"delete from SAUP_SECTION.Material where sectionUUID = '{sectionUUID}' and fileUUID = '{fileUUID}'";
+        }
     }
+
 }

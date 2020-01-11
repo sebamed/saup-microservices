@@ -11,6 +11,8 @@ namespace LectureMaterialMicroservice.Services {
         Section FindOneByUuidOrThrow(string uuid);
         SectionResponseDTO GetOneByUuid(string uuid);
         List<MultipleSectionResponseDTO> GetVisibleSections();
+        List<MultipleSectionResponseDTO> GetSectionsByCourse(string courseUUID, bool visible);
+
         SectionResponseDTO Create(CreateSectionRequestDTO requestDTO);
         SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO);
         SectionResponseDTO DeleteSection(string uuid);
