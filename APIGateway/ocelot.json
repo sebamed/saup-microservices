@@ -97,7 +97,7 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
     },
     {
-      "DownstreamPathTemplate": "/api/lecture-materials{everything}",
+      "DownstreamPathTemplate": "/api/sections{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -105,7 +105,7 @@
           "Port": 40008
         }
       ],
-      "UpstreamPathTemplate": "/lecture-materials{everything}",
+      "UpstreamPathTemplate": "/sections{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
     }
   ]

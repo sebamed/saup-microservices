@@ -49,12 +49,19 @@ namespace DepartmentMicroservice.Services.Implementation {
             return this._queryExecutor.Execute<Faculty>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_FACULTY_BY_UUID(uuid), this._modelMapper.MapToFaculty);
         }
         public FacultyResponseDTO GetOneByUuid(string uuid) {
-            return this._autoMapper.Map<FacultyResponseDTO>(this.FindOneByUUID(uuid));
+            var response = this._autoMapper.Map<FacultyResponseDTO>(this.FindOneByUUID(uuid));
+            if (response == null)
+                throw new EntityNotFoundException($"Faculty with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            return response;
+        }
+
+        public Faculty FindOneByNameAndCity(string name, string city) {
+            return this._queryExecutor.Execute<Faculty>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_FACULTY_BY_NAME_AND_CITY(name,city), this._modelMapper.MapToFaculty);
         }
 
         public FacultyResponseDTO Create(CreateFacultyRequestDTO requestDTO) {
-            if (this.FindByName(requestDTO.name) != null)
-                throw new EntityAlreadyExistsException($"Faculty with name {requestDTO.name} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            if (this.FindOneByNameAndCity(requestDTO.name,requestDTO.city) != null)
+                throw new EntityNotFoundException($"Faculty with name {requestDTO.name} in city {requestDTO.city} already exists!", GeneralConsts.MICROSERVICE_NAME);
 
             Faculty faculty = new Faculty() {
                 name = requestDTO.name,
@@ -70,7 +77,7 @@ namespace DepartmentMicroservice.Services.Implementation {
         public FacultyResponseDTO Update(UpdateFacultyRequestDTO requestDTO) {
             if (this.FindOneByUUID(requestDTO.uuid) == null)
                 throw new EntityNotFoundException($"Faculty with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-            
+
             Faculty faculty = new Faculty() {
                 uuid = requestDTO.uuid,
                 name = requestDTO.name,

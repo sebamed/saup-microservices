@@ -59,7 +59,7 @@ namespace SubjectMicroservice.Services.Implementation
             response.moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
         }
-
+         
         //CREATE
         public SubjectArchiveResponseDTO Create(CreateSubjectArchiveRequestDTO requestDTO) {
             SubjectArchive subjectArchive = new SubjectArchive() {
