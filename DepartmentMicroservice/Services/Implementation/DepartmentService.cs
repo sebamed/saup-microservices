@@ -45,7 +45,10 @@ namespace DepartmentMicroservice.Services.Implementation {
             return this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_UUID(uuid), this._modelMapper.MapToDepartment);
         }
         public DepartmentResponseDTO GetOneByUuid(string uuid) {
-            return this._autoMapper.Map<DepartmentResponseDTO>(this.FindOneByUUID(uuid));
+            var response = this._autoMapper.Map<DepartmentResponseDTO>(this.FindOneByUUID(uuid));
+            if (response == null)
+                throw new EntityNotFoundException($"Department with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            return response;
         }
         public List<Department> FindByFacultyName(string facultyName) {
             return this._queryExecutor.Execute<List<Department>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_FACULTY_NAME(facultyName), this._modelMapper.MapToDepartments);
