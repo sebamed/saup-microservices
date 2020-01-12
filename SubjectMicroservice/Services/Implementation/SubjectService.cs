@@ -85,10 +85,15 @@ namespace SubjectMicroservice.Services.Implementation
             return response;
         }
 
-		public SubjectResponseDTO Create(CreateSubjectRequestDTO requestDTO)
+        public Subject FindOneByNameAndDepartment(string name, string departmentUUID)
+        {
+            return this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_SUBJECT_BY_NAME_AND_DEPARTMENT(name,departmentUUID), this._modelMapper.MapToSubject);
+        }
+
+        public SubjectResponseDTO Create(CreateSubjectRequestDTO requestDTO)
 		{
-            if (this.FindByName(requestDTO.name) != null)
-                throw new EntityAlreadyExistsException($"Subject with name {requestDTO.name} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            if (this.FindOneByNameAndDepartment(requestDTO.name, requestDTO.departmentUUID) != null)
+                throw new EntityAlreadyExistsException($"Subject with name {requestDTO.name} already exists on Department {requestDTO.departmentUUID}!", GeneralConsts.MICROSERVICE_NAME);
 
             Subject subject = new Subject()
             {

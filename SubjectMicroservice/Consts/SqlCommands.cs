@@ -18,6 +18,11 @@ namespace SubjectMicroservice.Consts
             return $"select * from {GeneralConsts.SCHEMA_NAME}.Subject where uuid = '{uuid}'";
         }
 
+        public string GET_SUBJECT_BY_NAME_AND_DEPARTMENT(string name,string deparmentUUID)
+        {
+            return $"select * from {GeneralConsts.SCHEMA_NAME}.Subject where name = '{name}' and departmentUUID = '{deparmentUUID}'";
+        }
+
         public string GET_SUBJECTS_BY_NAME(string name)
         {
             return $"select * from {GeneralConsts.SCHEMA_NAME}.Subject where name = '{name}'";
