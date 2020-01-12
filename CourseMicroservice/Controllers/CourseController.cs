@@ -47,11 +47,11 @@ namespace CourseMicroservice.Controllers
             return Ok(this._courseService.Update(requestDTO));
         }
         //DELETE METHODS
-        [AllowAnonymous]
-        [HttpDelete]
+       /* [AllowAnonymous]
+        [HttpDelete(RouteConsts.ROUTE_COURSE_GET_ONE_BY_UUID)]
         public ActionResult<CourseResponseDTO>HandleDeleteCourse(string uuid)
         {
             return Ok(this._courseService.Delete(uuid));
-        }
+        }*/
     }
 }

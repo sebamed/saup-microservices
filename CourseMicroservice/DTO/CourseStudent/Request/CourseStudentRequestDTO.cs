@@ -1,18 +1,18 @@
-﻿using Commons.Domain;
+﻿using Commons.DTO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
-namespace CourseMicroservice.Domain {
-    public class CourseStudent {
-
+namespace CourseMicroservice.DTO.Course {
+    public class CourseStudentRequestDTO {
+        [Required]
         public string studentUUID { get; set; }
-        public string courseUUID { get; set; }
+        [Required]
         public bool activeStudent { get; set; }
+        [Required]
         public DateTime beginDate { get; set; }
+        [Required]
         public float currentPoints { get; set; }
+        [Required]
         public int finalMark { get; set; }
-
     }
 }

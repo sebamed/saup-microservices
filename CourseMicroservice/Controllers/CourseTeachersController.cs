@@ -30,7 +30,7 @@ namespace CourseMicroservice.Controllers
         //PUT METHODS
         [AllowAnonymous]
         [HttpPut]
-        public ActionResult<CourseTeacherResponseDTO> HandleUpdateTeacherOnCourse(string uuid,CourseTeacherUpdateRequest request)
+        public ActionResult<CourseTeacherResponseDTO> HandleUpdateTeacherOnCourse(string uuid,CourseTeacherRequestDTO request)
         {
             return Ok(this._courseTeacherService.UpdateTeacherOnCourse(uuid, request));
         }
@@ -44,7 +44,7 @@ namespace CourseMicroservice.Controllers
         //POST METHODS
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<CourseTeacherResponseDTO> HandleCreateTeacherOnCourse(string uuid, CourseTeacherUpdateRequest request)
+        public ActionResult<CourseTeacherResponseDTO> HandleCreateTeacherOnCourse(string uuid, CourseTeacherRequestDTO request)
         {
             return Ok(this._courseTeacherService.CreateTeacherOnCourse(uuid, request));
         }

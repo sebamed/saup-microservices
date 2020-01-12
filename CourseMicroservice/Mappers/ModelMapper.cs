@@ -101,6 +101,7 @@ namespace CourseMicroservice.Mappers
                 students.Add(new CourseStudent()
                 {
                     studentUUID = Convert.ToString(reader["studentUUID"]),
+                    courseUUID = Convert.ToString(reader["courseUUID"]),
                     activeStudent = Convert.ToBoolean(reader["activeStudent"]),
                     currentPoints = (float)Convert.ToDouble(reader["currentPoints"]),
                     finalMark = Convert.ToInt32(reader["finalMark"]),
@@ -108,6 +109,19 @@ namespace CourseMicroservice.Mappers
                 });
             }
             return students;
+        }
+        internal CourseStudent MapToCourseStudent(IDataReader reader)
+        {
+            reader.Read();
+            return new CourseStudent()
+            {
+                studentUUID = Convert.ToString(reader["studentUUID"]),
+                courseUUID = Convert.ToString(reader["courseUUID"]),
+                activeStudent = Convert.ToBoolean(reader["activeStudent"]),
+                currentPoints = (float)Convert.ToDouble(reader["currentPoints"]),
+                finalMark = Convert.ToInt32(reader["finalMark"]),
+                beginDate = Convert.ToDateTime(reader["beginDate"])
+            };
         }
 
         internal List<CourseTeacher> MapToCourseTeachers(IDataReader reader)

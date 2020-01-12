@@ -13,8 +13,9 @@ namespace CourseMicroservice.DTO.Course {
         public int minStudents { get; set; }
         public DateTime creationDate { get; set; }
         public string subjectUUID { get; set; }
-
         public List<CourseTeacherResponseDTO> teachers { get; set; }
+        public List<CourseStudentResponseDTO> students { get; set; }
+        public SubjectResponseDTO subject { get; set; }
 
     }
 }

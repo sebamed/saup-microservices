@@ -62,11 +62,17 @@ namespace CourseMicroservice.Services.Implementation {
             }
             return teacher;
         }
+        public CourseTeacher FindTeacherOnCourse(string courseUUID, string teacherUUID)
+        {
+            CourseTeacher teacher = this._queryExecutor.Execute<CourseTeacher>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_COURSE_TEACHER(courseUUID, teacherUUID), this._modelMapper.MapToCourseTeacher);
+            return teacher;
+        }
 
         //GET METHODS
         public List<CourseTeacherResponseDTO> GetAllTeachersOnCourse(string uuid)
         {
-            Course course = this.FindOneByUuidOrThrow(uuid);
+            //provera da li postoji kurs
+            this.FindOneByUuidOrThrow(uuid); 
             List<CourseTeacher> teachers = FindAllTeachersOnCourse(uuid);
             List<CourseTeacherResponseDTO> response = this._autoMapper.Map<List<CourseTeacherResponseDTO>>(teachers);
             for(int i=0; i< response.Count; i++)
@@ -78,8 +84,9 @@ namespace CourseMicroservice.Services.Implementation {
         }
 
         //PUT METHODS
-        public CourseTeacherResponseDTO UpdateTeacherOnCourse(string uuid, CourseTeacherUpdateRequest request)
+        public CourseTeacherResponseDTO UpdateTeacherOnCourse(string uuid, CourseTeacherRequestDTO request)
         {
+            //provera da li postoji profesor na kursu
             CourseTeacher oldCourseTeacher = FindTeacherOnCourseOrThrow(uuid, request.teacherUUID);
             CourseTeacher newCourseTeacher = this._autoMapper.Map<CourseTeacher>(request);
             newCourseTeacher.courseUUID = oldCourseTeacher.courseUUID;
@@ -93,26 +100,30 @@ namespace CourseMicroservice.Services.Implementation {
         //DELETE METHODS
         public CourseTeacherResponseDTO DeleteTeacherOnCourse(string uuid, string teacherUUID)
         {
+            //provera da li postoji profesor na kursu
             CourseTeacher courseTeacher = FindTeacherOnCourseOrThrow(uuid, teacherUUID);
             courseTeacher = this._queryExecutor.Execute<CourseTeacher>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_TEACHER_COURSE(uuid, teacherUUID), this._modelMapper.MapToCourseTeacher);
             CourseTeacherResponseDTO response = this._autoMapper.Map<CourseTeacherResponseDTO>(courseTeacher);
             return connectWithUser(response);
         }
 
-        public CourseTeacherResponseDTO CreateTeacherOnCourse(string courseUUID, CourseTeacherUpdateRequest request)
+        public CourseTeacherResponseDTO CreateTeacherOnCourse(string courseUUID, CourseTeacherRequestDTO request)
         {
+            //provera da li postoji kurs
             Course course = FindOneByUuidOrThrow(courseUUID);
+            //provera da li postoji profesor
             TeacherResponseDTO newTeacher = this._httpClientService.SendRequest<TeacherResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + request.teacherUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             if(newTeacher == null)
             {
                 throw new EntityNotFoundException($"Teacher with uuid: {request.teacherUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
             }
-            CourseTeacher courseTeacher = new CourseTeacher()
+            //provera da li vec postoji profesor na kursu
+            CourseTeacher existingCourseTeacher = FindTeacherOnCourseOrThrow(courseUUID, request.teacherUUID);
+            if (existingCourseTeacher != null)
             {
-                courseUUID = courseUUID,
-                teacherUUID = request.teacherUUID,
-                activeTeacher = request.activeTeacher
-            };
+                throw new EntityAlreadyExistsException("Teacher with uuid " + courseUUID + " already exists in course with uuid " + request.teacherUUID, GeneralConsts.MICROSERVICE_NAME);
+            }
+            CourseTeacher courseTeacher = this._autoMapper.Map<CourseTeacher>(request);
             this._queryExecutor.Execute<CourseTeacher>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_TEACHER_COURSE(courseTeacher), this._modelMapper.MapToCourseTeacher);
             CourseTeacherResponseDTO response = this._autoMapper.Map<CourseTeacherResponseDTO>(courseTeacher);
             return connectWithUser(response);
