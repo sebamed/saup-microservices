@@ -52,7 +52,8 @@ namespace SubjectMicroservice.Services.Implementation
         public SubjectArchiveResponseDTO GetLatestVersionBySubjectUUID(string subjectUUID) {
             SubjectArchiveResponseDTO response = this._autoMapper.Map<SubjectArchiveResponseDTO>(this.FindLatestVersionBySubjectUUID(subjectUUID));
             if (response == null)
-                return response;
+                throw new EntityAlreadyExistsException($"Subject archive with uuid {subjectUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
             response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             response.moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
