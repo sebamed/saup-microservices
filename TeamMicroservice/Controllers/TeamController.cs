@@ -42,7 +42,7 @@ namespace TeamMicroservice.Controllers
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_TEAM_BY_NAME)]
-        public ActionResult<TeamResponseDTO> HandleGetByName(string name)
+        public ActionResult<List<MultipleTeamResponseDTO>> HandleGetByName(string name)
         {
             return Ok(this._teamService.GetByName(name));
         }

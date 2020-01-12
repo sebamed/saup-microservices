@@ -13,8 +13,8 @@ namespace TeamMicroservice.Services
         TeamResponseDTO Create(CreateTeamRequestDTO requestDTO);
         TeamResponseDTO Update(UpdateTeamRequestDTO requestDTO);
         TeamResponseDTO Delete(string uuid);
-        TeamResponseDTO GetByName(string name);
         TeamResponseDTO GetOneByUuid(string uuid);
+        List<MultipleTeamResponseDTO> GetByName(string name);
         List<MultipleTeamResponseDTO> GetTeamsByCourse(string courseUUID);
     }
 }
