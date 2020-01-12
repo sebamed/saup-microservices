@@ -46,13 +46,13 @@ namespace DepartmentMicroservice.Services.Implementation {
             return this._autoMapper.Map<List<FacultyResponseDTO>>(this.FindByCity(city));
         }
         public Faculty FindOneByUUID(string uuid) {
-            var response = this._queryExecutor.Execute<Faculty>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_FACULTY_BY_UUID(uuid), this._modelMapper.MapToFaculty);
+            return this._queryExecutor.Execute<Faculty>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_FACULTY_BY_UUID(uuid), this._modelMapper.MapToFaculty);
+        }
+        public FacultyResponseDTO GetOneByUuid(string uuid) {
+            var response = this._autoMapper.Map<FacultyResponseDTO>(this.FindOneByUUID(uuid));
             if (response == null)
                 throw new EntityNotFoundException($"Faculty with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
             return response;
-        }
-        public FacultyResponseDTO GetOneByUuid(string uuid) {
-            return this._autoMapper.Map<FacultyResponseDTO>(this.FindOneByUUID(uuid));
         }
 
         public Faculty FindOneByNameAndCity(string name, string city) {

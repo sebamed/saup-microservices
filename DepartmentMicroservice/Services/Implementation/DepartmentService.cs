@@ -42,13 +42,13 @@ namespace DepartmentMicroservice.Services.Implementation {
             return this._autoMapper.Map<List<DepartmentResponseDTO>>(this.FindByName(name));
         }
         public Department FindOneByUUID(string uuid) {
-            var response = this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_UUID(uuid), this._modelMapper.MapToDepartment);
+            return this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_UUID(uuid), this._modelMapper.MapToDepartment);
+        }
+        public DepartmentResponseDTO GetOneByUuid(string uuid) {
+            var response = this._autoMapper.Map<DepartmentResponseDTO>(this.FindOneByUUID(uuid));
             if (response == null)
                 throw new EntityNotFoundException($"Department with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
             return response;
-        }
-        public DepartmentResponseDTO GetOneByUuid(string uuid) {
-            return this._autoMapper.Map<DepartmentResponseDTO>(this.FindOneByUUID(uuid));
         }
         public List<Department> FindByFacultyName(string facultyName) {
             return this._queryExecutor.Execute<List<Department>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_FACULTY_NAME(facultyName), this._modelMapper.MapToDepartments);
