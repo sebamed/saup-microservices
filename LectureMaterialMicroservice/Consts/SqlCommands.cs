@@ -1,5 +1,6 @@
 ﻿using LectureMaterialMicroservice.Domain;
 using SectionMicroservice.Domain;
+using SectionMicroservice.Domain.External;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,11 @@ namespace LectureMaterialMicroservice.Consts {
         {
             return $"select s.*" +
                 $"from SAUP_SECTION.Section s where s.uuid = '{uuid}';";
+        }
+
+        public string GET_ONE_SECTION_BY_NAME_AND_COURSE(string name, string courseUUID)
+        {
+            return $"select s.* from SAUP_SECTION.Section s where s.name = '{name}' and s.courseUUID = '{courseUUID}';";
         }
 
         public string GET_VISIBLE_SECTIONS()
@@ -83,10 +89,25 @@ namespace LectureMaterialMicroservice.Consts {
             return $"select * from SAUP_SECTION.Material where sectionUUID = '{sectionUUID}' and fileUUID = '{fileUUID}';";
         }
 
+        public string GET_ONE_FILE_BY_FILE_UUID(string fileUUID)
+        {
+            return $"select * from SAUP_SECTION.Material where fileUUID = '{fileUUID}';";
+        }
+
+        public string GET_FILES_BY_SECTION(string sectionUUID) {
+            return $"select * from SAUP_SECTION.Material where sectionUUID = '{sectionUUID}';";
+        }
+
         public string ADD_FILE_TO_SECTION(Material material)
         {
-            return $"insert into SAUP_SECTION.Material (sectionUUID, fileUUID, visible) output inserted.* " +
-                $"values ('{material.section.uuid}', '{material.file.uuid}', {material.visible});";
+            return $"insert into SAUP_SECTION.Material (sectionUUID, fileUUID, filePath, visible) output inserted.* " +
+                $"values ('{material.section.uuid}', '{material.file.uuid}', '{material.file.filePath}', {material.visible});";
+        }
+
+        public string UPDATE_FILE_IN_MATERIAL(File file)
+        {
+            return $"update SAUP_SECTION.Material " +
+              $"set filePath = '{file.filePath}' output inserted.* where fileUUID = '{file.uuid}';";
         }
 
         public string DELETE_FILE_FROM_SECTION(string sectionUUID, string fileUUID)
