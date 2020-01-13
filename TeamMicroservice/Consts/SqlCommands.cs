@@ -18,6 +18,11 @@ namespace TeamMicroservice.Consts
             return $"select * from {GeneralConsts.SCHEMA_NAME}.Team where uuid = '{uuid}'";
         }
 
+        public string GET_TEAM_BY_NAME_AND_COURSE(string name, string courseUUID)
+        {
+            return $"select * from {GeneralConsts.SCHEMA_NAME}.Team where name = '{name}' and courseUUID = '{courseUUID}'";
+        }
+
         public string GET_TEAM_BY_NAME(string name)
         {
             return $"select * from {GeneralConsts.SCHEMA_NAME}.Team where name = '{name}'";

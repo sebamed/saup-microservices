@@ -50,6 +50,9 @@ namespace TeamMicroservice.Services.Implementation
         public StudentTeamResponseDTO GetOneByStudentAndTeam(string studentUUID, string teamUUID)
         {
             StudentTeamResponseDTO response = this._autoMapper.Map<StudentTeamResponseDTO>(this.FindByStudentAndTeam(studentUUID,teamUUID));
+            if(response == null)
+                throw new EntityAlreadyExistsException($"Student with uuid {studentUUID} doesn't exist in Team with uuid {teamUUID}!", GeneralConsts.MICROSERVICE_NAME);
+            
             response.team = this._teamService.GetOneByUuid(teamUUID);
             response.student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
@@ -59,6 +62,12 @@ namespace TeamMicroservice.Services.Implementation
             if (this._teamService.GetOneByUuid(requestDTO.teamUUID) == null)
                 throw new EntityAlreadyExistsException($"Team with uuid {requestDTO.teamUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
+            StudentDTO student;
+            try {
+                student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + requestDTO.studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"Student with uuid {requestDTO.studentUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
             StudentTeam studentTeam = new StudentTeam() {
                 team = new Team()
                 {
@@ -78,7 +87,7 @@ namespace TeamMicroservice.Services.Implementation
             
             StudentTeamResponseDTO response = this._autoMapper.Map<StudentTeamResponseDTO>(studentTeam);
             response.team = this._teamService.GetOneByUuid(requestDTO.teamUUID);
-            response.student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.student = student;
             return response;
         }
 

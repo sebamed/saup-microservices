@@ -58,17 +58,13 @@ namespace TeamMicroservice.Services.Implementation
             return this._autoMapper.Map<List<MultipleTeamResponseDTO>>(this.FindTeamsByCourse(courseUUID));
         }
 
-        public Team FindByName(string name)
+        public List<Team> FindByName(string name)
         {
-            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAM_BY_NAME(name), this._modelMapper.MapToTeam);
+            return this._queryExecutor.Execute<List<Team>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAM_BY_NAME(name), this._modelMapper.MapToTeams);
         }
-        public TeamResponseDTO GetByName(string name)
+        public List<MultipleTeamResponseDTO> GetByName(string name)
         {
-            TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(this.FindByName(name));
-            if (response == null)
-                throw new EntityAlreadyExistsException($"Team with name {name} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            return response;
+            return this._autoMapper.Map<List<MultipleTeamResponseDTO>>(this.FindByName(name));
         }
         
         public Team FindOneByUUID(string uuid)
@@ -84,10 +80,22 @@ namespace TeamMicroservice.Services.Implementation
             return response;
         }
 
+        public Team FindOneByNameAndCourse(string name, string courseUUID)
+        {
+            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAM_BY_NAME_AND_COURSE(name,courseUUID), this._modelMapper.MapToTeam);
+        }
+
         public TeamResponseDTO Create(CreateTeamRequestDTO requestDTO)
         {
-            if (this.FindByName(requestDTO.name) != null)
-                throw new EntityAlreadyExistsException($"Team with name {requestDTO.name} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            if (this.FindOneByNameAndCourse(requestDTO.name,requestDTO.courseUUID) != null)
+                throw new EntityAlreadyExistsException($"Team with name {requestDTO.name} already exists in Course {requestDTO.courseUUID}!", GeneralConsts.MICROSERVICE_NAME);
+
+            TeacherDTO teacher;
+            try {
+                teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + requestDTO.teacherUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"Teacher with uuid {requestDTO.teacherUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
 
             Team team = new Team()
             {
@@ -106,7 +114,8 @@ namespace TeamMicroservice.Services.Implementation
             team = this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_TEAM(team), this._modelMapper.MapToTeam);
             
             TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(team);
-            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.teacher = teacher;
+
             return response;
         }
 
@@ -114,6 +123,13 @@ namespace TeamMicroservice.Services.Implementation
         {
             if (this.FindOneByUUID(requestDTO.uuid) == null)
                 throw new EntityNotFoundException($"Team with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            TeacherDTO teacher;
+            try {
+                teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + requestDTO.teacherUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"Teacher with uuid {requestDTO.teacherUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
             Team team = new Team()
             {
                 uuid = requestDTO.uuid,
@@ -132,7 +148,7 @@ namespace TeamMicroservice.Services.Implementation
             team = this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_TEAM(team), this._modelMapper.MapToTeam);
 
             TeamResponseDTO response = this._autoMapper.Map<TeamResponseDTO>(team);
-            response.teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.teacher = teacher;
             return response;
         }
 
