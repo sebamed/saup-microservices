@@ -5,11 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace MessagingMicroservice.Domain {
-    public class Instrument : BaseEntity {
-
-        public int InstrumentID { get; set; }
-
-        public string InstrumentNaziv { get; set; }
-
+    public class File : BaseEntity {
+        public string filePath { get; set; }
     }
 }
