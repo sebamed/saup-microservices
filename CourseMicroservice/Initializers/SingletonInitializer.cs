@@ -22,6 +22,7 @@ namespace CourseMicroservice.Initializers {
             services.AddSingleton<ICourseService, CourseService>();
             services.AddSingleton<ICourseTeacherService, CourseTeacherService>();
             services.AddSingleton<ICourseStudentsService, CourseStudentsService>();
+            services.AddSingleton<ICourseArchivesService, CourseArchivesService>();
             services.AddSingleton<HttpClientService>();
             services.AddSingleton<HttpClient>();
             services.AddHttpContextAccessor();

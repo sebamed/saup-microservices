@@ -50,6 +50,26 @@ namespace CourseMicroservice.Mappers
             }
             return null;
         }
+
+        internal CourseArchive MapToCourseArchive(IDataReader reader)
+        {
+            reader.Read();
+            return new CourseArchive()
+            {
+                name = Convert.ToString(reader["name"]),
+                description = Convert.ToString(reader["description"]),
+                active = Convert.ToBoolean(reader["active"]),
+                maxStudents = Convert.ToInt32(reader["maxStudents"]),
+                minStudents = Convert.ToInt32(reader["minStudents"]),
+                creationDate = Convert.ToDateTime(reader["creationDate"]),
+                subjectUUID = Convert.ToString(reader["subjectUUID"]),
+                moderatorUUID = Convert.ToString(reader["moderatorUUID"]),
+                changeDate = Convert.ToDateTime(reader["changeDate"]),
+                version = Convert.ToInt32(reader["version"]),
+                courseUUID = Convert.ToString(reader["courseUUID"])
+            };
+        }
+
         public Course MapToCourseAfterInsert(IDataReader reader)
         {
             reader.Read();

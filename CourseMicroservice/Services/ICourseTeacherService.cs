@@ -5,12 +5,10 @@ using System.Collections.Generic;
 namespace CourseMicroservice.Services {
     public interface ICourseTeacherService {
         //GET METHODS
-        List<CourseTeacherResponseDTO> GetAllTeachersOnCourse(string uuid);
-        //PUT METHODS
-        CourseTeacherResponseDTO UpdateTeacherOnCourse(string uuid, CourseTeacherRequestDTO request);
+        List<CourseTeacherMultipleResponseDTO> GetAllActiveTeachersOnCourse(string uuid);
         //DELETE METHODS
         CourseTeacherResponseDTO DeleteTeacherOnCourse(string courseUUID, string teacherUUID);
         //POST METHODS
-        CourseTeacherResponseDTO CreateTeacherOnCourse(string courseUUID, CourseTeacherRequestDTO request);
+        CourseTeacherResponseDTO CreateTeacherOnCourse(string courseUUID, CreateCourseTeacherRequestDTO request);
     }
 }

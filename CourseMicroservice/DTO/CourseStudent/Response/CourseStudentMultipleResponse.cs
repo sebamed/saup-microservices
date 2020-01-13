@@ -1,13 +1,9 @@
-﻿using Commons.Domain;
+﻿using Commons.DTO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CourseMicroservice.Domain {
-    public class CourseStudent {
+namespace CourseMicroservice.DTO.Course {
+    public class CourseStudentMultipleResponseDTO {
         public string studentUUID { get; set; }
-        public string courseUUID { get; set; }
         public bool activeStudent { get; set; }
         public DateTime beginDate { get; set; }
         public float currentPoints { get; set; }

@@ -22,7 +22,7 @@ namespace CourseMicroservice.Controllers
         //GET METHODS
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult<List<CourseResponseDTO>> HandleGetAllCourses()
+        public ActionResult<List<CourseMultipleResponseDTO>> HandleGetAllCourses()
         {
             return Ok(this._courseService.GetAll());
         }

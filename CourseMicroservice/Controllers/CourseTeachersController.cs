@@ -22,19 +22,13 @@ namespace CourseMicroservice.Controllers
         //GET METHODS
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult<List<CourseTeacherResponseDTO>> HandleGetAllTeachersOnCourse(string uuid)
+        public ActionResult<List<CourseTeacherResponseDTO>> HandleGetAllActiveTeachersOnCourse(string uuid)
         {
-            return Ok(this._courseTeacherService.GetAllTeachersOnCourse(uuid));
+            return Ok(this._courseTeacherService.GetAllActiveTeachersOnCourse(uuid));
         }
 
-        //PUT METHODS
-        [AllowAnonymous]
-        [HttpPut]
-        public ActionResult<CourseTeacherResponseDTO> HandleUpdateTeacherOnCourse(string uuid,CourseTeacherRequestDTO request)
-        {
-            return Ok(this._courseTeacherService.UpdateTeacherOnCourse(uuid, request));
-        }
         //DELETE METHODS
+
         [AllowAnonymous]
         [HttpDelete(RouteConsts.ROUTE_COURSE_TEACHERS_GET_ONE_BY_UUID)]
         public ActionResult<CourseTeacherResponseDTO> HandleDeleteTeacherOnCourse(string uuid, string teacherUuid)
@@ -44,7 +38,7 @@ namespace CourseMicroservice.Controllers
         //POST METHODS
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<CourseTeacherResponseDTO> HandleCreateTeacherOnCourse(string uuid, CourseTeacherRequestDTO request)
+        public ActionResult<CourseTeacherResponseDTO> HandleCreateTeacherOnCourse(string uuid, CreateCourseTeacherRequestDTO request)
         {
             return Ok(this._courseTeacherService.CreateTeacherOnCourse(uuid, request));
         }

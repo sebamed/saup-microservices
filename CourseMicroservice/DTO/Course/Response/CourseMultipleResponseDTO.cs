@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 namespace CourseMicroservice.DTO.Course {
-    public class CourseResponseDTO : BaseDTO {
+    public class CourseMultipleResponseDTO : BaseDTO {
 
         public int id { get; set; }
         public string name { get; set; }
@@ -13,8 +13,5 @@ namespace CourseMicroservice.DTO.Course {
         public int minStudents { get; set; }
         public DateTime creationDate { get; set; }
         public string subjectUUID { get; set; }
-        public List<CourseArchiveResponseDTO> archives { get; set; }
-        public SubjectResponseDTO subject { get; set; }
-
     }
 }

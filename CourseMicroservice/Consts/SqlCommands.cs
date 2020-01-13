@@ -32,9 +32,9 @@ namespace CourseMicroservice.Consts {
         }
 
         //COURSE TEACHERS
-        public string GET_COURSE_TEACHERS(string uuid)
+        public string GET_ACTIVE_COURSE_TEACHERS(string uuid)
         {
-            return $"select * from SAUP_COURSE.TeacherCourse where courseUUID='{uuid}'";
+            return $"select * from SAUP_COURSE.TeacherCourse where courseUUID='{uuid}' and activeTeacher=1";
         }
         public string GET_ONE_COURSE_TEACHER(string courseUuid, string teacherUuid)
         {
@@ -44,20 +44,16 @@ namespace CourseMicroservice.Consts {
         {
             return $"update SAUP_COURSE.TeacherCourse set activeTeacher = {boolToInt(courseTeacher.activeTeacher)} output inserted.* where teacherUUID = '{courseTeacher.teacherUUID}' and courseUUID = '{courseTeacher.courseUUID}';";
         }
-        public string DELETE_TEACHER_COURSE(string courseUUID, string teacherUUID)
-        {
-            return $"delete from SAUP_COURSE.TeacherCourse output deleted.* where courseUUID = '{courseUUID}' and teacherUUID = '{teacherUUID}';";
-        }
         public string CREATE_TEACHER_COURSE(CourseTeacher courseTeacher)
         {
             return $"insert into SAUP_COURSE.TeacherCourse(teacherUUID, courseUUID, activeTeacher) output inserted.* " +
-            $"values('{courseTeacher.teacherUUID}', '{courseTeacher.courseUUID}', {courseTeacher.activeTeacher} );";
+            $"values('{courseTeacher.teacherUUID}', '{courseTeacher.courseUUID}', {boolToInt(courseTeacher.activeTeacher)} );";
         }
 
         //COURSE STUDENTS
-        public string GET_COURSE_STUDENTS(string uuid)
+        public string GET_ACTIVE_COURSE_STUDENTS(string uuid)
         {
-            return $"select * from SAUP_COURSE.StudentCourse where courseUUID='{uuid}';";
+            return $"select * from SAUP_COURSE.StudentCourse where courseUUID='{uuid}' and activeStudent=1;";
         }
         public string GET_ONE_COURSE_STUDENT(string courseUuid, string studentUuid)
         {
@@ -73,9 +69,16 @@ namespace CourseMicroservice.Consts {
             return $"insert into SAUP_COURSE.StudentCourse(studentUUID, courseUUID, activeStudent, beginDate, currentPoints, finalMark) " +
             $"output inserted.* values('{courseStudent.studentUUID}', '{courseStudent.courseUUID}', {boolToInt(courseStudent.activeStudent)}, '{courseStudent.beginDate}', {courseStudent.currentPoints}, {courseStudent.finalMark}); ";
         }
-        public string DELETE_STUDENT_COURSE(string courseUUID, string teacherUUID)
+
+        //COURSE ARCHIVES
+        public string GET_COURSE_ARCHIVES(string uuid)
         {
-            return $"delete from SAUP_COURSE.StudentCourse output deleted.* where courseUUID = '{courseUUID}' and studentUUID = '{teacherUUID}';";
+            return $"select * from SAUP_COURSE.CourseArchive where courseUUID = '{uuid}';";
+        }
+        public string CREATE_COURSE_ARCHIVE(CourseArchive courseArchive)
+        {
+            return $"insert into SAUP_COURSE.CourseArchive(courseUUID, name, description, active, maxStudents, minStudents, creationDate, subjectUUID, moderatorUUID, changeDate) output inserted.* " +
+           $"values('{courseArchive.courseUUID}', '{courseArchive.name}', '{courseArchive.description}', {boolToInt(courseArchive.active)}, {courseArchive.maxStudents}, {courseArchive.minStudents}, '{courseArchive.creationDate}', '{courseArchive.subjectUUID}', '{courseArchive.moderatorUUID}', '{courseArchive.changeDate}'); ";
         }
 
 

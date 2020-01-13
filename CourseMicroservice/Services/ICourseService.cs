@@ -6,7 +6,7 @@ namespace CourseMicroservice.Services {
     public interface ICourseService {
 
         //GET METHODS
-        List<CourseResponseDTO> GetAll();
+        List<CourseMultipleResponseDTO> GetAll();
         CourseResponseDTO GetOneByUuid(string uuid);
 
         //POST METHODS

@@ -51,7 +51,7 @@ namespace CourseMicroservice.Services.Implementation {
         }
         public List<CourseTeacher> FindAllTeachersOnCourse(string uuid)
         {
-            return this._queryExecutor.Execute<List<CourseTeacher>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_TEACHERS(uuid), this._modelMapper.MapToCourseTeachers);
+            return this._queryExecutor.Execute<List<CourseTeacher>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ACTIVE_COURSE_TEACHERS(uuid), this._modelMapper.MapToCourseTeachers);
         }
         public CourseTeacher FindTeacherOnCourseOrThrow(string courseUUID, string teacherUUID)
         {
@@ -68,23 +68,8 @@ namespace CourseMicroservice.Services.Implementation {
             return teacher;
         }
 
-        //GET METHODS
-        public List<CourseTeacherResponseDTO> GetAllTeachersOnCourse(string uuid)
-        {
-            //provera da li postoji kurs
-            this.FindOneByUuidOrThrow(uuid); 
-            List<CourseTeacher> teachers = FindAllTeachersOnCourse(uuid);
-            List<CourseTeacherResponseDTO> response = this._autoMapper.Map<List<CourseTeacherResponseDTO>>(teachers);
-            for(int i=0; i< response.Count; i++)
-            {
-                response[i] = connectWithUser(response[i]);
-            }
-            return response;
-
-        }
-
         //PUT METHODS
-        public CourseTeacherResponseDTO UpdateTeacherOnCourse(string uuid, CourseTeacherRequestDTO request)
+        public CourseTeacherResponseDTO UpdateTeacherOnCourse(string uuid, CreateCourseTeacherRequestDTO request)
         {
             //provera da li postoji profesor na kursu
             CourseTeacher oldCourseTeacher = FindTeacherOnCourseOrThrow(uuid, request.teacherUUID);
@@ -102,12 +87,13 @@ namespace CourseMicroservice.Services.Implementation {
         {
             //provera da li postoji profesor na kursu
             CourseTeacher courseTeacher = FindTeacherOnCourseOrThrow(uuid, teacherUUID);
-            courseTeacher = this._queryExecutor.Execute<CourseTeacher>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_TEACHER_COURSE(uuid, teacherUUID), this._modelMapper.MapToCourseTeacher);
+            courseTeacher.activeTeacher = false;
+            courseTeacher = this._queryExecutor.Execute<CourseTeacher>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_TEACHER_COURSE(courseTeacher), this._modelMapper.MapToCourseTeacher);
             CourseTeacherResponseDTO response = this._autoMapper.Map<CourseTeacherResponseDTO>(courseTeacher);
             return connectWithUser(response);
         }
 
-        public CourseTeacherResponseDTO CreateTeacherOnCourse(string courseUUID, CourseTeacherRequestDTO request)
+        public CourseTeacherResponseDTO CreateTeacherOnCourse(string courseUUID, CreateCourseTeacherRequestDTO request)
         {
             //provera da li postoji kurs
             Course course = FindOneByUuidOrThrow(courseUUID);
@@ -118,15 +104,39 @@ namespace CourseMicroservice.Services.Implementation {
                 throw new EntityNotFoundException($"Teacher with uuid: {request.teacherUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
             }
             //provera da li vec postoji profesor na kursu
-            CourseTeacher existingCourseTeacher = FindTeacherOnCourseOrThrow(courseUUID, request.teacherUUID);
+            CourseTeacher existingCourseTeacher = FindTeacherOnCourse(courseUUID, request.teacherUUID);
             if (existingCourseTeacher != null)
             {
-                throw new EntityAlreadyExistsException("Teacher with uuid " + courseUUID + " already exists in course with uuid " + request.teacherUUID, GeneralConsts.MICROSERVICE_NAME);
+                if(existingCourseTeacher.activeTeacher == false)
+                {
+                    CourseTeacher updatedTeacher = this._autoMapper.Map<CourseTeacher>(request);
+                    updatedTeacher.activeTeacher = true;
+                    updatedTeacher.courseUUID = courseUUID;
+                    updatedTeacher = this._queryExecutor.Execute<CourseTeacher>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_TEACHER_COURSE(updatedTeacher), this._modelMapper.MapToCourseTeacher);
+                    CourseTeacherResponseDTO updatedResponse = this._autoMapper.Map<CourseTeacherResponseDTO>(updatedTeacher);
+                    return connectWithUser(updatedResponse);
+                }
+                else
+                {
+                    throw new EntityAlreadyExistsException("Teacher with uuid " + courseUUID + " already exists in course with uuid " + request.teacherUUID, GeneralConsts.MICROSERVICE_NAME);
+                }
+
             }
             CourseTeacher courseTeacher = this._autoMapper.Map<CourseTeacher>(request);
+            courseTeacher.courseUUID = courseUUID;
+            courseTeacher.activeTeacher = true;
             this._queryExecutor.Execute<CourseTeacher>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_TEACHER_COURSE(courseTeacher), this._modelMapper.MapToCourseTeacher);
             CourseTeacherResponseDTO response = this._autoMapper.Map<CourseTeacherResponseDTO>(courseTeacher);
             return connectWithUser(response);
+        }
+
+        public List<CourseTeacherMultipleResponseDTO> GetAllActiveTeachersOnCourse(string uuid)
+        {
+             //provera da li postoji kurs
+            this.FindOneByUuidOrThrow(uuid);
+            List<CourseTeacher> teachers = FindAllTeachersOnCourse(uuid);
+            List<CourseTeacherMultipleResponseDTO> response = this._autoMapper.Map<List<CourseTeacherMultipleResponseDTO>>(teachers);
+            return response;
         }
     }
 }

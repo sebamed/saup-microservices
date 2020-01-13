@@ -16,5 +16,7 @@ namespace CourseMicroservice.Localization {
         //Course Students
         public const string ROUTE_COURSE_STUDENTS = ROUTE_COURSE_GET_ONE_BY_UUID + "/students";
         public const string ROUTE_COURSE_STUDENTS_GET_ONE_BY_UUID = ROUTE_COURSE_STUDENTS + "/{studentUuid}";
+        //Course Archives
+        public const string ROUTE_COURSE_ARCHIVES = ROUTE_COURSE_GET_ONE_BY_UUID + "/archives";
     }
 }

@@ -11,6 +11,7 @@ using Commons.HttpClientRequests;
 using System.Net.Http;
 using Commons.Domain;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace CourseMicroservice.Services.Implementation {
     public class CourseService : ICourseService
@@ -21,10 +22,9 @@ namespace CourseMicroservice.Services.Implementation {
         private readonly ModelMapper _modelMapper;
         private readonly HttpClientService _httpClientService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private ICourseTeacherService _courseTeacherService;
-        private ICourseStudentsService _courseStudentsService;
+        private ICourseArchivesService _courseArchivesService;
 
-        public CourseService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor, ICourseTeacherService courseTeacherService, ICourseStudentsService courseStudentsService)
+        public CourseService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor, ICourseArchivesService courseArchivesService)
         {
             this._autoMapper = autoMapper;
             this._queryExecutor = queryExecutor;
@@ -32,8 +32,7 @@ namespace CourseMicroservice.Services.Implementation {
             this._modelMapper = modelMapper;
             this._httpClientService = httpClientService;
             this._httpContextAccessor = httpContextAccessor;
-            this._courseTeacherService = courseTeacherService;
-            this._courseStudentsService = courseStudentsService;
+            this._courseArchivesService = courseArchivesService;
         }
 
         //HELPER METHODS
@@ -51,23 +50,12 @@ namespace CourseMicroservice.Services.Implementation {
             }
             return course;
         }
-        public Course FindOneByUuid(string uuid)
-        {
-            Course course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_COURSE_BY_UUID(uuid), this._modelMapper.MapToCourse);
-            return course;
-        }
 
 
         //GET METHODS
-        public List<CourseResponseDTO> GetAll()
+        public List<CourseMultipleResponseDTO> GetAll()
         {
-            List<CourseResponseDTO> response = this._autoMapper.Map<List<CourseResponseDTO>>((this.FindAll()));
-            for (int i = 0; i<response.Count; i++)
-            {
-                response[i].teachers = this._courseTeacherService.GetAllTeachersOnCourse(response[i].uuid);
-                response[i].students = this._courseStudentsService.GetAllStudentsOnCourse(response[i].uuid);
-                response[i].subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + response[i].subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            }
+            List<CourseMultipleResponseDTO> response = this._autoMapper.Map<List<CourseMultipleResponseDTO>>((this.FindAll()));
             return response;
         }
 
@@ -76,9 +64,8 @@ namespace CourseMicroservice.Services.Implementation {
         {
             //provera da li postoji taj kurs
             CourseResponseDTO course = this._autoMapper.Map<CourseResponseDTO>(this.FindOneByUuidOrThrow(uuid));
-            course.teachers = this._courseTeacherService.GetAllTeachersOnCourse(course.uuid);
-            course.students = this._courseStudentsService.GetAllStudentsOnCourse(course.uuid);
             course.subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + course.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            course.archives = this._courseArchivesService.GetAllCourseArchives(course.uuid);
             return course;
         }
 
@@ -92,10 +79,35 @@ namespace CourseMicroservice.Services.Implementation {
             {
                 throw new EntityNotFoundException("Subject with uuid " + requestDTO.subjectUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
             }
-            Course course = this._autoMapper.Map<Course>(requestDTO);
+            Course course = new Course()
+            {
+                name = requestDTO.name,
+                description = requestDTO.description,
+                active = requestDTO.active,
+                maxStudents = requestDTO.maxtudents,
+                minStudents = requestDTO.minStudents,
+                creationDate = requestDTO.creationDate,
+                subjectUUID = requestDTO.subjectUUID
+            };
             this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_COURSE(course), this._modelMapper.MapToCourseAfterInsert);
+            CourseArchive archive = new CourseArchive()
+            {
+                courseUUID = course.uuid,
+                name = course.name,
+                description = course.description,
+                active = course.active,
+                maxStudents = course.maxStudents,
+                minStudents = course.minStudents,
+                creationDate = course.creationDate,
+                subjectUUID = course.subjectUUID,
+                changeDate = DateTime.Now,
+                moderatorUUID = "test"
+    };
+            CreateCourseArchiveRequest req = this._autoMapper.Map<CreateCourseArchiveRequest>(archive);
+            CourseArchiveResponseDTO archiveResponse = this._courseArchivesService.CreateCourseArchive(req);
             CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
             response.subject = subject;
+            response.archives = this._courseArchivesService.GetAllCourseArchives(course.uuid);
             return response;
         }
 
@@ -103,13 +115,39 @@ namespace CourseMicroservice.Services.Implementation {
         public CourseResponseDTO Update(UpdateCourseRequestDTO requestDTO)
         {
             //provera da li postoji kurs
-            Course course = this.FindOneByUuidOrThrow(requestDTO.uuid);
-            course = this._autoMapper.Map<Course>(requestDTO);
-            course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_COURSE(course), this._modelMapper.MapToCourseAfterUpdate);
+            Course oldCourse = this.FindOneByUuidOrThrow(requestDTO.uuid);
+            //update u tabeli kurs
+            Course course = new Course()
+            {
+                uuid = requestDTO.uuid,
+                name = requestDTO.name,
+                description = requestDTO.description,
+                active = requestDTO.active,
+                maxStudents = requestDTO.maxtudents,
+                minStudents = requestDTO.minStudents,
+                creationDate = requestDTO.creationDate,
+                subjectUUID = oldCourse.subjectUUID
+            };
+            this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_COURSE(course), this._modelMapper.MapToCourseAfterInsert);
+            //insert u tabeli arhiva
+            CourseArchive archive = new CourseArchive()
+            {
+                courseUUID = course.uuid,
+                name = course.name,
+                description = course.description,
+                active = course.active,
+                maxStudents = course.maxStudents,
+                minStudents = course.minStudents,
+                creationDate = course.creationDate,
+                subjectUUID = course.subjectUUID,
+                changeDate = DateTime.Now,
+                moderatorUUID = "test"
+            };
+            CreateCourseArchiveRequest req = this._autoMapper.Map<CreateCourseArchiveRequest>(archive);
+            CourseArchiveResponseDTO archiveResponse = this._courseArchivesService.CreateCourseArchive(req);
             CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
-            response.teachers = _courseTeacherService.GetAllTeachersOnCourse(course.uuid);
-            response.students = this._courseStudentsService.GetAllStudentsOnCourse(course.uuid);
             response.subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + response.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.archives = this._courseArchivesService.GetAllCourseArchives(course.uuid);
             return response;
         }
 
@@ -120,9 +158,8 @@ namespace CourseMicroservice.Services.Implementation {
             Course course = this.FindOneByUuidOrThrow(uuid);
             course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_COURSE(uuid), this._modelMapper.MapToCourse);
             CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
-            response.teachers = _courseTeacherService.GetAllTeachersOnCourse(course.uuid);
-            response.students = this._courseStudentsService.GetAllStudentsOnCourse(course.uuid);
             response.subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + response.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.archives = this._courseArchivesService.GetAllCourseArchives(response.uuid);
             return response;
         }
 
