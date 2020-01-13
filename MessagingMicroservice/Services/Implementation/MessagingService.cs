@@ -55,7 +55,7 @@ namespace MessagingMicroservice.Services.Implementation
             message = this._queryExecutor.Execute<Message>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_MESSAGE(message), this._modelMapper.MapToMessage);
 
             //ADD FILES TO MESSAGE
-            List<File> addedFiles = new List<File>(requestDTO.files.Count);
+            List<File> addedFiles = new List<File>();
             if(requestDTO.files != null)
             {
                 foreach (var f in requestDTO.files)
@@ -74,6 +74,7 @@ namespace MessagingMicroservice.Services.Implementation
 
             //SEND MESSAGE TO RECIPIENTS
             List<User> recipients = new List<User>();
+            List<string> recipientMails = new List<string>();
             foreach (var rDTO in requestDTO.recipients)
             {
                 var userRecipient = new User()
@@ -89,9 +90,11 @@ namespace MessagingMicroservice.Services.Implementation
                     recipient = userRecipient
                 };
                 this._queryExecutor.Execute<Recipient>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_RECIPIENT(messageRecipient), this._modelMapper.MapToRecipient);
+                var r = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + rDTO.uuid, userPrincipal.token).Result;
+                recipientMails.Add(r.email);
                 recipients.Add(userRecipient);
             }
-
+            this._httpClientService.SendEmail(recipientMails, $"Nova poruka: {message.sender.name}", message.content);
             message.recipients = recipients;
             message.files = addedFiles;
             return this._autoMapper.Map<MessageResponseDTO>(message);
@@ -99,6 +102,7 @@ namespace MessagingMicroservice.Services.Implementation
 
         public MessageResponseDTO Update(UpdateMessageRequestDTO requestDTO)
         {
+            throw new NotImplementedException();
             if (this.FindOneByUUID(requestDTO.uuid) == null)
                 throw new EntityNotFoundException($"Message with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
@@ -111,15 +115,27 @@ namespace MessagingMicroservice.Services.Implementation
 
             var userPrincipal = new UserPrincipal(_httpContextAccessor.HttpContext);
             message.sender = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + userPrincipal.uuid, userPrincipal.token).Result;
-
-
-            //todo pozivanje update fajla
-            //todo definisati da se reciepenti ne mogu menjati/dodavati za istu poruku?
-
-            //todo da li treba MapToMessageAfterInserted?
             message = this._queryExecutor.Execute<Message>(DatabaseConsts.USER_SCHEMA, _sqlCommands.UPDATE_MESSAGE(message), _modelMapper.MapToMessage);
 
             return this._autoMapper.Map<MessageResponseDTO>(message);
+        }
+
+        public List<MessageResponseDTO> GetMessagesByRecipents(string recipentUUIDs)
+        {
+            string sender = new UserPrincipal(_httpContextAccessor.HttpContext).uuid;
+            string[] split = recipentUUIDs.Split(',');
+            List<Message> messages = this._queryExecutor.Execute<List<Message>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_MESSAGES_BY_RECIPIENT(split, sender), this._modelMapper.MapToMessages);
+            if (messages == null)
+                throw new EntityNotFoundException($"There is no messages by recipient {recipentUUIDs}", GeneralConsts.MICROSERVICE_NAME);
+
+            foreach (var message in messages)
+            {
+                List<User> recipients = this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_RECIPIENTS_BY_MESSAGE(message.uuid), this._modelMapper.MapToUsers);
+                List<File> files = this._queryExecutor.Execute<List<File>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_FILES_BY_MESSAGE(message.uuid), this._modelMapper.MapToFiles);
+                message.recipients = recipients;
+                message.files = files;
+            }
+            return this._autoMapper.Map<List<MessageResponseDTO>>(messages);
         }
 
         public MessageResponseDTO GetOneByUuid(string uuid)
@@ -129,8 +145,12 @@ namespace MessagingMicroservice.Services.Implementation
 
         private Message FindOneByUUID(string uuid)
         {
-            //todo pronaci u FileMessage fajlove i u recipient primaoce
-            return this._queryExecutor.Execute<Message>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_MESSAGE_BY_UUID(uuid), this._modelMapper.MapToMessage);
+            var message = this._queryExecutor.Execute<Message>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_MESSAGE_BY_UUID(uuid), this._modelMapper.MapToMessage);
+            List<User> recipients = this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_RECIPIENTS_BY_MESSAGE(uuid), this._modelMapper.MapToUsers);
+            List<File> files = this._queryExecutor.Execute<List<File>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_FILES_BY_MESSAGE(uuid), this._modelMapper.MapToFiles);
+            message.recipients = recipients;
+            message.files = files;
+            return message;
         }
         public List<MessageResponseDTO> GetAll()
         {
@@ -139,8 +159,15 @@ namespace MessagingMicroservice.Services.Implementation
 
         private List<Message> FindAll()
         {
-            //todo pronaci u FileMessage fajlove i u recipient primaoce
-            return this._queryExecutor.Execute<List<Message>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_ALL_MESSAGES(), this._modelMapper.MapToMessages);
+            List<Message> messages = this._queryExecutor.Execute<List<Message>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_ALL_MESSAGES(), this._modelMapper.MapToMessages);
+            foreach(var message in messages)
+            {
+                List<User> recipients = this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_RECIPIENTS_BY_MESSAGE(message.uuid), this._modelMapper.MapToUsers);
+                List<File> files = this._queryExecutor.Execute<List<File>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_FILES_BY_MESSAGE(message.uuid), this._modelMapper.MapToFiles);
+                message.recipients = recipients;
+                message.files = files;
+            }
+            return messages;
         }
 
         public MessageResponseDTO Delete(string uuid)

@@ -16,8 +16,7 @@ namespace MessagingMicroservice.Mappers {
                     uuid = Convert.ToString(reader["uuid"]),
                     content = Convert.ToString(reader["content"]),
                     dateTime = Convert.ToDateTime(reader["dateTime"]),
-                    sender =
-                    {
+                    sender = new User(){
                        uuid = Convert.ToString(reader["senderUUID"]),
                        name = Convert.ToString(reader["senderName"]),
                        surname = Convert.ToString(reader["senderSurname"])
@@ -29,7 +28,7 @@ namespace MessagingMicroservice.Mappers {
             return messages;
         }
 
-        public Message MapToMessage(IDataReader reader) {//todo ispraviti da list koristi ovu metodu
+        public Message MapToMessage(IDataReader reader) {
             while (reader.Read()) {
                 return new Message()
                 {
@@ -42,14 +41,13 @@ namespace MessagingMicroservice.Mappers {
                        name = Convert.ToString(reader["senderName"]),
                        surname = Convert.ToString(reader["senderSurname"])
                     }
-
                 };
             }
 
             return null;
         }
 
-
+   
         public List<Recipient> MapToRecipients(IDataReader reader)
         {
             List<Recipient> recipients = new List<Recipient>();
@@ -68,6 +66,22 @@ namespace MessagingMicroservice.Mappers {
             }
 
             return recipients;
+        }
+
+        public List<User> MapToUsers(IDataReader reader)
+        {
+            List<User> users = new List<User>();
+            while (reader.Read())
+            {
+                users.Add(new User()
+                {
+                    uuid = Convert.ToString(reader["recipientUUID"]),
+                    name = Convert.ToString(reader["recipientName"]),
+                    surname = Convert.ToString(reader["recipientSurname"])
+                });
+            }
+
+            return users;
         }
 
         public Recipient MapToRecipient(IDataReader reader)
@@ -104,6 +118,20 @@ namespace MessagingMicroservice.Mappers {
                 };
             }
             return null;
+        }
+
+        public List<File> MapToFiles(IDataReader reader)
+        {
+            List<File> files = new List<File>();
+            while (reader.Read())
+            {
+                files.Add(new File()
+                {
+                    uuid = Convert.ToString(reader["fileUUID"]),
+                    filePath = Convert.ToString(reader["filePath"])
+                });
+            }
+            return files;
         }
     }
 }

@@ -20,9 +20,16 @@ namespace MessagingMicroservice.Controllers
             _messagingService = messagingService;
         }
 
-        [AllowAnonymous]//todo [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet]
         public ActionResult<List<MessageResponseDTO>> HandleGetAllMessages() => Ok(this._messagingService.GetAll());
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpGet]
+        public ActionResult<List<MessageResponseDTO>> HandleGetAllMessagesByRecipients(string recipients)
+        {
+            return Ok(this._messagingService.GetMessagesByRecipents(recipients));
+        }
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpPost]
@@ -30,14 +37,7 @@ namespace MessagingMicroservice.Controllers
            return Ok(this._messagingService.Create(requestDTO));
         }
 
-        [AllowAnonymous]//todo [Authorize(Roles = RoleConsts.ROLE_USER)]
-        [HttpPut]
-        public ActionResult<MessageResponseDTO> HandleUpdateMessage(UpdateMessageRequestDTO requestDTO)
-        {
-            return Ok(this._messagingService.Update(requestDTO));
-        }
-
-        [AllowAnonymous]//todo [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpDelete]
         public ActionResult<MessageResponseDTO> HandleDeleteMessage(string uuid)
         {

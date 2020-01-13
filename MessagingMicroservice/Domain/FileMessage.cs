@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MessagingMicroservice.Domain {
     public class FileMessage : BaseEntity {
-        public string messageUUID { get; set; }//todo Message object
+        public string messageUUID { get; set; }
         public File file { get; set; }
     }
 }
