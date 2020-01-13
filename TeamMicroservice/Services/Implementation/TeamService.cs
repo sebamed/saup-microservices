@@ -84,10 +84,15 @@ namespace TeamMicroservice.Services.Implementation
             return response;
         }
 
+        public Team FindOneByNameAndCourse(string name, string courseUUID)
+        {
+            return this._queryExecutor.Execute<Team>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_TEAM_BY_NAME_AND_COURSE(name,courseUUID), this._modelMapper.MapToTeam);
+        }
+
         public TeamResponseDTO Create(CreateTeamRequestDTO requestDTO)
         {
-            if (this.FindByName(requestDTO.name) != null)
-                throw new EntityAlreadyExistsException($"Team with name {requestDTO.name} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            if (this.FindOneByNameAndCourse(requestDTO.name,requestDTO.courseUUID) != null)
+                throw new EntityAlreadyExistsException($"Team with name {requestDTO.name} already exists in Course {requestDTO.courseUUID}!", GeneralConsts.MICROSERVICE_NAME);
 
             Team team = new Team()
             {

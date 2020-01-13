@@ -45,7 +45,10 @@ namespace DepartmentMicroservice.Services.Implementation {
             return this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_UUID(uuid), this._modelMapper.MapToDepartment);
         }
         public DepartmentResponseDTO GetOneByUuid(string uuid) {
-            return this._autoMapper.Map<DepartmentResponseDTO>(this.FindOneByUUID(uuid));
+            var response = this._autoMapper.Map<DepartmentResponseDTO>(this.FindOneByUUID(uuid));
+            if (response == null)
+                throw new EntityNotFoundException($"Department with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            return response;
         }
         public List<Department> FindByFacultyName(string facultyName) {
             return this._queryExecutor.Execute<List<Department>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_FACULTY_NAME(facultyName), this._modelMapper.MapToDepartments);
@@ -53,10 +56,17 @@ namespace DepartmentMicroservice.Services.Implementation {
         public List<DepartmentResponseDTO> GetByFacultyName(string facultyName) {
             return this._autoMapper.Map<List<DepartmentResponseDTO>>(this.FindByFacultyName(facultyName));
         }
+        public Department FindOneByNameAndfaculty(string name, string facultyUUID)
+        {
+            return this._queryExecutor.Execute<Department>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_DEPARTMENT_BY_NAME_AND_FACULTY(name,facultyUUID), this._modelMapper.MapToDepartment);
+        }
 
         public DepartmentResponseDTO Create(CreateDepartmentRequestDTO requestDTO) {
             if (this._facultyService.GetOneByUuid(requestDTO.facultyUUID) == null)
-                throw new EntityNotFoundException($"Faculty with uuid {requestDTO.facultyUUID} doesn't exists!", GeneralConsts.MICROSERVICE_NAME);
+                throw new EntityNotFoundException($"Faculty with uuid {requestDTO.facultyUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
+            if (this.FindOneByNameAndfaculty(requestDTO.name,requestDTO.facultyUUID) != null)
+                throw new EntityNotFoundException($"Department with name {requestDTO.name} with facultyUUID {requestDTO.facultyUUID} already exists!", GeneralConsts.MICROSERVICE_NAME);
 
             Faculty faculty = this._autoMapper.Map<Faculty>(this._facultyService.GetOneByUuid(requestDTO.facultyUUID)); 
 
