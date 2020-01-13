@@ -96,7 +96,6 @@ namespace SectionMicroservice.Services.Implementation
             MaterialResponseDTO response = this._autoMapper.Map<MaterialResponseDTO>(material);
             if(response == null)
                 throw new EntityNotFoundException($"Section with uuid: {requestDTO.sectionUUID} and file with uuid: {requestDTO.fileUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            //response.file = this._httpClientService.SendRequest<FileDTO>(HttpMethod.Get, "http://localhost:40003/api/files/" + response.file.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             response.section = this._sectionService.GetOneByUuid(requestDTO.sectionUUID);
             return response;
         }
