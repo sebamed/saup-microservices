@@ -123,13 +123,38 @@ namespace LectureMaterialMicroservice.Mappers
                     },
                     file = new File()
                     {
-                        uuid = Convert.ToString(reader["fileUUID"])
+                        uuid = Convert.ToString(reader["fileUUID"]),
+                        filePath = Convert.ToString(reader["filePath"]),
                     },
                     visible = Convert.ToInt32(reader["visible"])
                 };
             }
 
             return null;
+        }
+
+        public List<Material> MapToMaterials(IDataReader reader)
+        {
+            List<Material> materials = new List<Material>();
+
+            while (reader.Read())
+            {
+                materials.Add(new Material()
+                {
+                    section = new Section()
+                    {
+                        uuid = Convert.ToString(reader["sectionUUID"])
+                    },
+                    file = new File()
+                    {
+                        uuid = Convert.ToString(reader["fileUUID"]),
+                        filePath = Convert.ToString(reader["filePath"]),
+                    },
+                    visible = Convert.ToInt32(reader["visible"])
+                });
+            }
+
+            return materials;
         }
 
     }

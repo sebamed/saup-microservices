@@ -2,6 +2,7 @@
 using Commons.Consts;
 using Commons.DatabaseUtils;
 using Commons.Domain;
+using Commons.ExceptionHandling.Exceptions;
 using Commons.HttpClientRequests;
 using LectureMaterialMicroservice.Consts;
 using LectureMaterialMicroservice.Mappers;
@@ -47,8 +48,15 @@ namespace SectionMicroservice.Services.Implementation
             SectionArchiveResponseDTO response = this._autoMapper.Map<SectionArchiveResponseDTO>(this.FindLatestVersionBySectionUUID(sectionUUID));
             if (response == null)
                 return response;
+            
+            UserDTO moderator;
+            try {
+                moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"Moderator with uuid {response.moderator.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
 
-            response.moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.moderator = moderator;
 
             return response;
         }
