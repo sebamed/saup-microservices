@@ -62,12 +62,10 @@ namespace TeamMicroservice.Services.Implementation
             if (this._teamService.GetOneByUuid(requestDTO.teamUUID) == null)
                 throw new EntityAlreadyExistsException($"Team with uuid {requestDTO.teamUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
-            StudentDTO student;
-            try {
-                student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + requestDTO.studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            } catch {
+            StudentDTO student = this._httpClientService.SendRequest<StudentDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + requestDTO.studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if(student == null)
                 throw new EntityAlreadyExistsException($"Student with uuid {requestDTO.studentUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-            }
+
             StudentTeam studentTeam = new StudentTeam() {
                 team = new Team()
                 {
