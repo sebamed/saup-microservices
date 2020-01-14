@@ -25,7 +25,7 @@ namespace MessagingMicroservice.Controllers
         public ActionResult<List<MessageResponseDTO>> HandleGetAllMessages() => Ok(this._messagingService.GetAll());
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
-        [HttpGet]
+        [HttpGet(RouteConsts.ROUTE_MESSAGING_BY_RECIPIENT)]
         public ActionResult<List<MessageResponseDTO>> HandleGetAllMessagesByRecipients(string recipients)
         {
             return Ok(this._messagingService.GetMessagesByRecipents(recipients));

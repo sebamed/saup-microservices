@@ -160,6 +160,9 @@ namespace MessagingMicroservice.Services.Implementation
         private List<Message> FindAll()
         {
             List<Message> messages = this._queryExecutor.Execute<List<Message>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_ALL_MESSAGES(), this._modelMapper.MapToMessages);
+
+            if (messages == null) messages = new List<Message>();
+
             foreach(var message in messages)
             {
                 List<User> recipients = this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_RECIPIENTS_BY_MESSAGE(message.uuid), this._modelMapper.MapToUsers);

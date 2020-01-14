@@ -67,7 +67,7 @@ namespace MessagingMicroservice.Consts
                 $") " +
                 $"and m.senderUUID = '{sender}' " +
                 $"and recipientUUID in ({inStr}) " +
-                $"group by id, uuid, content, senderName, senderUUID, senderSurname, dateTime" +
+                $"group by id, uuid, content, senderName, senderUUID, senderSurname, dateTime " +
                 $"order by dateTime asc";
         }
 
