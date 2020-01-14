@@ -1,4 +1,5 @@
 ﻿
+using Commons.Consts;
 using Commons.Domain;
 using CourseMicroservice.DTO.Course;
 using CourseMicroservice.Localization;
@@ -20,7 +21,7 @@ namespace CourseMicroservice.Controllers
             this._courseTeacherService = courseTeacherService;
         }
         //GET METHODS
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet]
         public ActionResult<List<CourseTeacherResponseDTO>> HandleGetAllActiveTeachersOnCourse(string uuid)
         {
@@ -29,14 +30,14 @@ namespace CourseMicroservice.Controllers
 
         //DELETE METHODS
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpDelete(RouteConsts.ROUTE_COURSE_TEACHERS_GET_ONE_BY_UUID)]
         public ActionResult<CourseTeacherResponseDTO> HandleDeleteTeacherOnCourse(string uuid, string teacherUuid)
         {
             return Ok(this._courseTeacherService.DeleteTeacherOnCourse(uuid, teacherUuid));
         }
         //POST METHODS
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPost]
         public ActionResult<CourseTeacherResponseDTO> HandleCreateTeacherOnCourse(string uuid, CreateCourseTeacherRequestDTO request)
         {

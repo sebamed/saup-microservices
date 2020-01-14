@@ -1,4 +1,5 @@
 ﻿
+using Commons.Consts;
 using Commons.Domain;
 using CourseMicroservice.DTO.Course;
 using CourseMicroservice.Localization;
@@ -20,27 +21,26 @@ namespace CourseMicroservice.Controllers
             this._courseService = courseService;
         }
         //GET METHODS
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet]
         public ActionResult<List<CourseMultipleResponseDTO>> HandleGetAllCourses()
         {
             return Ok(this._courseService.GetAll());
         }
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_COURSE_GET_ONE_BY_UUID)]
         public ActionResult<CourseResponseDTO>HandleGetOneCourseByUuid(string uuid)
         {
             return Ok(this._courseService.GetOneByUuid(uuid));
         }
-        //POST METHODS
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPost]
         public ActionResult<CourseResponseDTO>HandleCreateCourse(CreateCourseRequestDTO requestDTO)
         {
             return Ok(this._courseService.Create(requestDTO));
         }
         //PUT METHODS
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPut]
         public ActionResult<CourseResponseDTO>HandleUpdateCourse(UpdateCourseRequestDTO requestDTO)
         {
