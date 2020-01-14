@@ -14,6 +14,9 @@ using SectionMicroservice.Services;
 using SectionMicroservice.DTO.SectionArchive.Request;
 using Commons.Domain;
 using Microsoft.AspNetCore.Http;
+using SectionMicroservice.DTO.External;
+using Commons.HttpClientRequests;
+using System.Net.Http;
 
 namespace LectureMaterialMicroservice.Services.Implementation {
     public class SectionService : ISectionService {
@@ -24,14 +27,17 @@ namespace LectureMaterialMicroservice.Services.Implementation {
         private readonly SqlCommands _sqlCommands;
         private readonly ISectionArchiveService _archiveService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpClientService _httpClientService;
 
-        public SectionService(QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, ISectionArchiveService archiveService, IHttpContextAccessor httpContextAccessor) {
+        public SectionService(HttpClientService httpClientService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, ISectionArchiveService archiveService, IHttpContextAccessor httpContextAccessor) {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._autoMapper = autoMapper;
             this._sqlCommands = sqlCommands;
             this._archiveService = archiveService;
             this._httpContextAccessor = httpContextAccessor;
+            this._httpClientService = httpClientService;
+
         }
 
         public List<MultipleSectionResponseDTO> GetAll() {
@@ -85,6 +91,14 @@ namespace LectureMaterialMicroservice.Services.Implementation {
             if (this.FindOneByNameAndCourse(requestDTO.name, requestDTO.courseUUID) != null)
                 throw new EntityNotFoundException($"Section with name {requestDTO.name} already exists on course with uuid: {requestDTO.courseUUID}!", GeneralConsts.MICROSERVICE_NAME);
 
+            CourseDTO course;
+
+            try {
+                course = this._httpClientService.SendRequest<CourseDTO>(HttpMethod.Get, "http://localhost:40005/api/courses/" + requestDTO.courseUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityNotFoundException($"Course with uuid {requestDTO.courseUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
             Section section = new Section()
             {
                 name = requestDTO.name,
@@ -110,8 +124,12 @@ namespace LectureMaterialMicroservice.Services.Implementation {
             };
 
             section = this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_SECTION(section), this._modelMapper.MapToSection);
+           
+            SectionResponseDTO response = this._autoMapper.Map<SectionResponseDTO>(section);
+            response.course = course;
+
             _ = this._archiveService.Create(archive);
-            return this._autoMapper.Map<SectionResponseDTO>(section);
+            return response;
         }
 
         public SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO)
