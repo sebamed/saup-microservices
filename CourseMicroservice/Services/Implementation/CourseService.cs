@@ -22,8 +22,9 @@ namespace CourseMicroservice.Services.Implementation {
         private readonly ModelMapper _modelMapper;
         private readonly HttpClientService _httpClientService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICourseArchivesService _courseArchiveService;
 
-        public CourseService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
+        public CourseService(ICourseArchivesService courseArchiveService, QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
         {
             this._autoMapper = autoMapper;
             this._queryExecutor = queryExecutor;
@@ -31,6 +32,7 @@ namespace CourseMicroservice.Services.Implementation {
             this._modelMapper = modelMapper;
             this._httpClientService = httpClientService;
             this._httpContextAccessor = httpContextAccessor;
+            this._courseArchiveService = courseArchiveService;
         }
 
         //HELPER METHODS
@@ -79,7 +81,7 @@ namespace CourseMicroservice.Services.Implementation {
                 name = requestDTO.name,
                 description = requestDTO.description,
                 active = requestDTO.active,
-                maxStudents = requestDTO.maxtudents,
+                maxStudents = requestDTO.maxStudents,
                 minStudents = requestDTO.minStudents,
                 creationDate = requestDTO.creationDate,
                 subject = new Subject()
@@ -89,8 +91,8 @@ namespace CourseMicroservice.Services.Implementation {
             };
 
             this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_COURSE(course), this._modelMapper.MapToCourseAfterInsert);
-            
-            CourseArchive archive = new CourseArchive()
+
+            CreateCourseArchiveRequestDTO archive = new CreateCourseArchiveRequestDTO()
             {
                 courseUUID = course.uuid,
                 name = course.name,
@@ -99,18 +101,13 @@ namespace CourseMicroservice.Services.Implementation {
                 maxStudents = course.maxStudents,
                 minStudents = course.minStudents,
                 creationDate = course.creationDate,
-                subject = new Subject()
-                {
-                    uuid = course.subject.uuid
-                },
+                subjectUUID = subject.uuid,
                 changeDate = DateTime.Now,
-                moderator = new Teacher()
-                {
-                    uuid = new UserPrincipal(_httpContextAccessor.HttpContext).uuid
-                }
+                moderatorUUID = new UserPrincipal(_httpContextAccessor.HttpContext).uuid
             };
 
             CreateCourseArchiveRequestDTO req = this._autoMapper.Map<CreateCourseArchiveRequestDTO>(archive);
+            _ = this._courseArchiveService.CreateCourseArchive(archive);
             CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
             response.subject = subject;
             return response;
@@ -121,6 +118,10 @@ namespace CourseMicroservice.Services.Implementation {
         {
             //provera da li postoji kurs
             Course oldCourse = this.FindOneByUuidOrThrow(requestDTO.uuid);
+            SubjectResponseDTO subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + requestDTO.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if(subject == null)
+                throw new EntityNotFoundException("Subject with uuid " + requestDTO.subjectUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
+
             //update u tabeli kurs
             Course course = new Course()
             {
@@ -128,7 +129,7 @@ namespace CourseMicroservice.Services.Implementation {
                 name = requestDTO.name,
                 description = requestDTO.description,
                 active = requestDTO.active,
-                maxStudents = requestDTO.maxtudents,
+                maxStudents = requestDTO.maxStudents,
                 minStudents = requestDTO.minStudents,
                 creationDate = requestDTO.creationDate,
                 subject = new Subject()
@@ -138,7 +139,7 @@ namespace CourseMicroservice.Services.Implementation {
             };
             this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_COURSE(course), this._modelMapper.MapToCourseAfterInsert);
             //insert u tabeli arhiva
-            CourseArchive archive = new CourseArchive()
+            CreateCourseArchiveRequestDTO archive = new CreateCourseArchiveRequestDTO()
             {
                 courseUUID = course.uuid,
                 name = course.name,
@@ -147,20 +148,14 @@ namespace CourseMicroservice.Services.Implementation {
                 maxStudents = course.maxStudents,
                 minStudents = course.minStudents,
                 creationDate = course.creationDate,
-                subject = new Subject()
-                {
-                    uuid = course.subject.uuid
-                },
+                subjectUUID = subject.uuid,
                 changeDate = DateTime.Now,
-                moderator = new Teacher()
-                {
-                    uuid = new UserPrincipal(_httpContextAccessor.HttpContext).uuid
-                }
+                moderatorUUID = new UserPrincipal(_httpContextAccessor.HttpContext).uuid
             };
 
-            CreateCourseArchiveRequestDTO req = this._autoMapper.Map<CreateCourseArchiveRequestDTO>(archive);
+            _ = this._courseArchiveService.CreateCourseArchive(archive);
             CourseResponseDTO response = this._autoMapper.Map<CourseResponseDTO>(course);
-            response.subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + response.subject.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.subject = subject;
             return response;
         }
 

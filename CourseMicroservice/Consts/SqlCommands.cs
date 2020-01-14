@@ -79,8 +79,9 @@ namespace CourseMicroservice.Consts {
         }
         public string CREATE_COURSE_ARCHIVE(CourseArchive courseArchive)
         {
-            return $"insert into SAUP_COURSE.CourseArchive(courseUUID, name, description, active, maxStudents, minStudents, creationDate, subjectUUID, moderatorUUID, changeDate) output inserted.* " +
-           $"values('{courseArchive.courseUUID}', '{courseArchive.name}', '{courseArchive.description}', {boolToInt(courseArchive.active)}, {courseArchive.maxStudents}, {courseArchive.minStudents}, '{courseArchive.creationDate}', '{courseArchive.subject.uuid}', '{courseArchive.moderator.uuid}', '{courseArchive.changeDate}'); ";
+            return $"insert into SAUP_COURSE.CourseArchive(courseUUID, name, description, active, maxStudents, minStudents, creationDate, subjectUUID, moderatorUUID, changeDate) " +
+           $"values('{courseArchive.courseUUID}', '{courseArchive.name}', '{courseArchive.description}', {boolToInt(courseArchive.active)}, {courseArchive.maxStudents}, " +
+           $"{courseArchive.minStudents}, '{courseArchive.creationDate}', '{courseArchive.subject.uuid}', '{courseArchive.moderator.uuid}', '{courseArchive.changeDate}'); ";
         }
 
 

@@ -21,9 +21,8 @@ namespace CourseMicroservice.Services.Implementation {
         private readonly ModelMapper _modelMapper;
         private readonly HttpClientService _httpClientService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ICourseService _courseService;
 
-        public CourseArchivesService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor, ICourseService courseService)
+        public CourseArchivesService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
         {
             this._autoMapper = autoMapper;
             this._queryExecutor = queryExecutor;
@@ -31,12 +30,19 @@ namespace CourseMicroservice.Services.Implementation {
             this._modelMapper = modelMapper;
             this._httpClientService = httpClientService;
             this._httpContextAccessor = httpContextAccessor;
-            this._courseService = courseService;
         }
 
         public CourseArchiveResponseDTO CreateCourseArchive(CreateCourseArchiveRequestDTO request)
         {
             CourseArchive archive = this._autoMapper.Map<CourseArchive>(request);
+            archive.subject = new Subject()
+            {
+                uuid = request.subjectUUID
+            };
+            archive.moderator = new Teacher()
+            {
+                uuid = request.moderatorUUID
+            };
             archive = this._queryExecutor.Execute<CourseArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_COURSE_ARCHIVE(archive), this._modelMapper.MapToCourseArchive);
             return this._autoMapper.Map<CourseArchiveResponseDTO>(archive);
         }
@@ -44,8 +50,6 @@ namespace CourseMicroservice.Services.Implementation {
         //GET METHODS
         public List<CourseArchiveResponseDTO> GetAllCourseArchives(string uuid)
         {
-            //provera da li postoji kurs
-            this._courseService.GetOneByUuid(uuid);
             List<CourseArchive> archives = this._queryExecutor.Execute<List<CourseArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_ARCHIVES(uuid), this._modelMapper.MapToCourseArchives);
             return this._autoMapper.Map<List<CourseArchiveResponseDTO>>(archives);
         }

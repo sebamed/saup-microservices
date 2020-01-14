@@ -11,7 +11,7 @@ namespace CourseMicroservice.DTO.Course {
         [Required]
         public bool active { get; set; }
         [Required]
-        public int maxtudents { get; set; }
+        public int maxStudents { get; set; }
         [Required]
         public int minStudents { get; set; }
         [Required]

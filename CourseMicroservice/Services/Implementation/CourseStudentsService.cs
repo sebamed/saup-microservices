@@ -112,6 +112,7 @@ namespace CourseMicroservice.Services.Implementation {
             };
             newCourseStudent = this._queryExecutor.Execute<CourseStudent>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_STUDENT_ON_COURSE(newCourseStudent), this._modelMapper.MapToCourseStudent);
             CourseStudentResponseDTO response = this._autoMapper.Map<CourseStudentResponseDTO>(newCourseStudent);
+            response.course = this._courseService.GetOneByUuid(response.course.uuid);
             return connectWithUser(response);
         }
 
@@ -132,6 +133,7 @@ namespace CourseMicroservice.Services.Implementation {
             oldStudent.beginDate = request.beginDate;
             oldStudent = this._queryExecutor.Execute<CourseStudent>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_STUDENT_ON_COURSE(oldStudent), this._modelMapper.MapToCourseStudent);
             CourseStudentResponseDTO response = this._autoMapper.Map<CourseStudentResponseDTO>(oldStudent);
+            response.course = this._courseService.GetOneByUuid(response.course.uuid);
             return connectWithUser(response);
         }
 
