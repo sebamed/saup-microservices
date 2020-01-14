@@ -45,7 +45,7 @@ namespace UserMicroservice.Services.Implementation {
                 name = requestDTO.name,
                 surname = requestDTO.surname,
                 password = requestDTO.password,
-                roleName = RoleConsts.ROLE_TEACHER
+                roleName = RoleConsts.ROLE_TEACHER_ONLY
             });
 
             Teacher teacher = new Teacher() {
