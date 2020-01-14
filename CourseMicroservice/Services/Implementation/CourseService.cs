@@ -82,7 +82,10 @@ namespace CourseMicroservice.Services.Implementation {
                 maxStudents = requestDTO.maxtudents,
                 minStudents = requestDTO.minStudents,
                 creationDate = requestDTO.creationDate,
-                subjectUUID = requestDTO.subjectUUID
+                subject = new Subject()
+                {
+                    uuid = requestDTO.subjectUUID
+                }
             };
 
             this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_COURSE(course), this._modelMapper.MapToCourseAfterInsert);
@@ -96,9 +99,15 @@ namespace CourseMicroservice.Services.Implementation {
                 maxStudents = course.maxStudents,
                 minStudents = course.minStudents,
                 creationDate = course.creationDate,
-                subjectUUID = course.subjectUUID,
+                subject = new Subject()
+                {
+                    uuid = course.subject.uuid
+                },
                 changeDate = DateTime.Now,
-                moderatorUUID = "test"
+                moderator = new Teacher()
+                {
+                    uuid = new UserPrincipal(_httpContextAccessor.HttpContext).uuid
+                }
             };
 
             CreateCourseArchiveRequestDTO req = this._autoMapper.Map<CreateCourseArchiveRequestDTO>(archive);
@@ -122,7 +131,10 @@ namespace CourseMicroservice.Services.Implementation {
                 maxStudents = requestDTO.maxtudents,
                 minStudents = requestDTO.minStudents,
                 creationDate = requestDTO.creationDate,
-                subjectUUID = requestDTO.subjectUUID
+                subject = new Subject()
+                {
+                    uuid = requestDTO.subjectUUID
+                }
             };
             this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_COURSE(course), this._modelMapper.MapToCourseAfterInsert);
             //insert u tabeli arhiva
@@ -135,9 +147,15 @@ namespace CourseMicroservice.Services.Implementation {
                 maxStudents = course.maxStudents,
                 minStudents = course.minStudents,
                 creationDate = course.creationDate,
-                subjectUUID = course.subjectUUID,
+                subject = new Subject()
+                {
+                    uuid = course.subject.uuid
+                },
                 changeDate = DateTime.Now,
-                moderatorUUID = new UserPrincipal(_httpContextAccessor.HttpContext).uuid
+                moderator = new Teacher()
+                {
+                    uuid = new UserPrincipal(_httpContextAccessor.HttpContext).uuid
+                }
             };
 
             CreateCourseArchiveRequestDTO req = this._autoMapper.Map<CreateCourseArchiveRequestDTO>(archive);

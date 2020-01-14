@@ -43,6 +43,11 @@ namespace CourseMicroservice.Services.Implementation {
             return courseStudent;
         }
 
+        public CourseStudent FindStudentOnCourse(string courseUuid, string studentUuid)
+        {
+            return this._queryExecutor.Execute<CourseStudent>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_COURSE_STUDENT(courseUuid, studentUuid), this._modelMapper.MapToCourseStudent);
+        }
+
         public CourseStudentResponseDTO connectWithUser(CourseStudentResponseDTO response) {
             StudentResponseDTO student = this._httpClientService.SendRequest<StudentResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + response.student.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             if (student == null)
@@ -71,14 +76,21 @@ namespace CourseMicroservice.Services.Implementation {
                 throw new EntityNotFoundException("Student with uuid " + request.studentUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
 
             //provera da li vec postoji student na tom kursu
-            CourseStudent existingCourseStudent = this.FindStudentOnCourseOrThrow(request.courseUUID, request.studentUUID);
+            CourseStudent existingCourseStudent = this.FindStudentOnCourse(request.courseUUID, request.studentUUID);
             if(existingCourseStudent != null)
             {
                 if (existingCourseStudent.activeStudent == false)
                 {
                     CourseStudent updatedStudent = this._autoMapper.Map<CourseStudent>(request);
                     updatedStudent.activeStudent = true;
-                    updatedStudent.courseUUID = request.courseUUID;
+                    updatedStudent.course = new Course()
+                    {
+                        uuid = request.courseUUID
+                    };
+                    updatedStudent.student = new Student()
+                    {
+                        uuid = request.studentUUID
+                    };
                     updatedStudent = this._queryExecutor.Execute<CourseStudent>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_STUDENT_ON_COURSE(updatedStudent), this._modelMapper.MapToCourseStudent);
                     CourseStudentResponseDTO updatedResponse = this._autoMapper.Map<CourseStudentResponseDTO>(updatedStudent);
                     return connectWithUser(updatedResponse);
@@ -90,7 +102,14 @@ namespace CourseMicroservice.Services.Implementation {
             }
             CourseStudent newCourseStudent = this._autoMapper.Map<CourseStudent>(request);
             newCourseStudent.activeStudent = true;
-            newCourseStudent.courseUUID = request.courseUUID;
+            newCourseStudent.course = new Course()
+            {
+                uuid = request.courseUUID
+            };
+            newCourseStudent.student = new Student()
+            {
+                uuid = request.studentUUID
+            };
             newCourseStudent = this._queryExecutor.Execute<CourseStudent>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_STUDENT_ON_COURSE(newCourseStudent), this._modelMapper.MapToCourseStudent);
             CourseStudentResponseDTO response = this._autoMapper.Map<CourseStudentResponseDTO>(newCourseStudent);
             return connectWithUser(response);
@@ -101,6 +120,14 @@ namespace CourseMicroservice.Services.Implementation {
             //provera da li postojji student na kursu
             CourseStudent oldStudent = FindStudentOnCourseOrThrow(request.courseUUID, request.studentUUID);
             oldStudent.currentPoints = request.currentPoints;
+            oldStudent.course = new Course()
+            {
+                uuid = request.courseUUID
+            };
+            oldStudent.student = new Student()
+            {
+                uuid = request.studentUUID
+            };
             oldStudent.finalMark = request.finalMark;
             oldStudent.beginDate = request.beginDate;
             oldStudent = this._queryExecutor.Execute<CourseStudent>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_STUDENT_ON_COURSE(oldStudent), this._modelMapper.MapToCourseStudent);

@@ -13,8 +13,8 @@ namespace CourseMicroservice.Domain {
         public int maxStudents { get; set; }
         public int minStudents { get; set; }
         public DateTime creationDate { get; set; }
-        public string subjectUUID { get; set; }
-        public string moderatorUUID { get; set; }
+        public Subject subject { get; set; }
+        public Teacher moderator { get; set; }
         public DateTime changeDate { get; set; }
         public int version { get; set; }
 

@@ -26,6 +26,10 @@ namespace CourseMicroservice.Mappers {
             CreateMap<CourseArchive, CourseArchiveResponseDTO>();
             CreateMap<CreateCourseArchiveRequestDTO, CourseArchive>();
             CreateMap<CourseArchive, CreateCourseArchiveRequestDTO>();
+
+            CreateMap<Teacher, TeacherResponseDTO>();
+            CreateMap<Student, StudentResponseDTO>();
+            CreateMap<Subject, SubjectResponseDTO>();
         }
     }
 }

@@ -20,29 +20,37 @@ namespace CourseMicroservice.Controllers
         {
             this._courseTeacherService = courseTeacherService;
         }
+
         //GET METHODS
-        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [Route(RouteConsts.ROUTE_COURSE_TEACHERS_BY_UUID)]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet]
         public ActionResult<List<CourseTeacherResponseDTO>> HandleGetAllActiveTeachersOnCourse(string uuid)
         {
             return Ok(this._courseTeacherService.GetAllActiveTeachersOnCourse(uuid));
         }
-
-        //DELETE METHODS
+        
+        //POST METHODS
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
+        [HttpPost]
+        public ActionResult<CourseTeacherResponseDTO> HandleCreateTeacherOnCourse(CreateCourseTeacherRequestDTO request)
+        {
+            return Ok(this._courseTeacherService.CreateTeacherOnCourse(request));
+        }
 
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
-        [HttpDelete(RouteConsts.ROUTE_COURSE_TEACHERS_GET_ONE_BY_UUID)]
+        [HttpPut]
+        public ActionResult<CourseTeacherResponseDTO> HandleUpdateTeacherOnCourse(UpdateCourseTeacherRequestDTO request)
+        {
+            return Ok(this._courseTeacherService.UpdateTeacherOnCourse(request));
+        }
+
+        //DELETE METHODS
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
+        [HttpDelete]
         public ActionResult<CourseTeacherResponseDTO> HandleDeleteTeacherOnCourse(string uuid, string teacherUuid)
         {
             return Ok(this._courseTeacherService.DeleteTeacherOnCourse(uuid, teacherUuid));
         }
-        //POST METHODS
-        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
-        [HttpPost]
-        public ActionResult<CourseTeacherResponseDTO> HandleCreateTeacherOnCourse(string uuid, CreateCourseTeacherRequestDTO request)
-        {
-            return Ok(this._courseTeacherService.CreateTeacherOnCourse(uuid, request));
-        }
-
     }
 }

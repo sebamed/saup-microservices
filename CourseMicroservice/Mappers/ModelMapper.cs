@@ -25,7 +25,10 @@ namespace CourseMicroservice.Mappers
                     maxStudents = Convert.ToInt32(reader["maxStudents"]),
                     minStudents = Convert.ToInt32(reader["minStudents"]),
                     creationDate = Convert.ToDateTime(reader["creationDate"]),
-                    subjectUUID = Convert.ToString(reader["subjectUUID"])
+                    subject = new Subject()
+                    {
+                        uuid = Convert.ToString(reader["subjectUUID"])
+                    }
                 });
             }
             return courses;
@@ -45,13 +48,16 @@ namespace CourseMicroservice.Mappers
                     maxStudents = Convert.ToInt32(reader["maxStudents"]),
                     minStudents = Convert.ToInt32(reader["minStudents"]),
                     creationDate = Convert.ToDateTime(reader["creationDate"]),
-                    subjectUUID = Convert.ToString(reader["subjectUUID"])
+                    subject = new Subject()
+                    {
+                        uuid = Convert.ToString(reader["subjectUUID"])
+                    }
                 };
             }
             return null;
         }
 
-        internal CourseArchive MapToCourseArchive(IDataReader reader)
+        public CourseArchive MapToCourseArchive(IDataReader reader)
         {
             reader.Read();
             return new CourseArchive()
@@ -62,8 +68,14 @@ namespace CourseMicroservice.Mappers
                 maxStudents = Convert.ToInt32(reader["maxStudents"]),
                 minStudents = Convert.ToInt32(reader["minStudents"]),
                 creationDate = Convert.ToDateTime(reader["creationDate"]),
-                subjectUUID = Convert.ToString(reader["subjectUUID"]),
-                moderatorUUID = Convert.ToString(reader["moderatorUUID"]),
+                subject = new Subject()
+                {
+                    uuid = Convert.ToString(reader["subjectUUID"])
+                },
+                moderator = new Teacher()
+                {
+                    uuid = Convert.ToString(reader["moderatorUUID"])
+                },
                 changeDate = Convert.ToDateTime(reader["changeDate"]),
                 version = Convert.ToInt32(reader["version"]),
                 courseUUID = Convert.ToString(reader["courseUUID"])
@@ -83,11 +95,12 @@ namespace CourseMicroservice.Mappers
                 maxStudents = Convert.ToInt32(reader["maxStudents"]),
                 minStudents = Convert.ToInt32(reader["minStudents"]),
                 creationDate = Convert.ToDateTime(reader["creationDate"]),
-                subjectUUID = Convert.ToString(reader["subjectUUID"])
+                subject = new Subject()
+                {
+                    uuid = Convert.ToString(reader["subjectUUID"])
+                }
             };
         }
-
-
 
         internal List<CourseArchive> MapToCourseArchives(IDataReader reader)
         {
@@ -103,10 +116,17 @@ namespace CourseMicroservice.Mappers
                     maxStudents = Convert.ToInt32(reader["maxStudents"]),
                     minStudents = Convert.ToInt32(reader["minStudents"]),
                     creationDate = Convert.ToDateTime(reader["creationDate"]),
-                    subjectUUID = Convert.ToString(reader["subjectUUID"]),
-                    moderatorUUID = Convert.ToString(reader["moderatorUUID"]),
+                    subject = new Subject()
+                    {
+                        uuid = Convert.ToString(reader["subjectUUID"])
+                    },
+                    moderator = new Teacher()
+                    {
+                        uuid = Convert.ToString(reader["moderatorUUID"])
+                    },
                     changeDate = Convert.ToDateTime(reader["changeDate"]),
-                    version = Convert.ToInt32(reader["version"])
+                    version = Convert.ToInt32(reader["version"]),
+                    courseUUID = Convert.ToString(reader["courseUUID"])
                 });
             }
             return archives;
@@ -120,8 +140,14 @@ namespace CourseMicroservice.Mappers
             {
                 students.Add(new CourseStudent()
                 {
-                    studentUUID = Convert.ToString(reader["studentUUID"]),
-                    courseUUID = Convert.ToString(reader["courseUUID"]),
+                    student = new Student()
+                    {
+                        uuid = Convert.ToString(reader["studentUUID"])
+                    },
+                    course = new Course()
+                    {
+                        uuid = Convert.ToString(reader["courseUUID"])
+                    },
                     activeStudent = Convert.ToBoolean(reader["activeStudent"]),
                     currentPoints = (float)Convert.ToDouble(reader["currentPoints"]),
                     finalMark = Convert.ToInt32(reader["finalMark"]),
@@ -135,8 +161,14 @@ namespace CourseMicroservice.Mappers
             reader.Read();
             return new CourseStudent()
             {
-                studentUUID = Convert.ToString(reader["studentUUID"]),
-                courseUUID = Convert.ToString(reader["courseUUID"]),
+                student = new Student()
+                {
+                    uuid = Convert.ToString(reader["studentUUID"])
+                },
+                course = new Course()
+                {
+                    uuid = Convert.ToString(reader["courseUUID"])
+                },
                 activeStudent = Convert.ToBoolean(reader["activeStudent"]),
                 currentPoints = (float)Convert.ToDouble(reader["currentPoints"]),
                 finalMark = Convert.ToInt32(reader["finalMark"]),
@@ -152,7 +184,14 @@ namespace CourseMicroservice.Mappers
             {
                 teachers.Add(new CourseTeacher()
                 {
-                    teacherUUID = Convert.ToString(reader["teacherUUID"]),
+                    teacher = new Teacher()
+                    {
+                        uuid = Convert.ToString(reader["teacherUUID"])
+                    },
+                    course = new Course()
+                    {
+                        uuid = Convert.ToString(reader["courseUUID"])
+                    },
                     activeTeacher = Convert.ToBoolean(reader["activeTeacher"])
                 });
             }
@@ -163,9 +202,15 @@ namespace CourseMicroservice.Mappers
             reader.Read();
             return new CourseTeacher()
             {
-                teacherUUID = Convert.ToString(reader["teacherUUID"]),
+                teacher = new Teacher()
+                {
+                    uuid = Convert.ToString(reader["teacherUUID"])
+                },
+                course = new Course()
+                {
+                    uuid = Convert.ToString(reader["courseUUID"])
+                },
                 activeTeacher = Convert.ToBoolean(reader["activeTeacher"]),
-                courseUUID = Convert.ToString(reader["courseUUID"])
             };
         }
 
@@ -182,7 +227,10 @@ namespace CourseMicroservice.Mappers
                 maxStudents = Convert.ToInt32(reader["maxStudents"]),
                 minStudents = Convert.ToInt32(reader["minStudents"]),
                 creationDate = Convert.ToDateTime(reader["creationDate"]),
-                subjectUUID = Convert.ToString(reader["subjectUUID"])
+                subject = new Subject()
+                {
+                    uuid = Convert.ToString(reader["subjectUUID"])
+                }
             };
         }
     }

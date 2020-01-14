@@ -3,11 +3,8 @@ using System;
 
 namespace CourseMicroservice.DTO.Course {
     public class CourseTeacherResponseDTO {
-        public string teacherUUID { get; set; }
+        public CourseResponseDTO course { get; set; }
+        public TeacherResponseDTO teacher { get; set; }
         public bool activeTeacher { get; set; }
-        public string name { get; set; }
-        public string surname { get; set; }
-        public string email { get; set; }
-
     }
 }

@@ -17,7 +17,7 @@ namespace CourseMicroservice.Consts {
         {
             return $"update SAUP_COURSE.Course " +
             $"set name = '{course.name}', description = '{course.description}', active = {boolToInt(course.active)}, maxStudents = {course.maxStudents}, minStudents = {course.minStudents}, " +
-            $"creationDate = '{course.creationDate}', subjectUUID = '{course.subjectUUID}'" +
+            $"creationDate = '{course.creationDate}', subjectUUID = '{course.subject.uuid}'" +
             $" output inserted.* where uuid = '{course.uuid}';";
         }
         public string DELETE_COURSE(string uuid)
@@ -30,7 +30,7 @@ namespace CourseMicroservice.Consts {
             return $"insert into SAUP_COURSE.Course(uuid, name, description, active, maxStudents, minStudents, creationDate," +
                 $"subjectUUID) output inserted.* " +
                 $"values('{course.uuid}', '{course.name}', '{course.description}', {boolToInt(course.active)}, {course.maxStudents}, {course.minStudents}, '{course.creationDate}'," +
-                $"'{course.subjectUUID}');";
+                $"'{course.subject.uuid}');";
         }
 
         //COURSE TEACHERS
@@ -44,12 +44,12 @@ namespace CourseMicroservice.Consts {
         }
         public string UPDATE_TEACHER_COURSE(CourseTeacher courseTeacher)
         {
-            return $"update SAUP_COURSE.TeacherCourse set activeTeacher = {boolToInt(courseTeacher.activeTeacher)} output inserted.* where teacherUUID = '{courseTeacher.teacherUUID}' and courseUUID = '{courseTeacher.courseUUID}';";
+            return $"update SAUP_COURSE.TeacherCourse set activeTeacher = {boolToInt(courseTeacher.activeTeacher)} output inserted.* where teacherUUID = '{courseTeacher.teacher.uuid}' and courseUUID = '{courseTeacher.course.uuid}';";
         }
         public string CREATE_TEACHER_COURSE(CourseTeacher courseTeacher)
         {
             return $"insert into SAUP_COURSE.TeacherCourse(teacherUUID, courseUUID, activeTeacher) output inserted.* " +
-            $"values('{courseTeacher.teacherUUID}', '{courseTeacher.courseUUID}', {boolToInt(courseTeacher.activeTeacher)} );";
+            $"values('{courseTeacher.teacher.uuid}', '{courseTeacher.course.uuid}', {boolToInt(courseTeacher.activeTeacher)} );";
         }
 
         //COURSE STUDENTS
@@ -64,12 +64,12 @@ namespace CourseMicroservice.Consts {
         public string UPDATE_STUDENT_ON_COURSE(CourseStudent courseStudent)
         {
             return $"update SAUP_COURSE.StudentCourse set activeStudent = {boolToInt(courseStudent.activeStudent)}, beginDate = '{courseStudent.beginDate}', currentPoints = {courseStudent.currentPoints}, finalMark = {courseStudent.finalMark} " +
-            $"output inserted.* where studentUUID = '{courseStudent.studentUUID}' and courseUUID = '{courseStudent.courseUUID}'; ";
+            $"output inserted.* where studentUUID = '{courseStudent.student.uuid}' and courseUUID = '{courseStudent.course.uuid}'; ";
         }
         public string CREATE_STUDENT_ON_COURSE(CourseStudent courseStudent)
         {
             return $"insert into SAUP_COURSE.StudentCourse(studentUUID, courseUUID, activeStudent, beginDate, currentPoints, finalMark) " +
-            $"output inserted.* values('{courseStudent.studentUUID}', '{courseStudent.courseUUID}', {boolToInt(courseStudent.activeStudent)}, '{courseStudent.beginDate}', {courseStudent.currentPoints}, {courseStudent.finalMark}); ";
+            $"output inserted.* values('{courseStudent.student.uuid}', '{courseStudent.course.uuid}', {boolToInt(courseStudent.activeStudent)}, '{courseStudent.beginDate}', {courseStudent.currentPoints}, {courseStudent.finalMark}); ";
         }
 
         //COURSE ARCHIVES
@@ -80,7 +80,7 @@ namespace CourseMicroservice.Consts {
         public string CREATE_COURSE_ARCHIVE(CourseArchive courseArchive)
         {
             return $"insert into SAUP_COURSE.CourseArchive(courseUUID, name, description, active, maxStudents, minStudents, creationDate, subjectUUID, moderatorUUID, changeDate) output inserted.* " +
-           $"values('{courseArchive.courseUUID}', '{courseArchive.name}', '{courseArchive.description}', {boolToInt(courseArchive.active)}, {courseArchive.maxStudents}, {courseArchive.minStudents}, '{courseArchive.creationDate}', '{courseArchive.subjectUUID}', '{courseArchive.moderatorUUID}', '{courseArchive.changeDate}'); ";
+           $"values('{courseArchive.courseUUID}', '{courseArchive.name}', '{courseArchive.description}', {boolToInt(courseArchive.active)}, {courseArchive.maxStudents}, {courseArchive.minStudents}, '{courseArchive.creationDate}', '{courseArchive.subject.uuid}', '{courseArchive.moderator.uuid}', '{courseArchive.changeDate}'); ";
         }
 
 

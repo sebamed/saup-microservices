@@ -9,6 +9,8 @@ namespace CourseMicroservice.Services {
         //DELETE METHODS
         CourseTeacherResponseDTO DeleteTeacherOnCourse(string courseUUID, string teacherUUID);
         //POST METHODS
-        CourseTeacherResponseDTO CreateTeacherOnCourse(string courseUUID, CreateCourseTeacherRequestDTO request);
+        CourseTeacherResponseDTO CreateTeacherOnCourse(CreateCourseTeacherRequestDTO request);
+        //PUT METHODS
+        CourseTeacherResponseDTO UpdateTeacherOnCourse(UpdateCourseTeacherRequestDTO request);
     }
 }

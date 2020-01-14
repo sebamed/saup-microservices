@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace CourseMicroservice.Domain {
     public class CourseStudent {
-        public string studentUUID { get; set; }
-        public string courseUUID { get; set; }
+        public Student student { get; set; }
+        public Course course { get; set; }
         public bool activeStudent { get; set; }
         public DateTime beginDate { get; set; }
         public float currentPoints { get; set; }
