@@ -43,7 +43,7 @@ namespace SectionMicroservice.Services.Implementation
             this._sectionService = sectionService;
         }
 
-        public Material FindOneByUuid(string sectionUUID, string fileUUID)
+        public Material FindOneBySectionAndFile(string sectionUUID, string fileUUID)
         {
             return this._queryExecutor.Execute<Material>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_FILE_BY_SECTION_AND_FILE_UUID(sectionUUID, fileUUID), this._modelMapper.MapToMaterial);
         }
@@ -59,7 +59,7 @@ namespace SectionMicroservice.Services.Implementation
         }
 
         public MaterialResponseDTO GetOneByUuidOrThrow(string sectionUUID, string fileUUID) {
-            MaterialResponseDTO response = this._autoMapper.Map<MaterialResponseDTO>(this.FindOneByUuid(sectionUUID,fileUUID));
+            MaterialResponseDTO response = this._autoMapper.Map<MaterialResponseDTO>(this.FindOneBySectionAndFile(sectionUUID,fileUUID));
             if (response == null)
                 throw new EntityNotFoundException($"Section with uuid: {sectionUUID} and file with uuid: {fileUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
             response.section = this._sectionService.GetOneByUuid(sectionUUID);
@@ -78,6 +78,13 @@ namespace SectionMicroservice.Services.Implementation
 
         public MaterialResponseDTO Create(CreateMaterialRequestDTO requestDTO) 
         {
+            if (this.FindOneBySectionAndFile(requestDTO.sectionUUID, requestDTO.fileUUID) != null)
+                throw new EntityNotFoundException($"Section with uuid: {requestDTO.sectionUUID} and file with uuid: {requestDTO.fileUUID} already exists!", GeneralConsts.MICROSERVICE_NAME);
+
+            FileDTO file = this._httpClientService.SendRequest<FileDTO>(HttpMethod.Get, "http://localhost:40003/api/files/" + requestDTO.fileUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if(file == null)
+                throw new EntityAlreadyExistsException($"File with uuid {requestDTO.fileUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
             Material material = new Material()
             {
                 section = new Section() {
@@ -86,7 +93,7 @@ namespace SectionMicroservice.Services.Implementation
                 file = new File()
                 {
                     uuid = requestDTO.fileUUID,
-                    filePath = requestDTO.filePath
+                    filePath = file.filePath
                 },
                 visible = requestDTO.visible
             };
@@ -94,15 +101,14 @@ namespace SectionMicroservice.Services.Implementation
             material = this._queryExecutor.Execute<Material>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.ADD_FILE_TO_SECTION(material), this._modelMapper.MapToMaterial);
 
             MaterialResponseDTO response = this._autoMapper.Map<MaterialResponseDTO>(material);
-            if(response == null)
-                throw new EntityNotFoundException($"Section with uuid: {requestDTO.sectionUUID} and file with uuid: {requestDTO.fileUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
+            response.file = file;
             response.section = this._sectionService.GetOneByUuid(requestDTO.sectionUUID);
             return response;
         }
 
         public MaterialResponseDTO Delete(string sectionUUID, string fileUUID)
         {
-            if (this.FindOneByUuid(sectionUUID, fileUUID) == null)
+            if (this.FindOneBySectionAndFile(sectionUUID, fileUUID) == null)
             {
                 throw new EntityNotFoundException($"Section with uuid: {sectionUUID} and file with uuid: {fileUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
             }

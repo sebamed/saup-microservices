@@ -74,7 +74,7 @@ namespace LectureMaterialMicroservice.Consts {
         }
 
         public string CREATE_ARCHIVE(SectionArchive sectionArchive) {
-            return $"insert into SAUP_SECTION.SectionArchive (sectionUUID, name, description, visible, creationDate, courseUUID, moderatorUUID, changeDate) output inserted.* " +
+            return $"insert into SAUP_SECTION.SectionArchive (sectionUUID, name, description, visible, creationDate, courseUUID, moderatorUUID, changeDate) " +
                $"values ('{sectionArchive.sectionUUID}','{sectionArchive.name}', '{sectionArchive.description}', '{sectionArchive.visible}', '{sectionArchive.creationDate}', '{sectionArchive.course.uuid}', '{sectionArchive.moderator.uuid}', '{sectionArchive.changeDate}');";
         }
 
