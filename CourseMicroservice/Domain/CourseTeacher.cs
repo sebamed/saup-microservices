@@ -5,11 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CourseMicroservice.Domain {
-    public class Instrument : BaseEntity {
-
-        public int InstrumentID { get; set; }
-
-        public string InstrumentNaziv { get; set; }
-
+    public class CourseTeacher {
+        public Teacher teacher { get; set; }
+        public Course course { get; set; }
+        public bool activeTeacher { get; set; }
     }
 }
