@@ -10,7 +10,7 @@ namespace MessagingMicroservice.DTO.Message
         [Required]
         public string content { get; set; }
         [Required]
-        public List<UserDTO> recipients { get; set; }
+        public List<string> recipientsUUID { get; set; }
         public List<FileDTO> files { get; set; } 
     }
 }

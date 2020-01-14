@@ -75,13 +75,16 @@ namespace MessagingMicroservice.Services.Implementation
             //SEND MESSAGE TO RECIPIENTS
             List<User> recipients = new List<User>();
             List<string> recipientMails = new List<string>();
-            foreach (var rDTO in requestDTO.recipients)
+            foreach (var rDTO in requestDTO.recipientsUUID)
             {
+                var r = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + rDTO, userPrincipal.token).Result;
+                if (r == null)
+                    throw new EntityNotFoundException($"There is no recipient with uuid {rDTO}", GeneralConsts.SCHEMA_NAME);
                 var userRecipient = new User()
                 {
-                    uuid = rDTO.uuid,
-                    name = rDTO.name,
-                    surname = rDTO.surname
+                    uuid = r.uuid,
+                    name = r.name,
+                    surname = r.surname
                 };
 
                 Recipient messageRecipient = new Recipient()
@@ -90,33 +93,13 @@ namespace MessagingMicroservice.Services.Implementation
                     recipient = userRecipient
                 };
                 this._queryExecutor.Execute<Recipient>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_RECIPIENT(messageRecipient), this._modelMapper.MapToRecipient);
-                var r = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + rDTO.uuid, userPrincipal.token).Result;
+                
                 recipientMails.Add(r.email);
                 recipients.Add(userRecipient);
             }
             this._httpClientService.SendEmail(recipientMails, $"Nova poruka: {message.sender.name}", message.content);
             message.recipients = recipients;
             message.files = addedFiles;
-            return this._autoMapper.Map<MessageResponseDTO>(message);
-        }
-
-        public MessageResponseDTO Update(UpdateMessageRequestDTO requestDTO)
-        {
-            throw new NotImplementedException();
-            if (this.FindOneByUUID(requestDTO.uuid) == null)
-                throw new EntityNotFoundException($"Message with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-
-            Message message = new Message()
-            {
-                uuid = requestDTO.uuid,
-                content = requestDTO.content,
-                dateTime = requestDTO.dateTime
-            };
-
-            var userPrincipal = new UserPrincipal(_httpContextAccessor.HttpContext);
-            message.sender = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + userPrincipal.uuid, userPrincipal.token).Result;
-            message = this._queryExecutor.Execute<Message>(DatabaseConsts.USER_SCHEMA, _sqlCommands.UPDATE_MESSAGE(message), _modelMapper.MapToMessage);
-
             return this._autoMapper.Map<MessageResponseDTO>(message);
         }
 
