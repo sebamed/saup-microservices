@@ -106,5 +106,24 @@ namespace MessagingMicroservice.Consts
         {
             return $"select fileUUID, filePath from {GeneralConsts.FILE_MESSAGE_TABLE} where messageUUID = '{uuid}'";
         }
+
+        public string UPDATE_FILE_IN_MESSAGE(File file)
+        {
+            return $"update {GeneralConsts.FILE_MESSAGE_TABLE} " +
+              $"set filePath = '{file.filePath}' output inserted.* where fileUUID = '{file.uuid}';";
+        }
+
+        public string UPDATE_RECIPIENT_IN_MESSAGE(User user)
+        {
+            return $"update {GeneralConsts.RECIPIENT_TABLE} " +
+              $"set recipientName = '{user.name}', " +
+              $"recipientSurname = '{user.surname}' output inserted.* where recipientUUID = '{user.uuid}';";
+        }
+        public string UPDATE_SENDER_IN_MESSAGE(User user)
+        {
+            return $"update {GeneralConsts.MESSAGE_TABLE} " +
+              $"set senderName = '{user.name}', " +
+              $"senderSurname = '{user.surname}' output inserted.* where senderUUID = '{user.uuid}';";
+        }
     }
 }

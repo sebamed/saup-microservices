@@ -186,5 +186,55 @@ namespace MessagingMicroservice.Services.Implementation
             return this._autoMapper.Map<MessageResponseDTO>(toDelete);
         }   
 
+        public string UpdateFileInMessage(FileDTO fileDTO)
+        {
+            File file = new File()
+            {
+                uuid = fileDTO.uuid,
+                filePath = fileDTO.filePath
+            };
+
+            List<File> r = this._queryExecutor.Execute<List<File>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.UPDATE_FILE_IN_MESSAGE(file), this._modelMapper.MapToFiles);
+            if (r == null)
+            {
+                return $"There is no file with uuid {file.uuid}";
+            }
+            return "File updated";
+        }
+
+        public string UpdateRecipientInMessage(UserDTO userDTO)
+        {
+            User user = new User()
+            {
+                uuid = userDTO.uuid,
+                name = userDTO.name,
+                surname = userDTO.surname
+            };
+
+            List<Recipient> r = this._queryExecutor.Execute<List<Recipient>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.UPDATE_RECIPIENT_IN_MESSAGE(user), this._modelMapper.MapToRecipients);
+            if (r == null)
+            {
+                return $"There is no recipient with uuid {user.uuid}";
+            }
+            return "Recipient updated";
+        }
+
+        public string UpdateSenderInMessage(UserDTO userDTO)
+        {
+            User user = new User()
+            {
+                uuid = userDTO.uuid,
+                name = userDTO.name,
+                surname = userDTO.surname
+            };
+
+            List<Message> r = this._queryExecutor.Execute<List<Message>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.UPDATE_SENDER_IN_MESSAGE(user), this._modelMapper.MapToMessages);
+
+            if(r == null)
+            {
+                return $"There is no sender with uuid {user.uuid}";
+            }
+            return "Sender updated";
+        }
     }
 }
