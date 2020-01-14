@@ -80,15 +80,36 @@ namespace SubjectMicroservice.Services.Implementation
 		public SubjectResponseDTO GetOneByUuid(string uuid)
 		{
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(this.FindOneByUUID(uuid));
+            if (response == null)
+                throw new EntityNotFoundException($"Subject with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
             response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             return response;
         }
 
-		public SubjectResponseDTO Create(CreateSubjectRequestDTO requestDTO)
+        public Subject FindOneByNameAndDepartment(string name, string departmentUUID)
+        {
+            return this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_SUBJECT_BY_NAME_AND_DEPARTMENT(name,departmentUUID), this._modelMapper.MapToSubject);
+        }
+
+        public SubjectResponseDTO Create(CreateSubjectRequestDTO requestDTO)
 		{
-            if (this.FindByName(requestDTO.name) != null)
-                throw new EntityAlreadyExistsException($"Subject with name {requestDTO.name} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            if (this.FindOneByNameAndDepartment(requestDTO.name, requestDTO.departmentUUID) != null)
+                throw new EntityAlreadyExistsException($"Subject with name {requestDTO.name} already exists on Department {requestDTO.departmentUUID}!", GeneralConsts.MICROSERVICE_NAME);
+
+            DepartmentDTO department;
+            UserDTO creator;
+            try {
+                department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + requestDTO.departmentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"Department with uuid {requestDTO.departmentUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            try {
+                creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + requestDTO.creatorUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"User with uuid {requestDTO.creatorUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
 
             Subject subject = new Subject()
             {
@@ -117,10 +138,11 @@ namespace SubjectMicroservice.Services.Implementation
             subject = this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_SUBJECT(subject), this._modelMapper.MapToSubject);
             
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(subject);
-            response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.department = department;
+            response.creator = creator;
 
             _ = _subjectArchiveService.Create(archiveDTO);
+
             return response;
 		}
 
@@ -129,7 +151,21 @@ namespace SubjectMicroservice.Services.Implementation
 			if (this.FindOneByUUID(requestDTO.uuid) == null)
 				throw new EntityNotFoundException($"Subject with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
-			Subject subject = new Subject()
+            DepartmentDTO department;
+            UserDTO creator;
+            try {
+                department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + requestDTO.departmentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"Department with uuid {requestDTO.departmentUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            try {
+                creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + requestDTO.creatorUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityAlreadyExistsException($"User with uuid {requestDTO.creatorUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            Subject subject = new Subject()
 			{
 				uuid = requestDTO.uuid,
 				name = requestDTO.name,
@@ -160,8 +196,8 @@ namespace SubjectMicroservice.Services.Implementation
             subject = this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_SUBJECT(subject), this._modelMapper.MapToSubject);
 
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(subject);
-            response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            response.department = department;
+            response.creator = creator;
             return response;
         }
 

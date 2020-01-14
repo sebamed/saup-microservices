@@ -11,9 +11,9 @@ namespace SubjectMicroservice.Services
 	public interface ISubjectArchiveService {
         SubjectArchiveResponseDTO Create(CreateSubjectArchiveRequestDTO requestDTO);
 
-        SubjectArchiveResponseDTO GetLatestVersionBySubjectUUID(string sectionUUID);
+        SubjectArchiveResponseDTO GetLatestVersionBySubjectUUID(string subjectUUID);
 
-        List<MultipleSubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string sectionUUID);
+        List<MultipleSubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string subjectUUID);
 
         public void Delete(string subjectUUID);
     }

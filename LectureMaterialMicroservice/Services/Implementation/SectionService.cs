@@ -52,9 +52,15 @@ namespace LectureMaterialMicroservice.Services.Implementation {
 
             return section;
         }
+
         public SectionResponseDTO GetOneByUuid(string uuid)
         {
             return this._autoMapper.Map<SectionResponseDTO>(this.FindOneByUuidOrThrow(uuid));
+        }
+
+        public Section FindOneByNameAndCourse(string name, string courseUUID)
+        {
+            return this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_SECTION_BY_NAME_AND_COURSE(name, courseUUID), this._modelMapper.MapToSection);
         }
 
         public List<Section> FindAllVisible()  {
@@ -76,6 +82,9 @@ namespace LectureMaterialMicroservice.Services.Implementation {
 
         public SectionResponseDTO Create(CreateSectionRequestDTO requestDTO)
         {
+            if (this.FindOneByNameAndCourse(requestDTO.name, requestDTO.courseUUID) != null)
+                throw new EntityNotFoundException($"Section with name {requestDTO.name} already exists on course with uuid: {requestDTO.courseUUID}!", GeneralConsts.MICROSERVICE_NAME);
+
             Section section = new Section()
             {
                 name = requestDTO.name,

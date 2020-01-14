@@ -10,7 +10,6 @@ namespace DepartmentMicroservice.Mappers {
     public class MappingProfile: Profile {
 
         public MappingProfile() {
-            //TODO: Define how to map different object from DB to ResponseDTO 
             CreateMap<File, FileResponseDTO>();
         }
     }

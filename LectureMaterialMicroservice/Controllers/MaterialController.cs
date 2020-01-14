@@ -1,6 +1,7 @@
 ﻿using LectureMaterialMicroservice.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SectionMicroservice.DTO.External;
 using SectionMicroservice.DTO.Material.Request;
 using SectionMicroservice.DTO.Material.Response;
 using SectionMicroservice.Services;
@@ -23,11 +24,26 @@ namespace SectionMicroservice.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
+        public ActionResult<MaterialResponseDTO> HandleGetFilesBySection(string sectionUUID)
+        {
+            return Ok(this._materialService.GetFilesBySection(sectionUUID));
+        }
+
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult<MaterialResponseDTO> HandleCreateMaterial(CreateMaterialRequestDTO requestDTO)
         {
             // todo: created()
             return Ok(this._materialService.Create(requestDTO));
+        }
+
+        [AllowAnonymous]
+        [HttpPut]
+        public ActionResult<MaterialResponseDTO> HandleUpdateMaterial(FileDTO requestDTO)
+        {
+            // todo: created()
+            return Ok(this._materialService.UpdateFileInMaterial(requestDTO));
         }
 
         [AllowAnonymous]

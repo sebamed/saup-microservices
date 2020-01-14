@@ -53,14 +53,14 @@ namespace FileMicroservice.Controllers
             return Ok(this._fileService.Create(requestDTO));
         }
 
-        [AllowAnonymous]//TODO [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpPut(RouteConsts.ROUTE_FILE_BASE)]
         public ActionResult<FileResponseDTO> HandleUpdateFile(UpdateFileRequestDTO requestDTO)
         {
             return Ok(this._fileService.Update(requestDTO));
         }
 
-        [AllowAnonymous]//TODO [Authorize(Roles = RoleConsts.ROLE_USER)] 
+        [Authorize(Roles = RoleConsts.ROLE_USER)] 
         [HttpDelete(RouteConsts.ROUTE_FILE_BASE)]
         public ActionResult<FileResponseDTO> HandleDeleteByUUID(string uuid)
         {

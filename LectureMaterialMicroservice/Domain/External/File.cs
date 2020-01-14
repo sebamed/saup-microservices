@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace SectionMicroservice.Domain.External
 {
     public class File : BaseEntity {
-        public string path { get; set; }
+        public string filePath { get; set; }
     }
 }
