@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using SubjectMicroservice.Consts;
 
 namespace SubjectMicroservice.Initializers {
     public class SwaggerUIInitializer : IInitializer {
@@ -8,7 +9,7 @@ namespace SubjectMicroservice.Initializers {
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo {
                     Version = "v1",
-                    Title = "Subject Microservice",
+                    Title = GeneralConsts.MICROSERVICE_NAME,
                     Description = "API Documentation",
                     Contact = new OpenApiContact() {
                         Name = "Sebastian Dudas",

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MailService.Consts;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
@@ -8,7 +9,7 @@ namespace MailService.Initializers {
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo {
                     Version = "v1",
-                    Title = "Auth Resource",
+                    Title = GeneralConsts.MICROSERVICE_NAME,
                     Description = "API Documentation",
                     Contact = new OpenApiContact() {
                         Name = "Sebastian Dudas",
