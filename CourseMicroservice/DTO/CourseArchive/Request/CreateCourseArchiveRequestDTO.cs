@@ -2,7 +2,7 @@
 using System;
 
 namespace CourseMicroservice.DTO.Course {
-    public class CreateCourseArchiveRequest {
+    public class CreateCourseArchiveRequestDTO {
         public string courseUUID { get; set; }
         public string name { get; set; }
         public string description { get; set; }
@@ -13,7 +13,5 @@ namespace CourseMicroservice.DTO.Course {
         public string subjectUUID { get; set; }
         public string moderatorUUID { get; set; }
         public DateTime changeDate { get; set; }
-        public int version { get; set; }
-
     }
 }

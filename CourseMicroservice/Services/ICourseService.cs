@@ -7,6 +7,7 @@ namespace CourseMicroservice.Services {
 
         //GET METHODS
         List<CourseMultipleResponseDTO> GetAll();
+
         CourseResponseDTO GetOneByUuid(string uuid);
 
         //POST METHODS
@@ -17,6 +18,5 @@ namespace CourseMicroservice.Services {
 
         //DELETE METHODS
         CourseResponseDTO Delete(string uuid);
-
     }
 }

@@ -21,8 +21,9 @@ namespace CourseMicroservice.Services.Implementation {
         private readonly ModelMapper _modelMapper;
         private readonly HttpClientService _httpClientService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICourseService _courseService;
 
-        public CourseArchivesService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
+        public CourseArchivesService(QueryExecutor queryExecutor, IMapper autoMapper, ModelMapper modelMapper, SqlCommands sqlCommands, HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor, ICourseService courseService)
         {
             this._autoMapper = autoMapper;
             this._queryExecutor = queryExecutor;
@@ -30,33 +31,23 @@ namespace CourseMicroservice.Services.Implementation {
             this._modelMapper = modelMapper;
             this._httpClientService = httpClientService;
             this._httpContextAccessor = httpContextAccessor;
+            this._courseService = courseService;
         }
 
-        public CourseArchiveResponseDTO CreateCourseArchive(CreateCourseArchiveRequest request)
+        public CourseArchiveResponseDTO CreateCourseArchive(CreateCourseArchiveRequestDTO request)
         {
             CourseArchive archive = this._autoMapper.Map<CourseArchive>(request);
             archive = this._queryExecutor.Execute<CourseArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_COURSE_ARCHIVE(archive), this._modelMapper.MapToCourseArchive);
             return this._autoMapper.Map<CourseArchiveResponseDTO>(archive);
         }
-
-        //HELPER METHODS
-        public Course FindOneByUuidOrThrow(string uuid)
-        {
-            Course course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_COURSE_BY_UUID(uuid), this._modelMapper.MapToCourse);
-            if (course == null)
-            {
-                throw new EntityNotFoundException($"Course with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            }
-            return course;
-        }
+        
         //GET METHODS
         public List<CourseArchiveResponseDTO> GetAllCourseArchives(string uuid)
         {
             //provera da li postoji kurs
-            this.FindOneByUuidOrThrow(uuid);
+            this._courseService.GetOneByUuid(uuid);
             List<CourseArchive> archives = this._queryExecutor.Execute<List<CourseArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_ARCHIVES(uuid), this._modelMapper.MapToCourseArchives);
             return this._autoMapper.Map<List<CourseArchiveResponseDTO>>(archives);
         }
     }
-
-    }
+}

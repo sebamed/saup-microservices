@@ -19,7 +19,8 @@ namespace CourseMicroservice.Controllers
         {
             this._courseArchivesService = courseArchivesService;
         }
-        [Authorize(Roles = Commons.Consts.RoleConsts.ROLE_USER)]
+        
+        [Authorize(Roles = Commons.Consts.RoleConsts.ROLE_TEACHER)]
         [HttpGet]
         public ActionResult<List<CourseArchiveResponseDTO>>HandleGetAllCourseArchives(string uuid)
         {

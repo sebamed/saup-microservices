@@ -7,10 +7,10 @@ namespace CourseMicroservice.Services {
         //GET METHODS
         List<CourseStudentMultipleResponseDTO> GetAllActiveStudentsOnCourse(string uuid);
         //POST METHODS
-        CourseStudentResponseDTO CreateStudentOnCourse(string uuid, CreateCourseStudentRequestDTO request);
+        CourseStudentResponseDTO CreateStudentOnCourse(CreateCourseStudentRequestDTO request);
         //DELETE METHODS
         CourseStudentResponseDTO DeleteStudentOnCourse(string courseUuid, string studentUuid);
         //PUT METHODS
-        CourseStudentResponseDTO UpdateStudentOnCourse(string uuid, UpdateCourseStudentRequestDTO request);
+        CourseStudentResponseDTO UpdateStudentOnCourse(UpdateCourseStudentRequestDTO request);
     }
 }

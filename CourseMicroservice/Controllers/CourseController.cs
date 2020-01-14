@@ -27,18 +27,21 @@ namespace CourseMicroservice.Controllers
         {
             return Ok(this._courseService.GetAll());
         }
+        
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_COURSE_GET_ONE_BY_UUID)]
         public ActionResult<CourseResponseDTO>HandleGetOneCourseByUuid(string uuid)
         {
             return Ok(this._courseService.GetOneByUuid(uuid));
         }
+        
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPost]
         public ActionResult<CourseResponseDTO>HandleCreateCourse(CreateCourseRequestDTO requestDTO)
         {
             return Ok(this._courseService.Create(requestDTO));
         }
+        
         //PUT METHODS
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPut]
@@ -46,12 +49,13 @@ namespace CourseMicroservice.Controllers
         {
             return Ok(this._courseService.Update(requestDTO));
         }
+        
         //DELETE METHODS
-       /* [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
         [HttpDelete(RouteConsts.ROUTE_COURSE_GET_ONE_BY_UUID)]
         public ActionResult<CourseResponseDTO>HandleDeleteCourse(string uuid)
         {
             return Ok(this._courseService.Delete(uuid));
-        }*/
+        }
     }
 }

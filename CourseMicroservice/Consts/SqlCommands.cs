@@ -16,7 +16,8 @@ namespace CourseMicroservice.Consts {
         public string UPDATE_COURSE(Course course)
         {
             return $"update SAUP_COURSE.Course " +
-            $"set name = '{course.name}', description = '{course.description}', active = {boolToInt(course.active)}, maxStudents = {course.maxStudents}, minStudents = {course.minStudents}, creationDate = '{course.creationDate}'" +
+            $"set name = '{course.name}', description = '{course.description}', active = {boolToInt(course.active)}, maxStudents = {course.maxStudents}, minStudents = {course.minStudents}, " +
+            $"creationDate = '{course.creationDate}', subjectUUID = '{course.subjectUUID}'" +
             $" output inserted.* where uuid = '{course.uuid}';";
         }
         public string DELETE_COURSE(string uuid)
@@ -27,7 +28,8 @@ namespace CourseMicroservice.Consts {
         public string CREATE_COURSE(Course course)
         {
             return $"insert into SAUP_COURSE.Course(uuid, name, description, active, maxStudents, minStudents, creationDate," +
-                $"subjectUUID) output inserted.* values('{course.uuid}', '{course.name}', '{course.description}', {boolToInt(course.active)}, {course.maxStudents}, {course.minStudents}, '{course.creationDate}'," +
+                $"subjectUUID) output inserted.* " +
+                $"values('{course.uuid}', '{course.name}', '{course.description}', {boolToInt(course.active)}, {course.maxStudents}, {course.minStudents}, '{course.creationDate}'," +
                 $"'{course.subjectUUID}');";
         }
 
