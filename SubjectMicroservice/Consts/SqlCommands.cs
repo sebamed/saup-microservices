@@ -69,7 +69,7 @@ namespace SubjectMicroservice.Consts
 
         public string CREATE_SUBJECT_ARHIVE(SubjectArchive SubjectArchive)
 		{
-			return $"insert into {GeneralConsts.SCHEMA_NAME}.SubjectArchive (subjectUUID, name, description, creationDate, departmentUUID, creatorUUID, moderatorUUID, changeDate) output inserted.* " +
+			return $"insert into {GeneralConsts.SCHEMA_NAME}.SubjectArchive (subjectUUID, name, description, creationDate, departmentUUID, creatorUUID, moderatorUUID, changeDate) " +
 				$"values ('{SubjectArchive.subjectUUID}', '{SubjectArchive.name}', '{SubjectArchive.description}', " +
                 $"'{SubjectArchive.creationDate}', '{SubjectArchive.department.uuid}', '{SubjectArchive.creator.uuid}', " +
                 $"'{SubjectArchive.moderator.uuid}', '{SubjectArchive.changeDate}');";
