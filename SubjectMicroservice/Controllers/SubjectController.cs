@@ -29,7 +29,7 @@ namespace SubjectMicroservice.Controllers
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_SUBJECT_BASE)]
-        public ActionResult<List<SubjectResponseDTO>> HandleGetAll()
+        public ActionResult<List<MultipleSubjectResponseDTO>> HandleGetAll()
         {
             return Ok(this._subjectService.GetAll());
         }
@@ -43,21 +43,21 @@ namespace SubjectMicroservice.Controllers
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_SUBJECT_BY_NAME)]
-		public ActionResult<List<SubjectResponseDTO>> HandleGetByName(string name)
+		public ActionResult<List<MultipleSubjectResponseDTO>> HandleGetByName(string name)
 		{
 			return Ok(this._subjectService.GetByName(name));
 		}
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_SUBJECT_BY_DEPARTMENT_UUID)]
-        public ActionResult<List<SubjectResponseDTO>> HandleGetByDepartmentUUID(string uuid)
+        public ActionResult<List<MultipleSubjectResponseDTO>> HandleGetByDepartmentUUID(string uuid)
         {
             return Ok(this._subjectService.GetByDepartmentUUID(uuid));
         }
 
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet(RouteConsts.ROUTE_SUBJECT_BY_CREATOR_UUID)]
-        public ActionResult<List<SubjectResponseDTO>> HandleGetByCreatorUUID(string uuid)
+        public ActionResult<List<MultipleSubjectResponseDTO>> HandleGetByCreatorUUID(string uuid)
         {
             return Ok(this._subjectService.GetByCreatorUUID(uuid));
         }
