@@ -82,8 +82,16 @@ namespace SubjectMicroservice.Services.Implementation
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(this.FindOneByUUID(uuid));
             if (response == null)
                 throw new EntityNotFoundException($"Subject with uuid {uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-            response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            try {
+                response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityNotFoundException($"Department with uuid {response.department.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+            try { 
+                response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityNotFoundException($"User with uuid {response.creator.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
             return response;
         }
 
@@ -212,8 +220,17 @@ namespace SubjectMicroservice.Services.Implementation
 			this._queryExecutor.Execute<Subject>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_SUBJECT(uuid), this._modelMapper.MapToSubject);
 
             SubjectResponseDTO response = this._autoMapper.Map<SubjectResponseDTO>(old);
-            response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            try {
+                response.department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response.department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityNotFoundException($"Department with uuid {response.department.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            try {
+                response.creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            } catch {
+                throw new EntityNotFoundException($"User with uuid {response.creator.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
             return response;
         }
     }
