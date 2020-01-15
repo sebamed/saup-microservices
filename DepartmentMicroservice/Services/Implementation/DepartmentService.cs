@@ -82,11 +82,16 @@ namespace DepartmentMicroservice.Services.Implementation {
         }
 
         public DepartmentResponseDTO Update(UpdateDepartmentRequestDTO requestDTO) {
-            if (this.FindOneByUUID(requestDTO.uuid) == null)
+            var old = this.FindOneByUUID(requestDTO.uuid);
+            if (old == null)
                 throw new EntityNotFoundException($"Department with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
             if (this._facultyService.GetOneByUuid(requestDTO.facultyUUID) == null)
                 throw new EntityNotFoundException($"Faculty with uuid {requestDTO.facultyUUID} doesn't exists!", GeneralConsts.MICROSERVICE_NAME);
+
+            var similar = this.FindOneByNameAndfaculty(requestDTO.name, requestDTO.facultyUUID);
+            if (similar != null && similar.name != old.name)
+                throw new EntityNotFoundException($"Department with name {requestDTO.name} with facultyUUID {requestDTO.facultyUUID} already exists!", GeneralConsts.MICROSERVICE_NAME);
 
             Faculty faculty = this._autoMapper.Map<Faculty>(this._facultyService.GetOneByUuid(requestDTO.facultyUUID));
 
