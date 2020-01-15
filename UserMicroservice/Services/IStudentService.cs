@@ -9,6 +9,6 @@ namespace UserMicroservice.Services {
     public interface IStudentService : ICrudService<StudentResponseDTO> {
 
         StudentResponseDTO Create(CreateStudentRequestDTO requestDTO);
-
+        StudentWithDepartmantResponseDTO GetStudentInfoFromDepartmentByUuid(string uuid);
     }
 }
