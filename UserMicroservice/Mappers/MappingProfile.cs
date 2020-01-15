@@ -25,6 +25,7 @@ namespace UserMicroservice.Mappers {
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Student, StudentResponseDTO>();
             CreateMap<Teacher, TeacherResponseDTO>();
+            CreateMap<Student, StudentWithDepartmantResponseDTO>();
         }
 
     }
