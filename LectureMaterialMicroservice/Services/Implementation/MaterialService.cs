@@ -58,11 +58,11 @@ namespace SectionMicroservice.Services.Implementation
             return this._queryExecutor.Execute<List<Material>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_FILES_BY_SECTION(sectionUUID), this._modelMapper.MapToMaterials);
         }
 
-        public MaterialResponseDTO GetOneByUuidOrThrow(string sectionUUID, string fileUUID) {
+        public MaterialResponseDTO GetFileByUUIDAndSection(string sectionUUID, string fileUUID) {
             MaterialResponseDTO response = this._autoMapper.Map<MaterialResponseDTO>(this.FindOneBySectionAndFile(sectionUUID,fileUUID));
             if (response == null)
                 throw new EntityNotFoundException($"Section with uuid: {sectionUUID} and file with uuid: {fileUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            response.section = this._sectionService.GetOneByUuid(sectionUUID);
+            response.section = this._sectionService.GetSectionByUuid(sectionUUID);
             return response;
         }
 
@@ -71,7 +71,7 @@ namespace SectionMicroservice.Services.Implementation
             List<MaterialResponseDTO> response = this._autoMapper.Map<List<MaterialResponseDTO>>(this.FindBySectionUUID(sectionUUID));
             foreach (var sec in response)
             {
-                sec.section = this._sectionService.GetOneByUuid(sec.section.uuid);
+                sec.section = this._sectionService.GetSectionByUuid(sec.section.uuid);
             }
             return response;
         }
@@ -102,7 +102,7 @@ namespace SectionMicroservice.Services.Implementation
 
             MaterialResponseDTO response = this._autoMapper.Map<MaterialResponseDTO>(material);
             response.file = file;
-            response.section = this._sectionService.GetOneByUuid(requestDTO.sectionUUID);
+            response.section = this._sectionService.GetSectionByUuid(requestDTO.sectionUUID);
             return response;
         }
 
@@ -113,7 +113,7 @@ namespace SectionMicroservice.Services.Implementation
                 throw new EntityNotFoundException($"Section with uuid: {sectionUUID} and file with uuid: {fileUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
             }
 
-            MaterialResponseDTO response = this.GetOneByUuidOrThrow(sectionUUID, fileUUID);
+            MaterialResponseDTO response = this.GetFileByUUIDAndSection(sectionUUID, fileUUID);
             _ = this._queryExecutor.Execute<Material>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_FILE_FROM_SECTION(sectionUUID, fileUUID), this._modelMapper.MapToMaterial);
             return response;
         }
@@ -135,7 +135,7 @@ namespace SectionMicroservice.Services.Implementation
 
             List<MaterialResponseDTO> response = this._autoMapper.Map<List<MaterialResponseDTO>>(materials);
             foreach(var mat in response) {
-                mat.section = this._sectionService.GetOneByUuid(mat.section.uuid);
+                mat.section = this._sectionService.GetSectionByUuid(mat.section.uuid);
             }
             return response;
         }

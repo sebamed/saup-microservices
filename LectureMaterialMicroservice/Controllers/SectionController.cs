@@ -54,7 +54,7 @@ namespace LectureMaterialMicroservice.Controllers {
         [HttpGet(RouteConsts.ROUTE_SECTION_GET_ONE_BY_UUID)]
         public ActionResult<SectionResponseDTO> HandleGetOneSectionByUuid(string uuid)
         {
-            return Ok(this._sectionService.GetOneByUuid(uuid));
+            return Ok(this._sectionService.GetSectionByUuid(uuid));
         }
 
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
@@ -72,6 +72,7 @@ namespace LectureMaterialMicroservice.Controllers {
         }
 
         [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
         [HttpDelete]
         public ActionResult<SectionResponseDTO> HandleDeleteSectionByUuid(string uuid)
         {
