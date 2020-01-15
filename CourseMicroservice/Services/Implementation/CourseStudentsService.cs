@@ -11,6 +11,7 @@ using Commons.HttpClientRequests;
 using System.Net.Http;
 using Commons.Domain;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace CourseMicroservice.Services.Implementation {
     public class CourseStudentsService : ICourseStudentsService
@@ -70,11 +71,23 @@ namespace CourseMicroservice.Services.Implementation {
         {
             //provera da li postoji kurs
             CourseResponseDTO course = this._courseService.GetOneByUuid(request.courseUUID);
+            String courseDep = course.subject.department.uuid;
+            StudentResponseDTO student;
             //provera da li postoji student
-            StudentResponseDTO student = this._httpClientService.SendRequest<StudentResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + request.studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            if (student == null)
+            try {
+                
+              student = this._httpClientService.SendRequest<StudentResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + request.studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            }
+            catch
+            {
                 throw new EntityNotFoundException("Student with uuid " + request.studentUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
-
+            }
+            String studentDep = student.departmentUUID;
+            //provera da li su predmet i student na istom departmanu
+            if (studentDep != courseDep)
+            {
+                throw new EntityNotFoundException("Student with uuid " + request.studentUUID + " and course with uuid: "+request.courseUUID+" are not on the same department", GeneralConsts.MICROSERVICE_NAME);
+            }
             //provera da li vec postoji student na tom kursu
             CourseStudent existingCourseStudent = this.FindStudentOnCourse(request.courseUUID, request.studentUUID);
             if(existingCourseStudent != null)
@@ -145,6 +158,26 @@ namespace CourseMicroservice.Services.Implementation {
             oldStudent = this._queryExecutor.Execute<CourseStudent>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_STUDENT_ON_COURSE(oldStudent), this._modelMapper.MapToCourseStudent);
             CourseStudentResponseDTO response = this._autoMapper.Map<CourseStudentResponseDTO>(oldStudent);
             return connectWithUser(response);
-        }   
+        }
+
+        public List<CourseStudentMultipleResponseDTO> GetAllCoursesByStudentUuid(string studentUuid)
+        {
+            //provera da li postoji student
+            StudentResponseDTO student = this._httpClientService.SendRequest<StudentResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + studentUuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if (student == null)
+                throw new EntityNotFoundException("Student with uuid " + studentUuid + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
+            List<CourseStudent> courses = this._queryExecutor.Execute<List<CourseStudent>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_COURSES_FROM_STUDENT(studentUuid), this._modelMapper.MapToCourseStudents);
+            return this._autoMapper.Map<List<CourseStudentMultipleResponseDTO>>(courses);
+        }
+
+        public List<CourseStudentMultipleResponseDTO> GetStudentSubjectHistory(string studentuuid, string subjectuuid)
+        {
+            List<CourseStudent> courseStudent = this._queryExecutor.Execute<List<CourseStudent>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_COURSES_BY_STUDENT_UUID_AND_SUBJECT_UUID(subjectuuid, studentuuid), this._modelMapper.MapToCourseStudents);
+            if(courseStudent == null)
+            {
+                throw new EntityNotFoundException("Student with uuid " + studentuuid + " doesn't have courses on subject with uuid " + subjectuuid, GeneralConsts.MICROSERVICE_NAME);
+            }
+            return this._autoMapper.Map<List<CourseStudentMultipleResponseDTO>>(courseStudent);
+        }
     }
 }

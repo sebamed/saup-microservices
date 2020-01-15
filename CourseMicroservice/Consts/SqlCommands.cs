@@ -42,6 +42,10 @@ namespace CourseMicroservice.Consts {
         {
             return $"select * from SAUP_COURSE.TeacherCourse where courseUUID='{courseUuid}' and teacherUUID='{teacherUuid}'";
         }
+        public string GET_ALL_COURSES_FROM_STUDENT(string studentUuid)
+        {
+            return $"select * from SAUP_COURSE.StudentCourse where studentUUID = '{studentUuid}' and activeStudent = 1;";
+        }
         public string UPDATE_TEACHER_COURSE(CourseTeacher courseTeacher)
         {
             return $"update SAUP_COURSE.TeacherCourse set activeTeacher = {boolToInt(courseTeacher.activeTeacher)} output inserted.* where teacherUUID = '{courseTeacher.teacher.uuid}' and courseUUID = '{courseTeacher.course.uuid}';";
@@ -60,6 +64,10 @@ namespace CourseMicroservice.Consts {
         public string GET_ONE_COURSE_STUDENT(string courseUuid, string studentUuid)
         {
             return $"select * from SAUP_COURSE.StudentCourse where courseUUID='{courseUuid}' and studentUUID='{studentUuid}';";
+        }
+        public string GET_ALL_COURSES_BY_STUDENT_UUID_AND_SUBJECT_UUID(string subjectUuid, string studentUuid)
+        {
+            return $"select * from SAUP_COURSE.StudentCourse s left join SAUP_COURSE.Course c on s.courseUUID=c.uuid where subjectUUID='{subjectUuid}' and studentUUID = '{studentUuid}';";
         }
         public string UPDATE_STUDENT_ON_COURSE(CourseStudent courseStudent)
         {
@@ -84,6 +92,22 @@ namespace CourseMicroservice.Consts {
            $"{courseArchive.minStudents}, '{courseArchive.creationDate}', '{courseArchive.subject.uuid}', '{courseArchive.moderator.uuid}', '{courseArchive.changeDate}'); ";
         }
 
+        //COURSE STATISTICS
+        public string GET_COURSE_STATISTICS_COURSE_UUID(string courseUuid)
+        {
+            return $"select avg(finalMark) as average, min(finalMark) as minimum, max(finalMark) as maximum " +
+            $"from SAUP_COURSE.StudentCourse where courseUUID = '{courseUuid}'; ";
+        }
+        public string GET_COURSE_STATISTICS_STUDENT_UUID(string studentUuid)
+        {
+            return $"select avg(finalMark) as average, min(finalMark) as minimum, max(finalMark) as maximum " +
+            $"from SAUP_COURSE.StudentCourse where studentUUID = '{studentUuid}'; ";
+        }
+        public string GET_COURSE_STATISTCS_YEAR(int year)
+        {
+            return $"select avg(finalMark) as average, min(finalMark) as minimum, max(finalMark) as maximum " +
+            $"from SAUP_COURSE.StudentCourse where year(beginDate) = {year}; ";
+        }
 
         //HELP METHOD
         public int boolToInt(bool bl)

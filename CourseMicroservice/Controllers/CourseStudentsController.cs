@@ -29,6 +29,21 @@ namespace CourseMicroservice.Controllers
         {
             return Ok(this._courseStudentsService.GetAllActiveStudentsOnCourse(uuid));
         }
+
+        [Route(RouteConsts.ROUTE_COURSE_STUDENTS_BY_STUDENT_UUID)]
+        [Authorize(Roles =RoleConsts.ROLE_USER)]
+        [HttpGet]
+        public ActionResult<List<CourseStudentMultipleResponseDTO>> HadleGetAllCoursesForStudent(string studentuuid)
+        {
+            return Ok(this._courseStudentsService.GetAllCoursesByStudentUuid(studentuuid));
+        }
+        [Route(RouteConsts.ROUTE_COURSE_SUBJECT_STUDENT_HISTORY)]
+        [Authorize(Roles =RoleConsts.ROLE_USER)]
+        [HttpGet]
+        public ActionResult<List<CourseStudentMultipleResponseDTO>> HandleGetStudentSubjectHistory(string studentuuid, string subjectuuid)
+        {
+            return Ok(this._courseStudentsService.GetStudentSubjectHistory(studentuuid, subjectuuid));
+        }
         
         //POST METHODS
         [Authorize(Roles = RoleConsts.ROLE_USER)]
@@ -47,7 +62,7 @@ namespace CourseMicroservice.Controllers
         }
 
         //DELETE METHODS
-        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpDelete]
         public ActionResult<CourseStudentResponseDTO> HandleDeleteStudentOnCourse(string uuid, string studentUuid)
         {

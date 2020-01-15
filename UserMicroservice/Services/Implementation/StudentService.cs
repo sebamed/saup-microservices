@@ -1,13 +1,18 @@
 ﻿using AutoMapper;
 using Commons.Consts;
 using Commons.DatabaseUtils;
+using Commons.Domain;
 using Commons.ExceptionHandling.Exceptions;
+using Commons.HttpClientRequests;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using UserMicroservice.Consts;
 using UserMicroservice.Domain;
+using UserMicroservice.DTO.External.Department.Response;
 using UserMicroservice.DTO.Student.Request;
 using UserMicroservice.DTO.Student.Response;
 using UserMicroservice.DTO.User;
@@ -26,12 +31,18 @@ namespace UserMicroservice.Services.Implementation {
 
         private readonly SqlCommands _sqlCommands;
 
-        public StudentService(IUserService userService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands) {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        private readonly HttpClientService _httpClientService;
+
+        public StudentService(IUserService userService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, IHttpContextAccessor httpContextAccessor, HttpClientService httpClientService) {
             this._userService = userService;
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._autoMapper = autoMapper;
             this._sqlCommands = sqlCommands;
+            this._httpContextAccessor = httpContextAccessor;
+            this._httpClientService = httpClientService;
         }
 
         public StudentResponseDTO Create(CreateStudentRequestDTO requestDTO) {
@@ -88,5 +99,21 @@ namespace UserMicroservice.Services.Implementation {
             return this._queryExecutor.Execute<Student>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_STUDENT_BY_INDEX_NUMBER(indexNumber), this._modelMapper.MapToStudent);
         }
 
+        public StudentWithDepartmantResponseDTO GetStudentInfoFromDepartmentByUuid(string uuid) {
+            Student foundStudent = this.FindOneByUuidOrThrow(uuid);
+
+            Student authStudent = this.FindOneByUuidOrThrow(new UserPrincipal(this._httpContextAccessor.HttpContext).uuid);
+
+            if(!authStudent.departmentUuid.Equals(foundStudent.departmentUuid)) {
+                throw new EntityNotFoundException("No student with that uuid on the same department as you!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            DepartmentResponseDTO department = this._httpClientService.SendRequest<DepartmentResponseDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + authStudent.departmentUuid, new UserPrincipal(this._httpContextAccessor.HttpContext).token).Result;
+
+            StudentWithDepartmantResponseDTO response = this._autoMapper.Map<StudentWithDepartmantResponseDTO>(foundStudent);
+            response.departmentName = department.name;
+
+            return response;
+        }
     }
 }
