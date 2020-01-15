@@ -49,11 +49,16 @@ namespace MessagingMicroservice.Services.Implementation
                 content = requestDTO.content,
                 dateTime = DateTime.Now
             };
-
-            var userPrincipal = new UserPrincipal(_httpContextAccessor.HttpContext);
-            message.sender = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + userPrincipal.uuid, userPrincipal.token).Result;
-            message = this._queryExecutor.Execute<Message>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_MESSAGE(message), this._modelMapper.MapToMessage);
-
+            UserPrincipal userPrincipal;
+            try
+            {
+                userPrincipal = new UserPrincipal(_httpContextAccessor.HttpContext);
+                message.sender = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + userPrincipal.uuid, userPrincipal.token).Result;
+                message = this._queryExecutor.Execute<Message>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_MESSAGE(message), this._modelMapper.MapToMessage);
+            } catch
+            {
+                throw new BaseException("Error while getting sender, probably User microservice is down", GeneralConsts.MICROSERVICE_NAME, System.Net.HttpStatusCode.ServiceUnavailable);
+            }
             //ADD FILES TO MESSAGE
             List<File> addedFiles = new List<File>();
             if(requestDTO.files != null)

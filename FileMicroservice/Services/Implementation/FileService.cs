@@ -12,6 +12,10 @@ using System;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using FileMicroservice.DTO.File.Request;
+using Commons.Domain;
+using Microsoft.AspNetCore.Http;
+using Commons.HttpClientRequests;
+using System.Net.Http;
 
 namespace FileMicroservice.Services.Implementation {
     public class FileService : IFileService {
@@ -21,12 +25,19 @@ namespace FileMicroservice.Services.Implementation {
         private readonly SqlCommands _sqlCommands;
         private readonly IMapper _autoMapper;
         private readonly IWebHostEnvironment _env;
-        public FileService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, IMapper autoMapper, IWebHostEnvironment env) {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpClientService _httpClientService;
+
+        public FileService(QueryExecutor queryExecutor, ModelMapper modelMapper, SqlCommands sqlCommands, 
+            IMapper autoMapper, IWebHostEnvironment env,
+            HttpClientService httpClientService, IHttpContextAccessor httpContextAccessor) {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._sqlCommands = sqlCommands;
             this._autoMapper = autoMapper;
             this._env = env;
+            this._httpClientService = httpClientService;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         public FileResponseDTO Create(CreateFileRequestDTO requestDTO)
@@ -37,6 +48,7 @@ namespace FileMicroservice.Services.Implementation {
 
             file = this._queryExecutor.Execute<Domain.File>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_FILE(file), this._modelMapper.MapToFileAfterInsert);
             file = this._queryExecutor.Execute<Domain.File>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_FILE_BY_UUID(file.uuid), this._modelMapper.MapToFile);
+            var r = this._httpClientService.SendRequest<object>(HttpMethod.Put, "http://localhost:40008/api/sections/material/", new UserPrincipal(_httpContextAccessor.HttpContext).token, file).Result;
             return this._autoMapper.Map<FileResponseDTO>(file);
         }
 
@@ -85,7 +97,16 @@ namespace FileMicroservice.Services.Implementation {
             SaveFile(requestDTO.fileData, file.filePath);
 
             file = this._queryExecutor.Execute<Domain.File>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_FILE(file), this._modelMapper.MapToFile);
+            try
+            {
+                var mat = this._httpClientService.SendRequest<object>(HttpMethod.Put, "http://localhost:40008/api/sections/material/", new UserPrincipal(_httpContextAccessor.HttpContext).token, file).Result;
+            } catch {}
 
+            try
+            {
+                var message = this._httpClientService.SendRequest<object>(HttpMethod.Put, "http://localhost:40002/api/messaging/file/", new UserPrincipal(_httpContextAccessor.HttpContext).token, file).Result;
+            }
+            catch { }
             return this._autoMapper.Map<FileResponseDTO>(file);
         }
 

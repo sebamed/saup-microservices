@@ -9,6 +9,8 @@ using FileMicroservice.Mappers;
 using FileMicroservice.Services;
 using FileMicroservice.Services.Implementation;
 using FileMicroservice.Consts;
+using Commons.HttpClientRequests;
+using System.Net.Http;
 
 namespace FileMicroservice.Initializers {
 
@@ -21,7 +23,9 @@ namespace FileMicroservice.Initializers {
 
             // register UserService singleton
             services.AddSingleton<IFileService, FileService>();
-
+            services.AddSingleton<HttpClientService>();
+            services.AddSingleton<HttpClient>();
+            services.AddHttpContextAccessor();
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
 
