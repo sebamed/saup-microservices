@@ -75,8 +75,13 @@ namespace DepartmentMicroservice.Services.Implementation {
         }
 
         public FacultyResponseDTO Update(UpdateFacultyRequestDTO requestDTO) {
-            if (this.FindOneByUUID(requestDTO.uuid) == null)
+            var old = this.FindOneByUUID(requestDTO.uuid);
+            if (old == null)
                 throw new EntityNotFoundException($"Faculty with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            
+            var similar = this.FindOneByNameAndCity(requestDTO.name, requestDTO.city);
+            if (similar != null && similar.name != old.name)
+                throw new EntityNotFoundException($"Faculty with name {requestDTO.name} in city {requestDTO.city} already exists!", GeneralConsts.MICROSERVICE_NAME);
 
             Faculty faculty = new Faculty() {
                 uuid = requestDTO.uuid,

@@ -133,8 +133,13 @@ namespace TeamMicroservice.Services.Implementation
 
         public TeamResponseDTO Update(UpdateTeamRequestDTO requestDTO)
         {
-            if (this.FindOneByUUID(requestDTO.uuid) == null)
+            var old = this.FindOneByUUID(requestDTO.uuid);
+            if (old == null)
                 throw new EntityNotFoundException($"Team with uuid {requestDTO.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
+            var similar = this.FindOneByNameAndCourse(requestDTO.name, requestDTO.courseUUID);
+            if (similar != null && similar.name != old.name)
+                throw new EntityAlreadyExistsException($"Team with name {requestDTO.name} already exists in Course {requestDTO.courseUUID}!", GeneralConsts.MICROSERVICE_NAME);
 
             TeacherDTO teacher = this._httpClientService.SendRequest<TeacherDTO>(HttpMethod.Get, "http://localhost:40001/api/users/teachers/" + requestDTO.teacherUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
             if (teacher == null)

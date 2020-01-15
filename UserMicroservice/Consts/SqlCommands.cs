@@ -9,6 +9,12 @@ namespace UserMicroservice.Consts {
                 $"where u.uuid = '{ user.uuid}';";
         }
 
+        public string CHANGE_PASSWORD(string uuid, string password) {
+            return $"update SAUP_USER.Users set password = '{password}' " +
+                $"output inserted.*, r.name as 'role_name' from SAUP_USER.Users u join SAUP_USER.Role r on u.roleUUID = r.uuid " +
+                $"where u.uuid = '{ uuid}';"; ;
+        }
+
         // TODO: opravi ovo da radi jer outputu se nesto ne svidja
         public string CREATE_USER(User user) {
             //return $"insert into SAUP_USER.Users (uuid, name, surname, password, email, phone, roleUUID) output inserted.*, r.name as 'role_name' from SAUP_USER.Users u join SAUP_USER.Role r on u.roleUUID = r.uuid " +
