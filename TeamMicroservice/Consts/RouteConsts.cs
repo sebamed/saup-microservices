@@ -14,5 +14,7 @@ namespace TeamMicroservice.Localization {
         public const string ROUTE_TEAM_BY_COURSE = ROUTE_TEAM_BASE + "/course/{uuid}";
 
         public const string ROUTE_ADD_STUDENT_INTO_TEAM = ROUTE_TEAM_BASE + "/students";
+
+        public const string ROUTE_GET_STUDENTS_FROM_TEAM = ROUTE_TEAM_BASE + "/students/{teamUUID}";
     }
 }

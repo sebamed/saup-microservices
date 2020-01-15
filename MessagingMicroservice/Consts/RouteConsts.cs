@@ -17,5 +17,9 @@ namespace MessagingMicroservice.Localization {
         public const string ROUTE_MESSAGING_UPDATE_RECIPIENT = ROUTE_MESSAGING_BASE + "/recipient";
 
         public const string ROUTE_MESSAGING_UPDATE_SENDER = ROUTE_MESSAGING_BASE + "/sender";
+
+        public const string ROUTE_MESSAGING_USER = ROUTE_MESSAGING_BASE + "/user";
+
+        public const string ROUTE_MESSAGING_TEAM = ROUTE_MESSAGING_BASE + "/team";
     }
 }

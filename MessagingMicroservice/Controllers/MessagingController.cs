@@ -33,9 +33,16 @@ namespace MessagingMicroservice.Controllers
         }
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
-        [HttpPost]
-        public ActionResult<MessageResponseDTO> HandleCreateMessage(CreateMessageRequestDTO requestDTO){
+        [HttpPost(RouteConsts.ROUTE_MESSAGING_USER)]
+        public ActionResult<MessageResponseDTO> SendMessageToSingleRecipient(CreateUserMessageRequestDTO requestDTO){
            return Ok(this._messagingService.Create(requestDTO));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpPost(RouteConsts.ROUTE_MESSAGING_TEAM)]
+        public ActionResult<MessageResponseDTO> SendMessageToTeam(CreateTeamMessageRequestDTO requestDTO)
+        {
+            return Ok(this._messagingService.Create(requestDTO));
         }
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]

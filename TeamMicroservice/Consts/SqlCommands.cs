@@ -68,5 +68,10 @@ namespace TeamMicroservice.Consts
         {
             return $"select * from {GeneralConsts.SCHEMA_NAME}.StudentCourseTeam where studentUUID = '{studentUUID}' and teamUUID = '{teamUUID}'";
         }
+
+        public string GET_STUDENTS_BY_TEAM(string teamUUID)
+        {
+            return $"select * from {GeneralConsts.SCHEMA_NAME}.StudentCourseTeam where teamUUID = '{teamUUID}'";
+        }
     }
 }
