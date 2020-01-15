@@ -29,6 +29,7 @@ namespace UserMicroservice.Initializers {
             services.AddSingleton<ITeacherService, TeacherService>();
             services.AddSingleton<HttpClientService>();
             services.AddSingleton<HttpClient>();
+            services.AddHttpContextAccessor();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();

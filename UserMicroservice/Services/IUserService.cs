@@ -16,5 +16,6 @@ namespace UserMicroservice.Services {
         User FindOneByUuidOrThrow(string uuid);
 
         User FindOneByEmailAddress(string email);
+        UserResponseDTO ChangePassword(ChangePasswordRequestDTO requestDTO);
     }
 }
