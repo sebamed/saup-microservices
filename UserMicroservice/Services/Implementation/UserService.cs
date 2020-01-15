@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Commons.Consts;
 using Commons.DatabaseUtils;
+using Commons.Domain;
 using Commons.ExceptionHandling.Exceptions;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using UserMicroservice.Consts;
 using UserMicroservice.Domain;
@@ -22,12 +24,15 @@ namespace UserMicroservice.Services.Implementation {
 
         private readonly SqlCommands _sqlCommands;
 
-        public UserService(IRoleService roleService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands) {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public UserService(IRoleService roleService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, IHttpContextAccessor httpContextAccessor) {
             this._roleService = roleService;
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._autoMapper = autoMapper;
             this._sqlCommands = sqlCommands;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         public User Create(CreateUserRequestDTO requestDTO) {
@@ -88,6 +93,22 @@ namespace UserMicroservice.Services.Implementation {
             if (this.FindOneByEmailAddress(email) != null) {
                 throw new EntityAlreadyExistsException($"User with email {email} already exists!", GeneralConsts.MICROSERVICE_NAME);
             }
+        }
+
+        public UserResponseDTO ChangePassword(ChangePasswordRequestDTO requestDTO) {
+            User user = this.FindOneByUuidOrThrow(new UserPrincipal(this._httpContextAccessor.HttpContext).uuid);
+
+            if(!BCrypt.Net.BCrypt.Verify(requestDTO.oldPassword, user.password)) {
+                throw new EntityNotFoundException("The current password does not match!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            if(!requestDTO.newPassword.Equals(requestDTO.confirmNewPassword)) {
+                throw new EntityNotFoundException("New passwords must be the same!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CHANGE_PASSWORD(user.uuid, BCrypt.Net.BCrypt.HashPassword(requestDTO.newPassword)), this._modelMapper.MapToUserAfterUpdate);
+
+            return this._autoMapper.Map<UserResponseDTO>(user);
         }
     }
 
