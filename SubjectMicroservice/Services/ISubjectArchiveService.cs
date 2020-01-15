@@ -13,7 +13,7 @@ namespace SubjectMicroservice.Services
 
         SubjectArchiveResponseDTO GetLatestVersionBySubjectUUID(string subjectUUID);
 
-        List<MultipleSubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string subjectUUID);
+        List<SubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string subjectUUID);
 
         public void Delete(string subjectUUID);
     }
