@@ -156,5 +156,15 @@ namespace CourseMicroservice.Services.Implementation {
             List<CourseStudent> courses = this._queryExecutor.Execute<List<CourseStudent>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_COURSES_FROM_STUDENT(studentUuid), this._modelMapper.MapToCourseStudents);
             return this._autoMapper.Map<List<CourseStudentMultipleResponseDTO>>(courses);
         }
+
+        public List<CourseStudentMultipleResponseDTO> GetStudentSubjectHistory(string studentuuid, string subjectuuid)
+        {
+            List<CourseStudent> courseStudent = this._queryExecutor.Execute<List<CourseStudent>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_COURSES_BY_STUDENT_UUID_AND_SUBJECT_UUID(subjectuuid, studentuuid), this._modelMapper.MapToCourseStudents);
+            if(courseStudent == null)
+            {
+                throw new EntityNotFoundException("Student with uuid " + studentuuid + " doesn't have courses on subject with uuid " + subjectuuid, GeneralConsts.MICROSERVICE_NAME);
+            }
+            return this._autoMapper.Map<List<CourseStudentMultipleResponseDTO>>(courseStudent);
+        }
     }
 }

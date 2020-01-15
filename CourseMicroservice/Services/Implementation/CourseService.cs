@@ -72,9 +72,15 @@ namespace CourseMicroservice.Services.Implementation {
         CourseResponseDTO ICourseService.Create(CreateCourseRequestDTO requestDTO)
         {
             //provera da li postoji subject
-            SubjectResponseDTO subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + requestDTO.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            if(subject == null)
+            SubjectResponseDTO subject;
+            try
+            {
+                subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + requestDTO.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            }
+            catch
+            {
                 throw new EntityNotFoundException("Subject with uuid " + requestDTO.subjectUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
+            }
 
             Course course = new Course()
             {
@@ -118,9 +124,15 @@ namespace CourseMicroservice.Services.Implementation {
         {
             //provera da li postoji kurs
             Course oldCourse = this.FindOneByUuidOrThrow(requestDTO.uuid);
-            SubjectResponseDTO subject = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + requestDTO.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            if(subject == null)
-                throw new EntityNotFoundException("Subject with uuid " + requestDTO.subjectUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
+            SubjectResponseDTO subject;
+            try
+            {
+               subject  = this._httpClientService.SendRequest<SubjectResponseDTO>(HttpMethod.Get, "http://localhost:40006/api/subjects/" + requestDTO.subjectUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            }
+            catch
+            {
+                    throw new EntityNotFoundException("Subject with uuid " + requestDTO.subjectUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
+            }
 
             //update u tabeli kurs
             Course course = new Course()

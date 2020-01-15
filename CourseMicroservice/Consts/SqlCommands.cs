@@ -65,6 +65,10 @@ namespace CourseMicroservice.Consts {
         {
             return $"select * from SAUP_COURSE.StudentCourse where courseUUID='{courseUuid}' and studentUUID='{studentUuid}';";
         }
+        public string GET_ALL_COURSES_BY_STUDENT_UUID_AND_SUBJECT_UUID(string subjectUuid, string studentUuid)
+        {
+            return $"select * from SAUP_COURSE.StudentCourse s left join SAUP_COURSE.Course c on s.courseUUID=c.uuid where subjectUUID='{subjectUuid}' and studentUUID = '{studentUuid}';";
+        }
         public string UPDATE_STUDENT_ON_COURSE(CourseStudent courseStudent)
         {
             return $"update SAUP_COURSE.StudentCourse set activeStudent = {boolToInt(courseStudent.activeStudent)}, beginDate = '{courseStudent.beginDate}', currentPoints = {courseStudent.currentPoints}, finalMark = {courseStudent.finalMark} " +
