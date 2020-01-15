@@ -6,6 +6,7 @@ namespace CourseMicroservice.Services {
     public interface ICourseStudentsService {
         //GET METHODS
         List<CourseStudentMultipleResponseDTO> GetAllActiveStudentsOnCourse(string uuid);
+        List<CourseStudentMultipleResponseDTO> GetAllCoursesByStudentUuid(string studentUuid);
         //POST METHODS
         CourseStudentResponseDTO CreateStudentOnCourse(CreateCourseStudentRequestDTO request);
         //DELETE METHODS

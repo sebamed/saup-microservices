@@ -29,6 +29,13 @@ namespace CourseMicroservice.Controllers
         {
             return Ok(this._courseStudentsService.GetAllActiveStudentsOnCourse(uuid));
         }
+        [Route(RouteConsts.ROUTE_COURSE_STUDENTS_BY_STUDENT_UUID)]
+        [Authorize(Roles =RoleConsts.ROLE_USER)]
+        [HttpGet]
+        public ActionResult<List<CourseStudentMultipleResponseDTO>> HadleGetAllCoursesForStudent(string studentuuid)
+        {
+            return Ok(this._courseStudentsService.GetAllCoursesByStudentUuid(studentuuid));
+        }
         
         //POST METHODS
         [Authorize(Roles = RoleConsts.ROLE_USER)]

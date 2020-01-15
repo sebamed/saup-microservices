@@ -42,6 +42,10 @@ namespace CourseMicroservice.Consts {
         {
             return $"select * from SAUP_COURSE.TeacherCourse where courseUUID='{courseUuid}' and teacherUUID='{teacherUuid}'";
         }
+        public string GET_ALL_COURSES_FROM_STUDENT(string studentUuid)
+        {
+            return $"select * from SAUP_COURSE.StudentCourse where studentUUID = '{studentUuid}' and activeStudent = 1;";
+        }
         public string UPDATE_TEACHER_COURSE(CourseTeacher courseTeacher)
         {
             return $"update SAUP_COURSE.TeacherCourse set activeTeacher = {boolToInt(courseTeacher.activeTeacher)} output inserted.* where teacherUUID = '{courseTeacher.teacher.uuid}' and courseUUID = '{courseTeacher.course.uuid}';";
