@@ -39,6 +39,7 @@ namespace SectionMicroservice.Services.Implementation
         public List<MultipleSectionArchiveResponseDTO> GetAllArchivesBySectionUUID(string sectionUUID) {
             return this._autoMapper.Map<List<MultipleSectionArchiveResponseDTO>>(this.FindAllArchivesBySectionUUID(sectionUUID));
         }
+
         public List<SectionArchive> FindAllArchivesBySectionUUID(string sectionUUID) {
             return this._queryExecutor.Execute<List<SectionArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_ARCHIVES_BY_SECTION_UUID(sectionUUID), this._modelMapper.MapToSectionArchives);
         }
@@ -49,17 +50,19 @@ namespace SectionMicroservice.Services.Implementation
             if (response == null)
                 return response;
             
-            UserDTO moderator;
-            try {
-                moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            } catch {
+            UserDTO moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if (moderator == null)
                 throw new EntityAlreadyExistsException($"Moderator with uuid {response.moderator.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
-            }
-
             response.moderator = moderator;
+
+            CourseDTO course = this._httpClientService.SendRequest<CourseDTO>(HttpMethod.Get, "http://localhost:40005/api/courses/" + response.course.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if (course == null)
+                throw new EntityAlreadyExistsException($"Course with uuid {response.course.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            response.course = course;
 
             return response;
         }
+
         public SectionArchive FindLatestVersionBySectionUUID(string sectionUUID)
         {
             return this._queryExecutor.Execute<SectionArchive>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_LATEST_ARCHIVE_BY_SECTION_UUID(sectionUUID), this._modelMapper.MapToSectionArchive);

@@ -14,6 +14,9 @@ using SectionMicroservice.Services;
 using SectionMicroservice.DTO.SectionArchive.Request;
 using Commons.Domain;
 using Microsoft.AspNetCore.Http;
+using SectionMicroservice.DTO.External;
+using Commons.HttpClientRequests;
+using System.Net.Http;
 
 namespace LectureMaterialMicroservice.Services.Implementation {
     public class SectionService : ISectionService {
@@ -24,41 +27,48 @@ namespace LectureMaterialMicroservice.Services.Implementation {
         private readonly SqlCommands _sqlCommands;
         private readonly ISectionArchiveService _archiveService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpClientService _httpClientService;
 
-        public SectionService(QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, ISectionArchiveService archiveService, IHttpContextAccessor httpContextAccessor) {
+        public SectionService(HttpClientService httpClientService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, ISectionArchiveService archiveService, IHttpContextAccessor httpContextAccessor) {
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
             this._autoMapper = autoMapper;
             this._sqlCommands = sqlCommands;
             this._archiveService = archiveService;
             this._httpContextAccessor = httpContextAccessor;
+            this._httpClientService = httpClientService;
+
         }
 
         public List<MultipleSectionResponseDTO> GetAll() {
             return this._autoMapper.Map<List<MultipleSectionResponseDTO>>(this.FindAll());
         }
+
         public List<Section> FindAll() {
             return this._queryExecutor.Execute<List<Section>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_SECTIONS(), this._modelMapper.MapToSections);
         }
         
-        public Section FindOneByUuidOrThrow(string uuid)
+        public Section FindSectionByUuid(string uuid)
         {
             Section section = this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_SECTION_BY_UUID(uuid), this._modelMapper.MapToSection);
 
             if (section == null)
-            {
                 throw new EntityNotFoundException($"Section with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            }
 
             return section;
         }
 
-        public SectionResponseDTO GetOneByUuid(string uuid)
+        public SectionResponseDTO GetSectionByUuid(string uuid)
         {
-            return this._autoMapper.Map<SectionResponseDTO>(this.FindOneByUuidOrThrow(uuid));
+            var response = this._autoMapper.Map<SectionResponseDTO>(this.FindSectionByUuid(uuid));
+            CourseDTO course = this._httpClientService.SendRequest<CourseDTO>(HttpMethod.Get, "http://localhost:40005/api/courses/" + response.course.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if (course == null)
+                throw new EntityAlreadyExistsException($"Course with uuid {response.course.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+            response.course = course;
+            return response;
         }
 
-        public Section FindOneByNameAndCourse(string name, string courseUUID)
+        public Section FindSectionByNameAndCourse(string name, string courseUUID)
         {
             return this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_SECTION_BY_NAME_AND_COURSE(name, courseUUID), this._modelMapper.MapToSection);
         }
@@ -66,6 +76,7 @@ namespace LectureMaterialMicroservice.Services.Implementation {
         public List<Section> FindAllVisible()  {
             return this._queryExecutor.Execute<List<Section>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_VISIBLE_SECTIONS(), this._modelMapper.MapToSections);
         }
+
         public List<MultipleSectionResponseDTO> GetVisibleSections()
         {
             return this._autoMapper.Map<List<MultipleSectionResponseDTO>>(this.FindAllVisible());
@@ -73,8 +84,9 @@ namespace LectureMaterialMicroservice.Services.Implementation {
 
         public List<MultipleSectionResponseDTO> GetSectionsByCourse(string courseUUID, bool visible)
         {
-            return this._autoMapper.Map<List<MultipleSectionResponseDTO>>(this.FindSectionsByCourse(courseUUID,visible));
+            return this._autoMapper.Map<List<MultipleSectionResponseDTO>>(this.FindSectionsByCourse(courseUUID, visible));
         }
+
         public List<Section> FindSectionsByCourse(string courseUUID, bool visible)
         {
             return this._queryExecutor.Execute<List<Section>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_SECTIONS_BY_COURSE(courseUUID,visible), this._modelMapper.MapToSections);
@@ -82,8 +94,12 @@ namespace LectureMaterialMicroservice.Services.Implementation {
 
         public SectionResponseDTO Create(CreateSectionRequestDTO requestDTO)
         {
-            if (this.FindOneByNameAndCourse(requestDTO.name, requestDTO.courseUUID) != null)
+            if (this.FindSectionByNameAndCourse(requestDTO.name, requestDTO.courseUUID) != null)
                 throw new EntityNotFoundException($"Section with name {requestDTO.name} already exists on course with uuid: {requestDTO.courseUUID}!", GeneralConsts.MICROSERVICE_NAME);
+
+            CourseDTO course = this._httpClientService.SendRequest<CourseDTO>(HttpMethod.Get, "http://localhost:40005/api/courses/" + requestDTO.courseUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if (course == null)
+                throw new EntityNotFoundException($"Course with uuid {requestDTO.courseUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
 
             Section section = new Section()
             {
@@ -110,16 +126,23 @@ namespace LectureMaterialMicroservice.Services.Implementation {
             };
 
             section = this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_SECTION(section), this._modelMapper.MapToSection);
+           
+            SectionResponseDTO response = this._autoMapper.Map<SectionResponseDTO>(section);
+            response.course = course;
+
             _ = this._archiveService.Create(archive);
-            return this._autoMapper.Map<SectionResponseDTO>(section);
+            return response;
         }
 
         public SectionResponseDTO Update(UpdateSectionRequestDTO requestDTO)
         {
-            if (this.FindOneByUuidOrThrow(requestDTO.uuid) == null)
-            {
+            if (this.FindSectionByUuid(requestDTO.uuid) == null)
                 throw new EntityNotFoundException($"Section with uuid: {requestDTO.uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            }
+
+            CourseDTO course = this._httpClientService.SendRequest<CourseDTO>(HttpMethod.Get, "http://localhost:40005/api/courses/" + requestDTO.courseUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            if(course == null)
+                throw new EntityNotFoundException($"Course with uuid {requestDTO.courseUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
             Section section = new Section()
             {
                 uuid = requestDTO.uuid,
@@ -146,21 +169,27 @@ namespace LectureMaterialMicroservice.Services.Implementation {
             };
 
             section = this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_SECTION(section), this._modelMapper.MapToSection);
+
+            SectionResponseDTO response = this._autoMapper.Map<SectionResponseDTO>(section);
+            response.course = course;
+
             _ = this._archiveService.Create(archive);
-            return this._autoMapper.Map<SectionResponseDTO>(section);
+            return response;
 
         }
         
         public SectionResponseDTO DeleteSection(string uuid) {
-            if (this.FindOneByUuidOrThrow(uuid) == null) {
+            if (this.FindSectionByUuid(uuid) == null)
                 throw new EntityNotFoundException($"Section with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            }
-
+           
             this._archiveService.Delete(uuid);
 
-            Section old = this.FindOneByUuidOrThrow(uuid);
+            SectionResponseDTO old = this.GetSectionByUuid(uuid);
             this._queryExecutor.Execute<Section>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_SECTION(uuid), this._modelMapper.MapToSection);
-            return this._autoMapper.Map<SectionResponseDTO>(old);
+
+            SectionResponseDTO response = this._autoMapper.Map<SectionResponseDTO>(old);
+
+            return response;
         }
     }
 }

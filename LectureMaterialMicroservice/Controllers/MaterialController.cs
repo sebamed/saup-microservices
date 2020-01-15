@@ -1,4 +1,5 @@
-﻿using LectureMaterialMicroservice.Localization;
+﻿using Commons.Consts;
+using LectureMaterialMicroservice.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SectionMicroservice.DTO.External;
@@ -23,30 +24,28 @@ namespace SectionMicroservice.Controllers
             _materialService = materialService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet]
         public ActionResult<MaterialResponseDTO> HandleGetFilesBySection(string sectionUUID)
         {
             return Ok(this._materialService.GetFilesBySection(sectionUUID));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPost]
         public ActionResult<MaterialResponseDTO> HandleCreateMaterial(CreateMaterialRequestDTO requestDTO)
         {
-            // todo: created()
             return Ok(this._materialService.Create(requestDTO));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpPut]
         public ActionResult<MaterialResponseDTO> HandleUpdateMaterial(FileDTO requestDTO)
         {
-            // todo: created()
             return Ok(this._materialService.UpdateFileInMaterial(requestDTO));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpDelete]
         public ActionResult<MaterialResponseDTO> HandleDeleteFileBySectionUuid(string sectionUUID, string fileUUID)
         {
