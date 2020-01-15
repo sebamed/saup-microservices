@@ -57,6 +57,21 @@ namespace CourseMicroservice.Mappers
             return null;
         }
 
+        internal CourseStatistics MapToCourseStatistics(IDataReader reader)
+        {
+            reader.Read();
+            while (reader.Read())
+            {
+                return new CourseStatistics()
+                {
+                    average = Convert.ToInt32(reader["average"]),
+                    min = Convert.ToInt32(reader["minimum"]),
+                    max = Convert.ToInt32(reader["maximum"])
+                };
+            }
+            return null;
+        }
+
         public CourseArchive MapToCourseArchive(IDataReader reader)
         {
             reader.Read();
