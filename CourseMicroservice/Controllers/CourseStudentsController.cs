@@ -23,7 +23,7 @@ namespace CourseMicroservice.Controllers
 
         //GET METHODS
         [Route(RouteConsts.ROUTE_COURSE_STUDENTS_BY_UUID)]
-        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet]
         public ActionResult<List<CourseStudentMultipleResponseDTO>> HandleGetAllActiveStudentsOnCourse(string uuid)
         {

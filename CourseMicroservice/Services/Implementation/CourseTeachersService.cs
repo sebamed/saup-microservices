@@ -36,9 +36,15 @@ namespace CourseMicroservice.Services.Implementation {
         //HELPER METHODS
         public CourseTeacherResponseDTO connectWithUser(CourseTeacherResponseDTO response)
         {
-            TeacherResponseDTO newTeacher = this._httpClientService.SendRequest<TeacherResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            if(newTeacher == null)
+            TeacherResponseDTO newTeacher;
+            try
+            {
+                newTeacher = this._httpClientService.SendRequest<TeacherResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response.teacher.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            }
+            catch
+            {
                 throw new EntityNotFoundException($"Teacher with uuid: {response.teacher.uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
 
             response.teacher = newTeacher;
             response.course = this._courseService.GetOneByUuid(response.course.uuid);
@@ -76,10 +82,15 @@ namespace CourseMicroservice.Services.Implementation {
             //provera da li postoji kurs
             CourseResponseDTO course = this._courseService.GetOneByUuid(request.courseUUID);
             //provera da li postoji profesor
-            TeacherResponseDTO newTeacher = this._httpClientService.SendRequest<TeacherResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + request.teacherUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            if (newTeacher == null)
+            try
+            {
+                TeacherResponseDTO newTeacher = this._httpClientService.SendRequest<TeacherResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + request.teacherUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            }
+            catch
+            {
                 throw new EntityNotFoundException($"Teacher with uuid: {request.teacherUUID} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-            
+            }
+
             //provera da li vec postoji profesor na kursu
             CourseTeacher existingCourseTeacher = FindTeacherOnCourse(request.courseUUID, request.teacherUUID);
             if (existingCourseTeacher != null)
