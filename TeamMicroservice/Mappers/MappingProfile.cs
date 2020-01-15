@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Commons.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace TeamMicroservice.Mappers
             CreateMap<StudentTeam, StudentTeamResponseDTO>();
             CreateMap<StudentTeamResponseDTO, StudentTeam>();
             CreateMap<TeamResponseDTO, Team>();
+            CreateMap<Student, BaseDTO>();
         }
     }
 }

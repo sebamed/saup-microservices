@@ -2,6 +2,7 @@
 using Commons.Consts;
 using Commons.DatabaseUtils;
 using Commons.Domain;
+using Commons.DTO;
 using Commons.ExceptionHandling.Exceptions;
 using Commons.HttpClientRequests;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,10 @@ namespace TeamMicroservice.Services.Implementation
             return this._queryExecutor.Execute<StudentTeam>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_BY_TEAM_AND_STUDENT(studentUUID, teamUUID), this._modelMapper.MapToStudentTeam);
         }
 
+        public List<Student> FindStudentsByTeam(string teamUUID)
+        {
+            return this._queryExecutor.Execute<List<Student>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_STUDENTS_BY_TEAM(teamUUID), this._modelMapper.MapToStudentsInTeam);
+        }
         public StudentTeamResponseDTO GetOneByStudentAndTeam(string studentUUID, string teamUUID)
         {
             StudentTeamResponseDTO response = this._autoMapper.Map<StudentTeamResponseDTO>(this.FindByStudentAndTeam(studentUUID,teamUUID));
@@ -115,6 +120,11 @@ namespace TeamMicroservice.Services.Implementation
             _ = this._queryExecutor.Execute<StudentTeam>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.DELETE_STUDENT_FROM_TEAM(studentUUID,teamUUID), this._modelMapper.MapToStudentTeam);
 
             return response;
+        }
+
+        public List<BaseDTO> GetStudentsUUIDFromTeam(string teamUUID)
+        {
+            return this._autoMapper.Map<List<BaseDTO>>(FindStudentsByTeam(teamUUID));
         }
     }
 }

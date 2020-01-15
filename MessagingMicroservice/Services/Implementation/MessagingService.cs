@@ -14,6 +14,7 @@ using AutoMapper;
 using Commons.HttpClientRequests;
 using MessagingMicroservice.DTO;
 using System.Net.Http;
+using Commons.DTO;
 
 namespace MessagingMicroservice.Services.Implementation
 {
@@ -80,32 +81,55 @@ namespace MessagingMicroservice.Services.Implementation
             //SEND MESSAGE TO RECIPIENTS
             List<User> recipients = new List<User>();
             List<string> recipientMails = new List<string>();
-            foreach (var rDTO in requestDTO.recipientsUUID)
-            {
-                var r = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + rDTO, userPrincipal.token).Result;
-                if (r == null)
-                    throw new EntityNotFoundException($"There is no recipient with uuid {rDTO}", GeneralConsts.SCHEMA_NAME);
-                var userRecipient = new User()
+            if (requestDTO is CreateUserMessageRequestDTO){
+                var recipientUUID = ((CreateUserMessageRequestDTO) requestDTO).recipientUUID;
+                recipients.Add(SendMessageToRecipient(recipientUUID, message, recipientMails, userPrincipal.token));
+            } else{
+                try
                 {
-                    uuid = r.uuid,
-                    name = r.name,
-                    surname = r.surname
-                };
+                    var team = ((CreateTeamMessageRequestDTO) requestDTO).teamUUID;
+                    var studentsInTeam = this._httpClientService.SendRequest<List<BaseDTO>>(HttpMethod.Get, "http://localhost:40004/api/teams/students/" + team, userPrincipal.token).Result;
+                    if(studentsInTeam == null)
+                    {
+                        throw new EntityNotFoundException($"There is no students in team {team}", GeneralConsts.MICROSERVICE_NAME);
+                    }
 
-                Recipient messageRecipient = new Recipient()
-                {
-                    messageUUID = message.uuid,
-                    recipient = userRecipient
-                };
-                this._queryExecutor.Execute<Recipient>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_RECIPIENT(messageRecipient), this._modelMapper.MapToRecipient);
-                
-                recipientMails.Add(r.email);
-                recipients.Add(userRecipient);
+                    foreach (var student in studentsInTeam)
+                    {
+                        recipients.Add(SendMessageToRecipient(student.uuid, message, recipientMails, userPrincipal.token));
+                    }
+                }catch(Exception e) {
+                    throw new BaseException("Team service is not available", GeneralConsts.MICROSERVICE_NAME, System.Net.HttpStatusCode.ServiceUnavailable);
+                }
             }
+
             this._httpClientService.SendEmail(recipientMails, $"Nova poruka: {message.sender.name}", message.content);
             message.recipients = recipients;
             message.files = addedFiles;
             return this._autoMapper.Map<MessageResponseDTO>(message);
+        }
+
+        private User SendMessageToRecipient(string uuid, Message message, List<string> recipientMails, string token)
+        {
+            var r = this._httpClientService.SendRequest<User>(HttpMethod.Get, "http://localhost:40001/api/users/" + uuid, token).Result;
+            if (r == null)
+                throw new EntityNotFoundException($"There is no recipient with uuid {uuid}", GeneralConsts.SCHEMA_NAME);
+            var userRecipient = new User()
+            {
+                uuid = r.uuid,
+                name = r.name,
+                surname = r.surname
+            };
+
+            Recipient messageRecipient = new Recipient()
+            {
+                messageUUID = message.uuid,
+                recipient = userRecipient
+            };
+            this._queryExecutor.Execute<Recipient>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_RECIPIENT(messageRecipient), this._modelMapper.MapToRecipient);
+
+            recipientMails.Add(r.email);
+            return userRecipient;
         }
 
         public List<MessageResponseDTO> GetMessagesByRecipents(string recipentUUIDs)

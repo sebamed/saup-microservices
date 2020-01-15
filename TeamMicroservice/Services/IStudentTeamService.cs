@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Commons.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,6 @@ namespace TeamMicroservice.Services
     public interface IStudentTeamService {
         StudentTeamResponseDTO AddStudentIntoTeam(AddStudentIntoTeamDTO requestDTO);
         StudentTeamResponseDTO DeleteStudentFromTeam(string studentUUID,string teamUUID);
-
+        List<BaseDTO> GetStudentsUUIDFromTeam(string teamUUID);
     }
 }
