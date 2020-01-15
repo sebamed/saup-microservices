@@ -10,7 +10,9 @@ namespace MessagingMicroservice.Localization {
 
         public const string ROUTE_MESSAGING_BASE = ROUTE_API_BASE + "/messaging";
 
-        public const string ROUTE_MESSAGING_BY_RECIPIENT = ROUTE_MESSAGING_BASE + "/conversation";
+        public const string ROUTE_MESSAGING_BY_RECIPIENT = ROUTE_MESSAGING_BASE + "/user/{recipientsUUID}";
+
+        public const string ROUTE_MESSAGING_BY_TEAM = ROUTE_MESSAGING_BASE + "/team/{teamUUID}";
 
         public const string ROUTE_MESSAGING_UPDATE_FILE = ROUTE_MESSAGING_BASE + "/file";
 

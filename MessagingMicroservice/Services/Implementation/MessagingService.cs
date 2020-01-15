@@ -132,22 +132,26 @@ namespace MessagingMicroservice.Services.Implementation
             return userRecipient;
         }
 
-        public List<MessageResponseDTO> GetMessagesByRecipents(string recipentUUIDs)
+        private List<Message> FindMessagesByRecipients(string[] recipients)
         {
             string sender = new UserPrincipal(_httpContextAccessor.HttpContext).uuid;
-            string[] split = recipentUUIDs.Split(',');
-            List<Message> messages = this._queryExecutor.Execute<List<Message>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_MESSAGES_BY_RECIPIENT(split, sender), this._modelMapper.MapToMessages);
+            List<Message> messages = this._queryExecutor.Execute<List<Message>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_MESSAGES_BY_RECIPIENT(recipients, sender), this._modelMapper.MapToMessages);
             if (messages == null)
-                throw new EntityNotFoundException($"There is no messages by recipient {recipentUUIDs}", GeneralConsts.MICROSERVICE_NAME);
+                throw new EntityNotFoundException($"There is no messages by recipient {recipients}", GeneralConsts.MICROSERVICE_NAME);
 
             foreach (var message in messages)
             {
-                List<User> recipients = this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_RECIPIENTS_BY_MESSAGE(message.uuid), this._modelMapper.MapToUsers);
+                List<User> recipientsM = this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_RECIPIENTS_BY_MESSAGE(message.uuid), this._modelMapper.MapToUsers);
                 List<File> files = this._queryExecutor.Execute<List<File>>(DatabaseConsts.USER_SCHEMA, _sqlCommands.GET_FILES_BY_MESSAGE(message.uuid), this._modelMapper.MapToFiles);
-                message.recipients = recipients;
+                message.recipients = recipientsM;
                 message.files = files;
             }
-            return this._autoMapper.Map<List<MessageResponseDTO>>(messages);
+            return messages;
+        }
+        public List<MessageResponseDTO> GetMessagesByRecipents(string recipentUUIDs)
+        {
+            string[] split = recipentUUIDs.Split(',');
+            return this._autoMapper.Map<List<MessageResponseDTO>>(FindMessagesByRecipients(split));
         }
 
         public MessageResponseDTO GetOneByUuid(string uuid)
@@ -247,6 +251,28 @@ namespace MessagingMicroservice.Services.Implementation
                 return $"There is no sender with uuid {user.uuid}";
             }
             return "Sender updated";
+        }
+
+        public List<MessageResponseDTO> GetMessagesByTeam(string team)
+        {
+            try
+            {
+                var studentsInTeam = this._httpClientService.SendRequest<List<BaseDTO>>(HttpMethod.Get, "http://localhost:40004/api/teams/students/" + team, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+                if (studentsInTeam == null)
+                {
+                    throw new EntityNotFoundException($"There is no students in team {team}", GeneralConsts.MICROSERVICE_NAME);
+                }
+                string[] array = new string[studentsInTeam.Count];
+                for (int i = 0; i < studentsInTeam.Count; i++){
+                    array[i] = studentsInTeam[i].uuid;
+                }
+                
+                return this._autoMapper.Map<List<MessageResponseDTO>>(FindMessagesByRecipients(array));
+            }
+            catch (Exception e)
+            {
+                throw new BaseException("Team service is not available", GeneralConsts.MICROSERVICE_NAME, System.Net.HttpStatusCode.ServiceUnavailable);
+            }
         }
     }
 }

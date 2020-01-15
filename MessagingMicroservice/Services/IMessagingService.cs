@@ -12,5 +12,6 @@ namespace MessagingtMicroservice.Services
         string UpdateRecipientInMessage(UserDTO userDTO);
         string UpdateSenderInMessage(UserDTO userDTO);
         string UpdateFileInMessage(FileDTO fileDTO);
+        List<MessageResponseDTO> GetMessagesByTeam(string team);
     }
 }

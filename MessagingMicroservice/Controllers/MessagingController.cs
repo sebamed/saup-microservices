@@ -27,10 +27,18 @@ namespace MessagingMicroservice.Controllers
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_MESSAGING_BY_RECIPIENT)]
-        public ActionResult<List<MessageResponseDTO>> HandleGetAllMessagesByRecipients(string recipients)
+        public ActionResult<List<MessageResponseDTO>> HandleGetAllMessagesByRecipients(string recipientsUUID)
         {
-            return Ok(this._messagingService.GetMessagesByRecipents(recipients));
+            return Ok(this._messagingService.GetMessagesByRecipents(recipientsUUID));
         }
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpGet(RouteConsts.ROUTE_MESSAGING_BY_TEAM)]
+        public ActionResult<List<MessageResponseDTO>> HandleGetAllMessagesByTeam(string teamUUID)
+        {
+            return Ok(this._messagingService.GetMessagesByTeam(teamUUID));
+        }
+
 
         [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpPost(RouteConsts.ROUTE_MESSAGING_USER)]

@@ -54,6 +54,7 @@ namespace MessagingMicroservice.Consts
             {
                 inStr += $"'{s}',";
             }
+
             inStr = inStr.Substring(0, inStr.Length - 1);
 
             return $"select id, uuid, content, senderName, senderUUID, senderSurname, dateTime " +
