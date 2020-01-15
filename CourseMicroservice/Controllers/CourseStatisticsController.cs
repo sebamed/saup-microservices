@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace CourseMicroservice.Controllers
 {
     [Authorize]
-    [Route(RouteConsts.ROUTE_COURSE_STATISTICS)]
+    [Route(RouteConsts.ROUTE_COURSE_STATISTICS_BASE)]
     [ApiController]
     public class CourseStatisticsController : ControllerBase
     {
@@ -23,11 +23,27 @@ namespace CourseMicroservice.Controllers
 
         [HttpGet]
         [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
+        [Route(RouteConsts.ROUTE_COURSE_STATISTICS_BY_COURSE_UUID)]
         public ActionResult<CourseStatisticsResponseDTO> HandleGetStatisticsByCourse(string courseuuid)
         {
-           return  this._courseStatisticsService.Get_Course_Statistics(courseuuid);
+           return  this._courseStatisticsService.Get_Course_Statistics_Course_Uuid(courseuuid);
         }
-        
+        [HttpGet]
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
+        [Route(RouteConsts.ROUTE_COURSE_STATISTICS_BY_STUDENT_UUID)]
+        public ActionResult<CourseStatisticsResponseDTO> HandleGetStatisticsByStudent(string studentuuid)
+        {
+            return this._courseStatisticsService.Get_Course_Satistics_Student_Uuid(studentuuid);
+        }
+        [HttpGet]
+        [Authorize(Roles = RoleConsts.ROLE_ADMIN)]
+        [Route(RouteConsts.ROUTE_COURSE_STATISTICS_BY_YEAR)]
+        public ActionResult<CourseStatisticsResponseDTO> HandleGetStatisticsByYear(int year)
+        {
+            return this._courseStatisticsService.Get_Course_Statistics_Year(year);
+        }
+
+
 
     }
 }

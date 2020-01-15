@@ -25,6 +25,9 @@ namespace CourseMicroservice.Localization {
         public const string ROUTE_COURSE_ARCHIVES = ROUTE_COURSE_BASE + "/archives/{uuid}";
 
         //Course Statistics
-        public const string ROUTE_COURSE_STATISTICS = ROUTE_COURSE_BASE + "/statistics/{courseuuid}";
+        public const string ROUTE_COURSE_STATISTICS_BASE = ROUTE_COURSE_BASE + "/statistics";
+        public const string ROUTE_COURSE_STATISTICS_BY_COURSE_UUID = ROUTE_COURSE_STATISTICS_BASE + "/course/{courseuuid}";
+        public const string ROUTE_COURSE_STATISTICS_BY_STUDENT_UUID = ROUTE_COURSE_STATISTICS_BASE + "/student/{studentuuid}";
+        public const string ROUTE_COURSE_STATISTICS_BY_YEAR = ROUTE_COURSE_STATISTICS_BASE + "/year/{year}";
     }
 }

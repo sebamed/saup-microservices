@@ -94,6 +94,16 @@ namespace CourseMicroservice.Consts {
             return $"select avg(finalMark) as average, min(finalMark) as minimum, max(finalMark) as maximum " +
             $"from SAUP_COURSE.StudentCourse where courseUUID = '{courseUuid}'; ";
         }
+        public string GET_COURSE_STATISTICS_STUDENT_UUID(string studentUuid)
+        {
+            return $"select avg(finalMark) as average, min(finalMark) as minimum, max(finalMark) as maximum " +
+            $"from SAUP_COURSE.StudentCourse where studentUUID = '{studentUuid}'; ";
+        }
+        public string GET_COURSE_STATISTCS_YEAR(int year)
+        {
+            return $"select avg(finalMark) as average, min(finalMark) as minimum, max(finalMark) as maximum " +
+            $"from SAUP_COURSE.StudentCourse where year(beginDate) = {year}; ";
+        }
 
         //HELP METHOD
         public int boolToInt(bool bl)

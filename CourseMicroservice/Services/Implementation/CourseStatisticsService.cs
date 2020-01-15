@@ -34,19 +34,35 @@ namespace CourseMicroservice.Services.Implementation {
             this._courseService = courseService;
         }
 
-        public Course FindOneByUuidOrThrow(string uuid)
+        public CourseStatisticsResponseDTO Get_Course_Satistics_Student_Uuid(string studentUuid)
         {
-            Course course = this._queryExecutor.Execute<Course>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_COURSE_BY_UUID(uuid), this._modelMapper.MapToCourse);
-            if (course == null)
-                throw new EntityNotFoundException($"Course with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
-
-            return course;
+            try
+            {
+                StudentResponseDTO student = this._httpClientService.SendRequest<StudentResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + studentUuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            }
+            catch
+            {
+                throw new EntityNotFoundException("Student with uuid " + studentUuid + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
+            }
+            CourseStatistics stat = this._queryExecutor.Execute<CourseStatistics>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_STATISTICS_STUDENT_UUID(studentUuid), this._modelMapper.MapToCourseStatistics);
+            if (stat == null)
+                throw new EntityNotFoundException($"No data for student with uuid: " + studentUuid, GeneralConsts.MICROSERVICE_NAME);
+            return this._autoMapper.Map<CourseStatisticsResponseDTO>(stat);
         }
 
-        public CourseStatisticsResponseDTO Get_Course_Statistics(string courseUuid)
+        public CourseStatisticsResponseDTO Get_Course_Statistics_Course_Uuid(string courseUuid)
         {
-            this.FindOneByUuidOrThrow(courseUuid);
             CourseStatistics stat = this._queryExecutor.Execute<CourseStatistics>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_STATISTICS_COURSE_UUID(courseUuid), this._modelMapper.MapToCourseStatistics);
+            if (stat == null)
+                throw new EntityNotFoundException($"No data for course with uuid: " + courseUuid, GeneralConsts.MICROSERVICE_NAME);
+            return this._autoMapper.Map<CourseStatisticsResponseDTO>(stat);
+        }
+
+        public CourseStatisticsResponseDTO Get_Course_Statistics_Year(int year)
+        {
+            CourseStatistics stat = this._queryExecutor.Execute<CourseStatistics>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_COURSE_STATISTCS_YEAR(year), this._modelMapper.MapToCourseStatistics);
+            if (stat == null)
+                throw new EntityNotFoundException($"No data for year: " + year, GeneralConsts.MICROSERVICE_NAME);
             return this._autoMapper.Map<CourseStatisticsResponseDTO>(stat);
         }
     }
