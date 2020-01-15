@@ -103,6 +103,25 @@ namespace MessagingMicroservice.Mappers {
             return null;
         }
 
+        public List<FileMessage> MapToFileMessages(IDataReader reader)
+        {
+            List<FileMessage> fms = new List<FileMessage>();
+            while (reader.Read())
+            {
+                fms.Add(new FileMessage()
+                {
+                    messageUUID = Convert.ToString(reader["messageUUID"]),
+                    file = new File()
+                    {
+                        uuid = Convert.ToString(reader["fileUUID"]),
+                        filePath = Convert.ToString(reader["filePath"])
+                    }
+                });
+            }
+
+            return fms;
+        }
+
         internal FileMessage MapToFileMessage(IDataReader reader)
         {
             while (reader.Read())

@@ -1,4 +1,5 @@
 ﻿using Commons.Consts;
+using MessagingMicroservice.DTO;
 using MessagingMicroservice.DTO.Message;
 using MessagingMicroservice.Localization;
 using MessagingtMicroservice.Services;
@@ -42,6 +43,27 @@ namespace MessagingMicroservice.Controllers
         public ActionResult<MessageResponseDTO> HandleDeleteMessage(string uuid)
         {
             return Ok(this._messagingService.Delete(uuid));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpPut(RouteConsts.ROUTE_MESSAGING_UPDATE_FILE)]
+        public ActionResult<string> HandleUpdateMessage(FileDTO request)
+        {
+            return Ok(this._messagingService.UpdateFileInMessage(request));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpPut(RouteConsts.ROUTE_MESSAGING_UPDATE_RECIPIENT)]
+        public ActionResult<string> HandleUpdateMessage(UserDTO recipient)
+        {
+            return Ok(this._messagingService.UpdateRecipientInMessage(recipient));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpPut(RouteConsts.ROUTE_MESSAGING_UPDATE_SENDER)]
+        public ActionResult<string> HandleUpdateMessageSender(UserDTO sender)
+        {
+            return Ok(this._messagingService.UpdateSenderInMessage(sender));
         }
     }
 }
