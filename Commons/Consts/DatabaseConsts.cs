@@ -8,7 +8,5 @@ namespace Commons.Consts {
 
         public const string USER_SCHEMA = @"Server=147.91.175.176;Database=it32g2016;User Id=it32g2016;Password=ftnftn2016;";
         public const string ADMIN_SCHEMA = @"Server=147.91.175.176;Database=it32g2016;User Id=it32g2016;Password=ftnftn2016;";
-
-
     }
 }

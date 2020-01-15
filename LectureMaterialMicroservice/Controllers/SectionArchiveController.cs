@@ -1,4 +1,5 @@
-﻿using LectureMaterialMicroservice.Localization;
+﻿using Commons.Consts;
+using LectureMaterialMicroservice.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SectionMicroservice.DTO.SectionArchive.Request;
@@ -20,14 +21,15 @@ namespace SectionMicroservice.Controllers {
         public SectionArchiveController(ISectionArchiveService sectionArchiveService) {
             _sectionArchiveService = sectionArchiveService;
         }
-        [AllowAnonymous]
+
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet(RouteConsts.ROUTE_ARCHIVES_BY_SECTION_UUID)]
         public ActionResult<MultipleSectionArchiveResponseDTO> HandleGetAllArchivesBySectionUUID(string uuid)
         {
             return Ok(this._sectionArchiveService.GetAllArchivesBySectionUUID(uuid));
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
         [HttpGet(RouteConsts.ROUTE_LATEST_ARCHIVE_BY_SECTION_UUID)]
         public ActionResult<SectionArchiveResponseDTO> HandleGetLatestbySectionUUID(string uuid)
         {

@@ -8,8 +8,8 @@ using SectionMicroservice.DTO.Section.Request;
 
 namespace LectureMaterialMicroservice.Services {
     public interface ISectionService : ICrudService<MultipleSectionResponseDTO> {
-        Section FindOneByUuidOrThrow(string uuid);
-        SectionResponseDTO GetOneByUuid(string uuid);
+        Section FindSectionByUuid(string uuid);
+        SectionResponseDTO GetSectionByUuid(string uuid);
         List<MultipleSectionResponseDTO> GetVisibleSections();
         List<MultipleSectionResponseDTO> GetSectionsByCourse(string courseUUID, bool visible);
 

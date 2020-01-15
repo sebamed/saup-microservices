@@ -14,9 +14,6 @@ namespace SectionMicroservice.DTO.Material.Request
         public string fileUUID { get; set; }
 
         [Required]
-        public string filePath { get; set; }
-
-        [Required]
         public int visible { get; set; }
     }
 }
