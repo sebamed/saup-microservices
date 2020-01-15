@@ -54,7 +54,7 @@ namespace CourseMicroservice.Controllers
         }
 
         //DELETE METHODS
-        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpDelete]
         public ActionResult<CourseStudentResponseDTO> HandleDeleteStudentOnCourse(string uuid, string studentUuid)
         {
