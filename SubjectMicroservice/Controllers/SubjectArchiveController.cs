@@ -20,9 +20,9 @@ namespace SubjectMicroservice.Controllers
             _subjectArchiveService = subjectArchiveService;
         }
 
-        [Authorize(Roles = RoleConsts.ROLE_TEACHER)]
+        [Authorize(Roles = RoleConsts.ROLE_STUDENT)]
         [HttpGet(RouteConsts.ROUTE_ARCHIVES_BY_SUBJECT_UUID)]
-        public ActionResult<List<MultipleSubjectArchiveResponseDTO>> HandleGetAllBySubjectUUID(string uuid) {
+        public ActionResult<List<SubjectArchiveResponseDTO>> HandleGetAllBySubjectUUID(string uuid) {
             return Ok(this._subjectArchiveService.GetAllArchivesBySubjectUUID(uuid));
         }
 

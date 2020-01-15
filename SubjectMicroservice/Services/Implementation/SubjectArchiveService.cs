@@ -42,8 +42,41 @@ namespace SubjectMicroservice.Services.Implementation
         public List<SubjectArchive> FindAllArchivesBySubjectUUID(string subjectUUID) {
             return this._queryExecutor.Execute<List<SubjectArchive>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_ARCHIVES_BY_SUBJECT_UUID(subjectUUID), this._modelMapper.MapToSubjectArchives);
         }
-        public List<MultipleSubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string subjectUUID) {
-            return this._autoMapper.Map<List<MultipleSubjectArchiveResponseDTO>>(this.FindAllArchivesBySubjectUUID(subjectUUID));
+        public List<SubjectArchiveResponseDTO> GetAllArchivesBySubjectUUID(string subjectUUID) {
+            List<SubjectArchiveResponseDTO> response =  this._autoMapper.Map<List<SubjectArchiveResponseDTO>>(this.FindAllArchivesBySubjectUUID(subjectUUID));
+            for(int i = 0; i < response.Count; i++){
+                if (response[i] == null)
+                    throw new EntityAlreadyExistsException($"Subject archive with uuid {subjectUUID} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+
+                try
+                {
+                    response[i].department = this._httpClientService.SendRequest<DepartmentDTO>(HttpMethod.Get, "http://localhost:40007/api/departments/" + response[i].department.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+                }
+                catch
+                {
+                    throw new EntityNotFoundException($"Department with uuid {response[i].department.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+                }
+
+                try
+                {
+                    response[i].creator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response[i].creator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+                }
+                catch
+                {
+                    throw new EntityNotFoundException($"User with uuid {response[i].creator.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+                }
+
+                try
+                {
+                    response[i].moderator = this._httpClientService.SendRequest<UserDTO>(HttpMethod.Get, "http://localhost:40001/api/users/" + response[i].moderator.uuid, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+                }
+                catch
+                {
+                    throw new EntityNotFoundException($"User with uuid {response[i].creator.uuid} doesn't exist!", GeneralConsts.MICROSERVICE_NAME);
+                }
+            }
+           
+            return response;
         }
 
         public SubjectArchive FindLatestVersionBySubjectUUID(string subjectUUID) {
