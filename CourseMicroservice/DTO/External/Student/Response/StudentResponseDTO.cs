@@ -7,5 +7,6 @@ namespace CourseMicroservice.DTO.Course {
         public string surname { get; set; }
         public string email { get; set; }
         public string indexNumber { get; set; }
+        public string departmentUUID { get; set; }
     }
 }

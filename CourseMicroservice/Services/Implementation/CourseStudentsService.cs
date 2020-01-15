@@ -11,6 +11,7 @@ using Commons.HttpClientRequests;
 using System.Net.Http;
 using Commons.Domain;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace CourseMicroservice.Services.Implementation {
     public class CourseStudentsService : ICourseStudentsService
@@ -70,11 +71,23 @@ namespace CourseMicroservice.Services.Implementation {
         {
             //provera da li postoji kurs
             CourseResponseDTO course = this._courseService.GetOneByUuid(request.courseUUID);
+            String courseDep = course.subject.department.uuid;
+            StudentResponseDTO student;
             //provera da li postoji student
-            StudentResponseDTO student = this._httpClientService.SendRequest<StudentResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + request.studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
-            if (student == null)
+            try {
+                
+              student = this._httpClientService.SendRequest<StudentResponseDTO>(HttpMethod.Get, "http://localhost:40001/api/users/students/" + request.studentUUID, new UserPrincipal(_httpContextAccessor.HttpContext).token).Result;
+            }
+            catch
+            {
                 throw new EntityNotFoundException("Student with uuid " + request.studentUUID + " doesn't exist", GeneralConsts.MICROSERVICE_NAME);
-
+            }
+            String studentDep = student.departmentUUID;
+            //provera da li su predmet i student na istom departmanu
+            if (studentDep != courseDep)
+            {
+                throw new EntityNotFoundException("Student with uuid " + request.studentUUID + " and course with uuid: "+request.courseUUID+" are not on the same department", GeneralConsts.MICROSERVICE_NAME);
+            }
             //provera da li vec postoji student na tom kursu
             CourseStudent existingCourseStudent = this.FindStudentOnCourse(request.courseUUID, request.studentUUID);
             if(existingCourseStudent != null)
