@@ -88,6 +88,12 @@ namespace CourseMicroservice.Consts {
            $"{courseArchive.minStudents}, '{courseArchive.creationDate}', '{courseArchive.subject.uuid}', '{courseArchive.moderator.uuid}', '{courseArchive.changeDate}'); ";
         }
 
+        //COURSE STATISTICS
+        public string GET_COURSE_STATISTICS_COURSE_UUID(string courseUuid)
+        {
+            return $"select avg(finalMark) as average, min(finalMark) as minimum, max(finalMark) as maximum " +
+            $"from SAUP_COURSE.StudentCourse where courseUUID = '{courseUuid}'; ";
+        }
 
         //HELP METHOD
         public int boolToInt(bool bl)

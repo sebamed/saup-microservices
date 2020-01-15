@@ -23,5 +23,8 @@ namespace CourseMicroservice.Localization {
         
         //Course Archives
         public const string ROUTE_COURSE_ARCHIVES = ROUTE_COURSE_BASE + "/archives/{uuid}";
+
+        //Course Statistics
+        public const string ROUTE_COURSE_STATISTICS = ROUTE_COURSE_BASE + "/statistics/{courseuuid}";
     }
 }

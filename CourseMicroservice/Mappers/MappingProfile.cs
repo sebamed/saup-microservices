@@ -30,6 +30,8 @@ namespace CourseMicroservice.Mappers {
             CreateMap<Teacher, TeacherResponseDTO>();
             CreateMap<Student, StudentResponseDTO>();
             CreateMap<Subject, SubjectResponseDTO>();
+
+            CreateMap<CourseStatistics, CourseStatisticsResponseDTO>();
         }
     }
 }
