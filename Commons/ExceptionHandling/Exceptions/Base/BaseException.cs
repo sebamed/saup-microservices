@@ -21,8 +21,5 @@ namespace Commons.ExceptionHandling.Exceptions {
             this.origin = origin;
             this.code = code;
         }
-
-
-
     }
 }

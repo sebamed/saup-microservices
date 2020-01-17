@@ -5,7 +5,7 @@ namespace AuthResource.DTO.User {
 
         [EmailAddress]
         [Required]
-        public string username { get; set; }
+        public string email { get; set; }
 
         [Required]
         public string password { get; set; }

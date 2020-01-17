@@ -10,6 +10,7 @@ using UserMicroservice.DTO.User;
 using UserMicroservice.Localization;
 using UserMicroservice.Services;
 using Commons.Consts;
+using UserMicroservice.DTO.User.Request;
 
 namespace UserMicroservice.Controllers
 {
@@ -31,10 +32,22 @@ namespace UserMicroservice.Controllers
             return Ok(this._userService.GetAll());
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpPost(RouteConsts.ROUTE_USER_CHANGE_PASSWORD)]
+        public ActionResult<UserResponseDTO> HandleChangePassword(ChangePasswordRequestDTO requestDTO) {
+            return Ok(this._userService.ChangePassword(requestDTO));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
         [HttpGet(RouteConsts.ROUTE_USER_GET_ONE_BY_UUID)]
         public ActionResult<UserResponseDTO> HandleGetOneUserByUuid(string uuid) {
             return Ok(this._userService.GetOneByUuid(uuid));
+        }
+
+        [Authorize(Roles = RoleConsts.ROLE_USER)]
+        [HttpPut]
+        public ActionResult<UserResponseDTO> HandleUpdateUser(UpdateUserRequestDTO requestDTO) {
+            return Ok(this._userService.Update(requestDTO));
         }
 
     }

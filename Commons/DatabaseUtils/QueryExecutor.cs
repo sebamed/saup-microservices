@@ -19,23 +19,31 @@ namespace Commons.DatabaseUtils {
                     connection.Open();
 
                     SqlDataReader reader = command.ExecuteReader();
+                        if (reader.HasRows) {
+                            try {
+                                var data = map(reader);
 
-                    if (reader.HasRows) {
+                                reader.Close();
+                                connection.Close();
 
-                        var data = map(reader);
+                                return data;
 
-                        reader.Close();
-                        connection.Close();
+                            } catch (Exception e) {
+                                throw new Exception("501");
+                            }
 
-                        return data;
-                    }
-
+                        } else {
+                            connection.Close();
+                            return default(T);
+                        }
+                    
                 } catch (Exception e) {
-                    throw new BadSqlQueryException($"There was an error with the database while trying to execute: `{query}`", "Query Executor - Manual Mapper");
+                    if (e.Message.Equals("501")) {
+                        throw new MapperDisfuntionException("There was a problem with mapping the result from the db!", "Query Executor - Manual Mapper");
+                    } else {
+                        throw new BadSqlQueryException($"There was an error with the database while trying to execute: `{query}`", "Query Executor - Manual Mapper");
+                    }
                 }
-
-                connection.Close();
-                return default(T);
             }
         }
 

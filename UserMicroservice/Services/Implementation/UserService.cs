@@ -1,6 +1,9 @@
-﻿using Commons.Consts;
+﻿using AutoMapper;
+using Commons.Consts;
 using Commons.DatabaseUtils;
+using Commons.Domain;
 using Commons.ExceptionHandling.Exceptions;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using UserMicroservice.Consts;
 using UserMicroservice.Domain;
@@ -11,42 +14,102 @@ using UserMicroservice.Mappers;
 namespace UserMicroservice.Services.Implementation {
     public class UserService : IUserService {
 
+        private readonly IRoleService _roleService;
+
         private readonly QueryExecutor _queryExecutor;
 
         private readonly ModelMapper _modelMapper;
 
-        public UserService(QueryExecutor queryExecutor, ModelMapper modelMapper) {
+        private readonly IMapper _autoMapper;
+
+        private readonly SqlCommands _sqlCommands;
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public UserService(IRoleService roleService, QueryExecutor queryExecutor, ModelMapper modelMapper, IMapper autoMapper, SqlCommands sqlCommands, IHttpContextAccessor httpContextAccessor) {
+            this._roleService = roleService;
             this._queryExecutor = queryExecutor;
             this._modelMapper = modelMapper;
+            this._autoMapper = autoMapper;
+            this._sqlCommands = sqlCommands;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
-        public UserResponseDTO Create(CreateUserRequestDTO requestDTO) {
-            // todo
-            return new UserResponseDTO();
+        public User Create(CreateUserRequestDTO requestDTO) {
+            // Checking if the user with provided email already exists
+            this.ThrowExceptionIfEmailExists(requestDTO.email);
+
+            User user = new User() {
+                email = requestDTO.email,
+                phone = requestDTO.phone,
+                name = requestDTO.name,
+                surname = requestDTO.surname,
+                password = BCrypt.Net.BCrypt.HashPassword(requestDTO.password),
+                role = this._roleService.FindOneByName(requestDTO.roleName)
+            };
+
+            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CREATE_USER(user), this._modelMapper.MapToUserAfterInsert);
+
+            return user;
         }
 
         public List<UserResponseDTO> GetAll() {
-            // todo
-            return new List<UserResponseDTO>();
+            return this._autoMapper.Map<List<UserResponseDTO>>(this.FindAll());
         }
         public UserResponseDTO GetOneByUuid(string uuid) {
-            // todo
-
-            // *1
-            //List<Instrument> k = this._queryExecutor.Execute<Instrument>(DatabaseConsts.USER_SCHEMA, "select * from tblInstrument;");
-            
-
-            // koristicemo ovakve mappere:
-            var b = this._queryExecutor.Execute<Instrument>(DatabaseConsts.USER_SCHEMA, "select * from tblInstrument where InstrumentID = 123;", this._modelMapper.mapToInstrument);
-            var a = this._queryExecutor.Execute<List<Instrument>>(DatabaseConsts.USER_SCHEMA, "select * from tblInstrument;", this._modelMapper.mapToInstruments);
-
-            throw new EntityNotFoundException($"User with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
+            return this._autoMapper.Map<UserResponseDTO>(this.FindOneByUuidOrThrow(uuid));
         }
 
         public UserResponseDTO Update(UpdateUserRequestDTO requestDTO) {
-            // todo
-            return new UserResponseDTO();
-        }       
+            this.ThrowExceptionIfEmailExists(requestDTO.email);
+
+            User user = this.FindOneByUuidOrThrow(requestDTO.uuid);
+            user = this._autoMapper.Map<User>(requestDTO);
+
+            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.UPDATE_USER(user), this._modelMapper.MapToUserAfterUpdate);
+
+            return this._autoMapper.Map<UserResponseDTO>(user);
+        }
+
+        public User FindOneByUuidOrThrow(string uuid) {
+            User user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_USER_BY_UUID(uuid), this._modelMapper.MapToUser);
+
+            if (user == null) {
+                throw new EntityNotFoundException($"User with uuid: {uuid} does not exist!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            return user;
+        }
+
+        public User FindOneByEmailAddress(string email) {
+            return this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ONE_USER_BY_EMAIL(email), this._modelMapper.MapToUser);
+        }
+
+        public List<User> FindAll() {
+            return this._queryExecutor.Execute<List<User>>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.GET_ALL_USERS(), this._modelMapper.MapToUsers);
+        }
+
+        private void ThrowExceptionIfEmailExists(string email) {
+            if (this.FindOneByEmailAddress(email) != null) {
+                throw new EntityAlreadyExistsException($"User with email {email} already exists!", GeneralConsts.MICROSERVICE_NAME);
+            }
+        }
+
+        public UserResponseDTO ChangePassword(ChangePasswordRequestDTO requestDTO) {
+            User user = this.FindOneByUuidOrThrow(new UserPrincipal(this._httpContextAccessor.HttpContext).uuid);
+
+            if(!BCrypt.Net.BCrypt.Verify(requestDTO.oldPassword, user.password)) {
+                throw new EntityNotFoundException("The current password does not match!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            if(!requestDTO.newPassword.Equals(requestDTO.confirmNewPassword)) {
+                throw new EntityNotFoundException("New passwords must be the same!", GeneralConsts.MICROSERVICE_NAME);
+            }
+
+            user = this._queryExecutor.Execute<User>(DatabaseConsts.USER_SCHEMA, this._sqlCommands.CHANGE_PASSWORD(user.uuid, BCrypt.Net.BCrypt.HashPassword(requestDTO.newPassword)), this._modelMapper.MapToUserAfterUpdate);
+
+            return this._autoMapper.Map<UserResponseDTO>(user);
+        }
     }
 
 }

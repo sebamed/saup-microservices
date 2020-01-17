@@ -7,29 +7,201 @@ using UserMicroservice.Domain;
 
 namespace UserMicroservice.Mappers {
     public class ModelMapper {
-
-        public List<Instrument> mapToInstruments(IDataReader reader) {
-            List<Instrument> instruments = new List<Instrument>();
-
-            while(reader.Read()) {
-                instruments.Add(new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
-                });
-            }
-
-            return instruments;
+        public T EmptyMapper<T>(IDataReader reader) {
+            return default(T);
         }
 
-        public Instrument mapToInstrument(IDataReader reader) {
+        public Role MapToRole(IDataReader reader) {
             while (reader.Read()) {
-                return new Instrument() {
-                    InstrumentID = Convert.ToInt32(reader["InstrumentID"]),
-                    InstrumentNaziv = Convert.ToString(reader["InstrumentNaziv"])
+                return new Role() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"])
                 };
             }
 
             return null;
+        }
+
+        public Student MapToStudent(IDataReader reader) {
+            while (reader.Read()) {
+                return new Student() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    departmentUuid = Convert.ToString(reader["departmentUuid"]),
+                    indexNumber = Convert.ToString(reader["indexNumber"])
+                };
+            }
+
+            return null;
+        }
+
+        public List<Student> MapToStudents(IDataReader reader) {
+            List<Student> students = new List<Student>();
+
+            while (reader.Read()) {
+                students.Add(new Student() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    departmentUuid = Convert.ToString(reader["departmentUuid"]),
+                    indexNumber = Convert.ToString(reader["indexNumber"])
+                });
+            }
+
+            return students;
+        }
+
+        public Admin MapToAdmin(IDataReader reader) {
+            while (reader.Read()) {
+                return new Admin() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                };
+            }
+
+            return null;
+        }
+
+        public List<Admin> MapToAdmins(IDataReader reader) {
+            List<Admin> admins = new List<Admin>();
+
+            while (reader.Read()) {
+                admins.Add(new Admin() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                });
+            }
+
+            return admins;
+        }
+
+        public List<Teacher> MapToTeachers(IDataReader reader) {
+            List<Teacher> teachers = new List<Teacher>();
+
+            while (reader.Read()) {
+                teachers.Add(new Teacher() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                });
+            }
+
+            return teachers;
+        }
+
+        public Teacher MapToTeacher(IDataReader reader) {
+            while (reader.Read()) {
+                return new Teacher() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"])
+                };
+            }
+
+            return null;
+        }
+
+        public User MapToUserAfterInsert(IDataReader reader) {
+            reader.Read();
+            return new User() {
+                uuid = Convert.ToString(reader["uuid"]),
+                id = Convert.ToInt32(reader["id"]),
+                name = Convert.ToString(reader["name"]),
+                surname = Convert.ToString(reader["surname"]),
+                password = Convert.ToString(reader["password"]),
+                email = Convert.ToString(reader["email"]),
+                phone = Convert.ToString(reader["phone"]),
+                role = new Role() {
+                    uuid = Convert.ToString(reader["roleUUID"]),
+                }
+            };
+        }
+
+        public User MapToUserAfterUpdate(IDataReader reader) {
+            reader.Read();
+            return new User() {
+                uuid = Convert.ToString(reader["uuid"]),
+                id = Convert.ToInt32(reader["id"]),
+                name = Convert.ToString(reader["name"]),
+                surname = Convert.ToString(reader["surname"]),
+                password = Convert.ToString(reader["password"]),
+                email = Convert.ToString(reader["email"]),
+                phone = Convert.ToString(reader["phone"]),
+                role = new Role() {
+                    uuid = Convert.ToString(reader["roleUUID"]),
+                    name = Convert.ToString(reader["role_name"])
+                }
+            };
+        }
+
+        public User MapToUser(IDataReader reader) {
+            while (reader.Read()) {
+                return new User() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    role = new Role() {
+                        uuid = Convert.ToString(reader["roleUUID"]),
+                        name = Convert.ToString(reader["role_name"])
+                    }
+                };
+            }
+
+            return null;
+        }
+
+        public List<User> MapToUsers(IDataReader reader) {
+            List<User> users = new List<User>();
+
+            while (reader.Read()) {
+                users.Add(new User() {
+                    uuid = Convert.ToString(reader["uuid"]),
+                    id = Convert.ToInt32(reader["id"]),
+                    name = Convert.ToString(reader["name"]),
+                    surname = Convert.ToString(reader["surname"]),
+                    password = Convert.ToString(reader["password"]),
+                    email = Convert.ToString(reader["email"]),
+                    phone = Convert.ToString(reader["phone"]),
+                    role = new Role() {
+                        uuid = Convert.ToString(reader["roleUUID"]),
+                        name = Convert.ToString(reader["role_name"]),
+                    }
+                });
+            }
+
+            return users;
         }
     }
 }

@@ -8,6 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using MessagingMicroservice.Mappers;
 using MessagingMicroservice.Services;
 using MessagingMicroservice.Services.Implementation;
+using MessagingtMicroservice.Services;
+using MessagingMicroservice.Consts;
+using Commons.HttpClientRequests;
+using System.Net.Http;
 
 namespace MessagingMicroservice.Initializers {
 
@@ -18,14 +22,18 @@ namespace MessagingMicroservice.Initializers {
 
         public void InitializeServices(IServiceCollection services, IConfiguration configuration) {
 
-            // register UserService singleton
-            services.AddSingleton<IUserService, UserService>();
-
+            services.AddSingleton<IMessagingService, MessagingService>();
+            services.AddHttpContextAccessor();
+            services.AddSingleton<HttpClientService>();
+            services.AddSingleton<HttpClient>();
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
 
             // register ModelMapper singleton
             services.AddSingleton<ModelMapper>();
+
+            // register SqlCommands singleton
+            services.AddSingleton<SqlCommands>();
         }
     }
 }

@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 namespace Commons.Consts {
     public class DatabaseConsts {
 
-        // yet to be changed to it32g2016 database with real schemas
-        public const string USER_SCHEMA = "data source=" + @"SEBAMED-PC\SQLEXPRESS" + ";initial catalog=sebamed; integrated security=true";
-
+        public const string USER_SCHEMA = @"Server=147.91.175.176;Database=it32g2016;User Id=it32g2016;Password=ftnftn2016;";
+        public const string ADMIN_SCHEMA = @"Server=147.91.175.176;Database=it32g2016;User Id=it32g2016;Password=ftnftn2016;";
     }
 }

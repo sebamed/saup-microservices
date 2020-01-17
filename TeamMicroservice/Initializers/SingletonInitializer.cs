@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TeamMicroservice.Mappers;
 using TeamMicroservice.Services;
 using TeamMicroservice.Services.Implementation;
+using TeamMicroservice.Consts;
+using Commons.HttpClientRequests;
+using System.Net.Http;
 
 namespace TeamMicroservice.Initializers {
 
@@ -19,13 +22,20 @@ namespace TeamMicroservice.Initializers {
         public void InitializeServices(IServiceCollection services, IConfiguration configuration) {
 
             // register UserService singleton
-            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<ITeamService, TeamService>();
+            services.AddSingleton<IStudentTeamService, StudentTeamService>();
+            services.AddSingleton<HttpClientService>();
+            services.AddSingleton<HttpClient>();
+            services.AddHttpContextAccessor();
 
             // register QueryExecutor singleton
             services.AddSingleton<QueryExecutor>();
 
             // register ModelMapper singleton
             services.AddSingleton<ModelMapper>();
+
+            // register SqlCommands singleton
+            services.AddSingleton<SqlCommands>();
         }
     }
 }

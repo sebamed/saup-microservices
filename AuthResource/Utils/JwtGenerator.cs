@@ -18,12 +18,12 @@ namespace AuthResource.Utils {
             this._settings = settings;
         }
 
-        public string Generate(string username, string role) {
+        public string Generate(string uuid, string role) {
             var now = DateTime.UtcNow;
 
             var claims = new Claim[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Sub, uuid),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, now.ToUniversalTime().ToString(), ClaimValueTypes.Integer64),
                 new Claim("roles", role)
